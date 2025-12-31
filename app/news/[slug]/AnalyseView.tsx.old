@@ -1,0 +1,85 @@
+'use client';
+
+import React from "react";
+import { ContentBody } from "@/components/content/ContentBody";
+import { Clock, ChevronLeft, User, Calendar } from "lucide-react";
+import Link from "next/link";
+
+// Hilfsfunktion für die Lesezeit (direkt in der View oder als Import)
+function calculateReadingTime(text: string): number {
+  const wordsPerMinute = 200;
+  const words = text?.trim().split(/\s+/).length || 0;
+  return Math.ceil(words / wordsPerMinute);
+}
+
+export function AnalyseView({ item }: { item: any }) {
+  const readingTime = calculateReadingTime(item.content || "");
+
+  return (
+    <div className="bg-[#fcfcfc] min-h-screen antialiased font-sans text-slate-900 pb-20">
+      
+      {/* 1. TOP NAV - Terminal Style */}
+      <nav className="max-w-4xl mx-auto px-6 pt-8 flex justify-between items-center border-b border-slate-100 pb-4">
+        <Link 
+          href="/news" 
+          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-colors"
+        >
+          <ChevronLeft size={14} /> Back_to_Feed
+        </Link>
+        <div className="text-[10px] font-mono text-slate-300 uppercase tracking-widest">
+          Beyond_Charts // Editorial_v.1
+        </div>
+      </nav>
+
+      {/* 2. HEADER - Fokus auf Typografie & Meta-Daten */}
+      <header className="max-w-4xl mx-auto px-6 pt-16 pb-12 space-y-8">
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-[10px] font-black uppercase tracking-[0.4em] text-blue-600">
+              {item.category || "General_Update"}
+            </span>
+            <div className="h-px w-8 bg-slate-200" />
+            <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+               <span className="flex items-center gap-1.5"><Calendar size={12}/> {item.publishedAt ? item.publishedAt.slice(0, 10) : "Recent"}</span>
+               <span className="flex items-center gap-1.5"><Clock size={12}/> {readingTime} Min_Read</span>
+            </div>
+          </div>
+
+          <h1 className="text-5xl md:text-8xl font-black tracking-[-0.05em] uppercase italic leading-[0.85] text-slate-950 py-4">
+            {item.title}
+          </h1>
+        </div>
+
+        {/* Autoren-Sektion */}
+        <div className="flex items-center gap-4 pt-6 border-t border-slate-100">
+          <div className="w-12 h-12 rounded-full bg-slate-950 flex items-center justify-center text-white shrink-0 shadow-lg">
+            <User size={20} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1.5">Written_By</p>
+            <p className="text-base font-bold text-slate-900">{item.author || "Beyond Charts Team"}</p>
+          </div>
+        </div>
+      </header>
+
+      {/* 3. MAIN CONTENT - Typography Excellence */}
+      <main className="max-w-4xl mx-auto px-6">
+        <article className="prose prose-slate prose-xl max-w-none
+          /* BeyondCharts Headline-DNA */
+          prose-headings:font-black prose-headings:italic prose-headings:uppercase prose-headings:tracking-tighter prose-headings:text-slate-950
+          prose-h2:text-4xl prose-h2:mt-20 prose-h2:mb-8 prose-h2:border-b prose-h2:border-slate-100 prose-h2:pb-4
+          
+          /* Fließtext-Optimierung */
+          prose-p:text-slate-600 prose-p:leading-[1.9] prose-p:mb-10
+          prose-strong:text-slate-950 prose-strong:font-black
+          
+          /* Listen & Trenner */
+          prose-li:text-slate-600 prose-li:marker:text-blue-600
+          prose-hr:border-slate-100 prose-hr:my-20">
+          
+          <ContentBody content={item.content} mode="full" />
+        </article>
+      </main>
+    </div>
+  );
+}

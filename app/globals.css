@@ -1,0 +1,108 @@
+/* app/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Trade Republic-inspired calm, high-contrast, minimal UI */
+:root {
+  --bg: 250 250 250;
+  --card: 255 255 255;
+  --text: 14 14 14;
+  --muted: 106 112 118;
+  --border: 231 234 238;
+
+  --primary: 22 163 74; /* calm green */
+  --primary-2: 16 185 129;
+  --warning: 245 158 11;
+  --danger: 239 68 68;
+
+  --premium: 17 24 39; /* near-black */
+  --chip: 244 246 248;
+
+  /* Global typography scale (single source of truth) */
+  --fs-0: 0.75rem;  /* 12px */
+  --fs-1: 0.875rem; /* 14px */
+  --fs-2: 1rem;     /* 16px */
+  --fs-3: 1.125rem; /* 18px */
+  --fs-4: 1.5rem;   /* 24px */
+  --fs-5: 2rem;     /* 32px */
+  --fs-6: 2.5rem;   /* 40px */
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+  font-family: var(--font-sans), ui-sans-serif, system-ui;
+  font-size: var(--fs-2);
+  line-height: 1.55;
+  transition: padding-top 0.3s ease;
+}
+
+/* Ensure consistent default typography everywhere */
+h1, h2, h3, h4, h5, h6 {
+  color: rgb(var(--text));
+}
+
+a {
+  color: inherit;
+}
+
+/* Touch ergonomics */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ff-tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+::selection {
+  background: rgba(var(--primary), 0.18);
+}
+
+@layer components {
+  .ff-container {
+    @apply mx-auto w-full max-w-6xl px-4 md:px-6;
+  }
+  .ff-card {
+    background: rgb(var(--card));
+    border: 1px solid rgb(var(--border));
+    @apply rounded-2xl shadow-card;
+  }
+  .ff-muted {
+    color: rgb(var(--muted));
+  }
+}
+
+/* ============================================
+   IMMERSIVE READING MODE
+   Versteckt globalen Header auf Detail-Pages
+============================================ */
+
+/* Verstecke ALLE headers und nav elements außer die mit fixed class */
+body.immersive-reading header:not([class*="fixed"]),
+body.immersive-reading nav:not([class*="fixed"]) {
+  display: none !important;
+}
+
+/* Entferne padding-top vom body falls vorhanden */
+body.immersive-reading {
+  padding-top: 0 !important;
+}
+
+/* Falls dein Layout einen Container hat, auch da padding entfernen */
+body.immersive-reading > div:first-child {
+  padding-top: 0 !important;
+}
+
+/* Smooth transitions */
+header:not([class*="fixed"]),
+nav:not([class*="fixed"]) {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

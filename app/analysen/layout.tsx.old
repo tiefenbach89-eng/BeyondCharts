@@ -1,0 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Analysen — Beyond Charts",
+  description: "Tiefgründige Unternehmensanalysen & Insights.",
+};
+
+export default function AnalysenLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <div className="min-h-screen">{children}</div>;
+}

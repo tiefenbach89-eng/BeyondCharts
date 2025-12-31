@@ -1,0 +1,12 @@
+{
+  "features": {
+    "auth": false,
+    "premium": true,
+    "premiumCTA": false,
+    "paywall": true
+  },
+  "legal": {
+    "requireSourceForExternalNews": true,
+    "showDisclaimer": true
+  }
+}
