@@ -56,6 +56,15 @@ export async function PUT(
   { params }: { params: { type: ContentType } }
 ) {
   const body = await req.json();
+  
+  // 🔍 DEBUG LOG - Was kommt rein?
+  console.log('📦 PUT Request received:');
+  console.log('   Title:', body.title);
+  console.log('   Has imageUrl?', !!body.imageUrl);
+  console.log('   ImageUrl type:', typeof body.imageUrl);
+  console.log('   ImageUrl length:', body.imageUrl?.length || 0);
+  console.log('   ImageUrl preview:', body.imageUrl?.substring(0, 80));
+  
   const settings = await getSettings();
 
   const error = validatePayload(params.type, body, settings);
@@ -65,7 +74,20 @@ export async function PUT(
 
   // Process image URL (convert base64 to file if needed)
   if (body.imageUrl) {
-    body.imageUrl = await processImageUrl(body.imageUrl);
+    try {
+      console.log('🖼️ Starting image processing...');
+      const originalUrl = body.imageUrl;
+      body.imageUrl = await processImageUrl(body.imageUrl);
+      console.log('✅ Image processed!');
+      console.log('   Before:', originalUrl.substring(0, 50));
+      console.log('   After:', body.imageUrl);
+    } catch (err) {
+      console.error('❌ Image processing ERROR:', err);
+      console.error('   Error message:', err instanceof Error ? err.message : 'Unknown error');
+      // Keep original URL if processing fails
+    }
+  } else {
+    console.log('⚠️ No imageUrl in body');
   }
 
   // Convert snapshot to analysis for analyses type
@@ -79,7 +101,12 @@ export async function PUT(
     delete body.snapshot;
   }
 
+  console.log('💾 Saving to DB with imageUrl:', body.imageUrl);
+
   const item = await upsertContent(params.type, body);
+  
+  console.log('✅ Saved! Returned imageUrl:', item.imageUrl);
+  
   return NextResponse.json(item);
 }
 

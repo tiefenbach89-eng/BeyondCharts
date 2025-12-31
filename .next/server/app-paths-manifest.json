@@ -1,7 +1,6 @@
 {
-  "/news/page": "app/news/page.js",
+  "/api/admin/[type]/route": "app/api/admin/[type]/route.js",
   "/analysen/[slug]/page": "app/analysen/[slug]/page.js",
-  "/analysen/page": "app/analysen/page.js",
   "/page": "app/page.js",
   "/admin/page": "app/admin/page.js"
 }

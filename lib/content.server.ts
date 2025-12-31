@@ -135,8 +135,8 @@ function normalizeLegacy<T extends Record<string, any>>(
       : undefined;
 
     const imageUrl =
-      typeof it.imageUrl === "string" && it.imageUrl.startsWith("http")
-        ? it.imageUrl
+      typeof it.imageUrl === "string" && it.imageUrl.trim()
+        ? it.imageUrl.trim()
         : undefined;
 
     return {
@@ -250,8 +250,8 @@ export async function upsertContent<T extends ContentType>(
     content: input.content,
 
     imageUrl:
-      typeof input.imageUrl === "string" && input.imageUrl.startsWith("http")
-        ? input.imageUrl
+      typeof input.imageUrl === "string" && input.imageUrl.trim()
+        ? input.imageUrl.trim()
         : undefined,
 
     imageSource:
