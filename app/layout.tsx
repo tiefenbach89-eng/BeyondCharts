@@ -10,15 +10,33 @@ import { SearchOverlay } from "@/components/search/SearchOverlay";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Beyond Charts — Investieren verstehen",
-  description: "Tiefgründige Unternehmensanalysen & Markt-Insights.",
-  metadataBase: new URL("http://localhost:3000"),
+  title: {
+    default: "Beyond Charts — Investieren verstehen",
+    template: "%s | BeyondCharts"
+  },
+  description: "Tiefgründige Unternehmensanalysen & Markt-Insights für informierte Investitionsentscheidungen.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
+  keywords: ["Aktienanalyse", "Investieren", "Finanzmarkt", "Portfolio", "Unternehmensanalyse", "Trading"],
+  authors: [{ name: "BeyondCharts" }],
+  openGraph: {
+    title: "Beyond Charts — Investieren verstehen",
+    description: "Tiefgründige Unternehmensanalysen & Markt-Insights.",
+    type: "website",
+    locale: "de_DE",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Beyond Charts",
+    description: "Tiefgründige Unternehmensanalysen & Markt-Insights.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" className={inter.variable}>
-      <body>
+      <body className="antialiased">
         <RoleProvider>
           <SearchProvider>
             <Header />

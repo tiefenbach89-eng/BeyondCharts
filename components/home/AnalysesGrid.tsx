@@ -33,7 +33,7 @@ export function AnalysesGrid({ analyses }: { analyses: any[] }) {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300 text-[10px] uppercase font-black">
+                  <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300 text-xs uppercase font-semibold">
                     Beyond Charts Insights
                   </div>
                 )}
@@ -46,16 +46,16 @@ export function AnalysesGrid({ analyses }: { analyses: any[] }) {
               </div>
 
               <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold leading-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-bold leading-tight text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                   {a.title}
                 </h3>
                 
-                <p className="mt-3 text-sm leading-relaxed text-slate-500 line-clamp-3 flex-grow">
+                <p className="mt-3 text-sm leading-relaxed text-slate-600 line-clamp-3 flex-grow">
                   {a.summary}
                 </p>
                 
-                <div className="mt-6 flex items-center justify-between border-t border-slate-50 pt-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                  <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
                     {new Date(
                       a.publishedAt || a.createdAt
                     ).toLocaleDateString("de-DE")}
@@ -73,7 +73,7 @@ export function AnalysesGrid({ analyses }: { analyses: any[] }) {
       <div className="mt-10 flex justify-center">
         <button
           onClick={() => setShowAll(!showAll)}
-          className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-3 text-sm font-medium text-slate-600 transition-all hover:bg-slate-50 hover:border-slate-300 active:scale-95 shadow-sm"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-8 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 active:scale-95 shadow-sm"
         >
           {showAll ? (
             <>

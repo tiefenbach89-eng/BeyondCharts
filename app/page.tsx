@@ -31,21 +31,13 @@ export default async function HomePage() {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.05),transparent_50%)]" />
         
-        <div className="relative ff-container px-4 py-20 md:py-32">
+        <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-32">
           <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
             
             {/* Left Content */}
             <div className="lg:col-span-7 order-2 lg:order-1">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-xl rounded-full border border-slate-200 shadow-sm mb-8">
-                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Institutional-Grade Research
-                </span>
-              </div>
-
               {/* Main Headline */}
-              <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-[-0.04em] leading-[1.05] text-slate-950 mb-8">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-8">
                 Hinter die Fassade
                 <br />
                 <span className="bg-gradient-to-r from-blue-600 via-violet-600 to-blue-600 bg-clip-text text-transparent">
@@ -54,7 +46,7 @@ export default async function HomePage() {
               </h1>
 
               {/* Subheadline */}
-              <p className="max-w-2xl text-xl md:text-2xl leading-relaxed text-slate-600 font-light mb-12">
+              <p className="max-w-2xl text-xl md:text-2xl leading-relaxed text-slate-600 mb-12">
                 Wir greifen Marktbewegungen und Schlagzeilen auf und setzen sie in
                 Relation zu <span className="font-semibold text-slate-900">Geschäftsmodellen</span>, <span className="font-semibold text-slate-900">Wettbewerb</span> und langfristigen Strukturen.
               </p>
@@ -101,47 +93,108 @@ export default async function HomePage() {
             <div className="lg:col-span-5 order-1 lg:order-2">
               {featuredAnalysis ? (
                 <div className="relative group">
-                  {/* Glow Effect */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-violet-600 to-blue-600 rounded-[40px] opacity-20 group-hover:opacity-30 blur-xl transition-all" />
+                  {/* Animated Glow Effect */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-violet-600 to-blue-600 rounded-[40px] opacity-20 group-hover:opacity-40 blur-2xl transition-all duration-500" />
                   
-                  {/* Card */}
-                  <Card className="relative overflow-hidden border-none bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 md:p-10 shadow-2xl text-white transform hover:scale-[1.02] transition-all duration-500">
-                    {/* Top Badge */}
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-widest">
-                        <Sparkles className="h-4 w-4" />
-                        Featured Analysis
-                      </div>
-                      {featuredAnalysis.isPremium && <PremiumIcon />}
-                    </div>
-
-                    {/* Title */}
-                    <h2 className="text-2xl md:text-3xl font-bold leading-tight text-white mb-8">
-                      {featuredAnalysis.title}
-                    </h2>
-
-                    {/* Content Box */}
-                    {featuredAnalysis.analysis?.businessModel && (
-                      <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
-                        <div className="text-xs font-bold text-blue-400 uppercase mb-3 tracking-wide">
-                          Investment Thesis
+                  {/* Card Wrapper with proper clipping */}
+                  <div className="relative overflow-hidden rounded-[40px]">
+                    <Card className="relative border-none bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 shadow-2xl text-white transform hover:scale-[1.02] transition-all duration-500">
+                      
+                      {/* Image Header - Upper Third */}
+                      {featuredAnalysis.imageUrl && (
+                        <div className="relative h-44 md:h-52 -mx-8 -mt-8 md:-mx-10 md:-mt-10">
+                          <img
+                            src={featuredAnalysis.imageUrl}
+                            alt={featuredAnalysis.title}
+                            className="w-full h-full object-cover"
+                          />
+                          {/* Smooth gradient fade - eliminates hard cut */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/40 to-slate-900" />
+                          
+                          {/* Badges on Image */}
+                          <div className="absolute top-4 right-4 flex items-center gap-2">
+                            {featuredAnalysis.ticker && (
+                              <div className="px-3 py-1.5 bg-slate-900/90 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg">
+                                <span className="text-xs font-bold text-white">
+                                  {featuredAnalysis.ticker}
+                                </span>
+                              </div>
+                            )}
+                            {featuredAnalysis.isPremium && <PremiumIcon />}
+                          </div>
                         </div>
-                        <p className="text-sm text-slate-200 leading-relaxed line-clamp-3">
-                          {featuredAnalysis.analysis.businessModel}
-                        </p>
-                      </div>
-                    )}
+                      )}
 
-                    {/* CTA */}
-                    <Link
-                      href={`/analysen/${featuredAnalysis.slug}`}
-                      className="group/btn flex items-center justify-between w-full px-6 py-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/20 transition-all"
-                    >
-                      <span className="text-sm font-bold text-white">Analyse öffnen</span>
-                      <ArrowRight className="h-5 w-5 text-blue-400 group-hover/btn:translate-x-1 transition-transform" />
-                    </Link>
+                    <div className="p-8 md:p-10">
+                      {/* Top Bar - "ANALYSE" Badge */}
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-400/30 rounded-full">
+                          <Sparkles className="h-3.5 w-3.5 text-blue-400" />
+                          <span className="text-xs font-bold text-blue-300 uppercase tracking-wide">
+                            Analyse
+                          </span>
+                        </div>
+                        
+                        {/* Show ticker/premium only if no image */}
+                        {!featuredAnalysis.imageUrl && (
+                          <div className="flex items-center gap-2">
+                            {featuredAnalysis.ticker && (
+                              <div className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg">
+                                <span className="text-xs font-bold text-white">
+                                  {featuredAnalysis.ticker}
+                                </span>
+                              </div>
+                            )}
+                            {featuredAnalysis.isPremium && <PremiumIcon />}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <h2 className="text-xl md:text-2xl font-bold leading-tight text-white mb-5 line-clamp-2 break-words">
+                        {featuredAnalysis.title}
+                      </h2>
+
+                      {/* Summary (instead of thesis) */}
+                      {featuredAnalysis.summary && (
+                        <p className="text-sm text-slate-300 leading-relaxed mb-5 line-clamp-3">
+                          {featuredAnalysis.summary}
+                        </p>
+                      )}
+
+                      {/* Meta Footer */}
+                      {(featuredAnalysis.category || featuredAnalysis.content) && (
+                        <div className="flex items-center gap-2 mb-5 text-xs text-slate-400">
+                          {featuredAnalysis.category && (
+                            <>
+                              <span className="font-medium">{featuredAnalysis.category}</span>
+                              <span>•</span>
+                            </>
+                          )}
+                          {featuredAnalysis.content && (
+                            <span>{Math.max(1, Math.ceil(featuredAnalysis.content.split(/\s+/).length / 200))} min</span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* CTA Button */}
+                      <Link
+                        href={`/analysen/${featuredAnalysis.slug}`}
+                        className="group/btn relative flex items-center justify-between w-full px-5 py-3.5 rounded-xl overflow-hidden transition-all hover:scale-[1.02]"
+                      >
+                        {/* Gradient background */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-violet-600 opacity-90 group-hover/btn:opacity-100 transition-opacity" />
+                        
+                        {/* Hover shimmer */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+                        
+                        <span className="relative text-sm font-bold text-white">Analyse öffnen</span>
+                        <ArrowRight className="relative h-4 w-4 text-white group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   </Card>
-                </div>
+                </div> {/* End of overflow wrapper */}
+              </div>
               ) : (
                 <div className="p-12 bg-white/60 backdrop-blur-sm border-2 border-dashed border-slate-300 rounded-[40px] text-center">
                   <TrendingUp className="h-12 w-12 text-slate-300 mb-4 mx-auto" />
@@ -156,20 +209,70 @@ export default async function HomePage() {
       </section>
 
       {/* STATS SECTION */}
-      <section className="ff-container px-4 py-20 border-b border-slate-100">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <section className="max-w-7xl mx-auto px-4 py-20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { value: "500+", label: "Analysen" },
-            { value: "12K+", label: "Leser" },
-            { value: "95%", label: "Erfolgsquote" },
-            { value: "24/7", label: "Updates" },
+            { 
+              value: "500+", 
+              label: "Analysen", 
+              gradient: "from-blue-600 to-cyan-600",
+              icon: (
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              )
+            },
+            { 
+              value: "12K+", 
+              label: "Leser",
+              gradient: "from-violet-600 to-purple-600",
+              icon: (
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              )
+            },
+            { 
+              value: "95%", 
+              label: "Erfolgsquote",
+              gradient: "from-emerald-600 to-teal-600",
+              icon: (
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )
+            },
+            { 
+              value: "24/7", 
+              label: "Updates",
+              gradient: "from-amber-600 to-orange-600",
+              icon: (
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              )
+            },
           ].map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-slate-950 mb-2">
-                {stat.value}
-              </div>
-              <div className="text-sm font-medium text-slate-500">
-                {stat.label}
+            <div key={i} className="group relative">
+              {/* Subtle glow effect */}
+              <div className={`absolute -inset-0.5 bg-gradient-to-r ${stat.gradient} rounded-3xl opacity-0 group-hover:opacity-20 blur transition-opacity`} />
+              
+              {/* Card */}
+              <div className="relative p-8 bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                {/* Icon */}
+                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-4 text-white shadow-lg group-hover:scale-110 transition-transform`}>
+                  {stat.icon}
+                </div>
+                
+                {/* Value */}
+                <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
+                  {stat.value}
+                </div>
+                
+                {/* Label */}
+                <div className="text-sm font-medium text-slate-600">
+                  {stat.label}
+                </div>
               </div>
             </div>
           ))}
@@ -177,24 +280,24 @@ export default async function HomePage() {
       </section>
 
       {/* NEWS SECTION */}
-      <section className="ff-container px-4 py-20 border-b border-slate-100">
+      <section className="max-w-7xl mx-auto px-4 px-4 py-20 border-b border-slate-100">
         <HomeTopStories allNews={allNews} />
       </section>
 
       {/* ANALYSES SECTION */}
-      <section className="ff-container px-4 py-20 border-b border-slate-100">
+      <section className="max-w-7xl mx-auto px-4 px-4 py-20 border-b border-slate-100">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full mb-4">
               <Zap size={14} className="text-blue-600" />
-              <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
                 Deep Dives
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-950 mb-4">
               Aktuelle Analysen
             </h2>
-            <p className="text-lg text-slate-600 font-light max-w-2xl">
+            <p className="text-lg text-slate-600 max-w-2xl">
               Unternehmen verstehen, statt nur den Kurs zu raten.
             </p>
           </div>
@@ -215,7 +318,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-y border-slate-700">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_50%)]" />
         
-        <div className="relative ff-container px-4 py-20 text-center">
+        <div className="relative max-w-7xl mx-auto px-4 py-20 text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6">
               Bereit für tiefere Einblicke?
@@ -243,10 +346,10 @@ export default async function HomePage() {
       </section>
 
       {/* DISCLAIMER */}
-      <section className="ff-container px-4 py-12 text-center">
+      <section className="max-w-7xl mx-auto px-4 px-4 py-12 text-center">
         <div className="max-w-4xl mx-auto p-8 bg-slate-50 rounded-3xl border border-slate-200">
           <p className="text-xs leading-relaxed text-slate-500">
-            <span className="font-bold text-slate-700 uppercase tracking-wider">Risikohinweis:</span>{" "}
+            <span className="font-bold text-slate-700 uppercase tracking-wide">Risikohinweis:</span>{" "}
             Keine Anlageberatung im Sinne des WpHG. Alle Inhalte dienen ausschließlich der Information und stellen keine Aufforderung zum Kauf oder Verkauf von Wertpapieren dar. Investitionen in Wertpapiere sind mit Risiken verbunden und können zum Totalverlust des eingesetzten Kapitals führen. Vergangene Wertentwicklungen sind kein Indikator für zukünftige Erträge. Bitte beachte unsere vollständigen{" "}
             <Link href="/haftungsausschluss" className="underline hover:text-blue-600 font-semibold">
               Haftungsausschlüsse

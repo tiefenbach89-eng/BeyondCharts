@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listContent, upsertContent, deleteContent } from "@/lib/content.server";
 import { getSettings } from "@/lib/settings.server";
+import { processImageUrl } from "@/lib/imageStorage";
 
 type ContentType = "news" | "analyses";
 
@@ -30,6 +31,22 @@ export async function POST(
     return NextResponse.json({ error }, { status: 400 });
   }
 
+  // Process image URL (convert base64 to file if needed)
+  if (body.imageUrl) {
+    body.imageUrl = await processImageUrl(body.imageUrl);
+  }
+
+  // Convert snapshot to analysis for analyses type
+  if (params.type === 'analyses' && body.snapshot) {
+    body.analysis = {
+      overview: body.snapshot.thesis || '',
+      businessModel: body.snapshot.profitability || '',
+      risks: body.snapshot.risk || '',
+      scenarios: body.snapshot.substance || '',
+    };
+    delete body.snapshot;
+  }
+
   const item = await upsertContent(params.type, body);
   return NextResponse.json(item);
 }
@@ -44,6 +61,22 @@ export async function PUT(
   const error = validatePayload(params.type, body, settings);
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
+  }
+
+  // Process image URL (convert base64 to file if needed)
+  if (body.imageUrl) {
+    body.imageUrl = await processImageUrl(body.imageUrl);
+  }
+
+  // Convert snapshot to analysis for analyses type
+  if (params.type === 'analyses' && body.snapshot) {
+    body.analysis = {
+      overview: body.snapshot.thesis || '',
+      businessModel: body.snapshot.profitability || '',
+      risks: body.snapshot.risk || '',
+      scenarios: body.snapshot.substance || '',
+    };
+    delete body.snapshot;
   }
 
   const item = await upsertContent(params.type, body);

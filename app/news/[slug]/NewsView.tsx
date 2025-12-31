@@ -4,7 +4,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { 
   Clock, Calendar, ChevronLeft, Share2, User, 
   ExternalLink, TrendingUp, AlertCircle, CheckCircle,
@@ -52,7 +51,10 @@ export function NewsView({ item }: NewsViewProps) {
   }, []);
 
   const readingTime = calculateReadingTime(item.content || "");
-  const { sections: contentSections } = parseStructuredContent(item.content || "");
+  
+  // Check if content is HTML or Markdown
+  const isHtml = item.content && /<(h[1-6]|p|div|strong|em|ul|ol|li)[^>]*>/i.test(item.content);
+  const { sections: contentSections } = !isHtml ? parseStructuredContent(item.content || "") : { sections: [] };
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-emerald-50/20 min-h-screen antialiased">
@@ -114,12 +116,10 @@ export function NewsView({ item }: NewsViewProps) {
         {item.imageUrl && (
           <div className="mb-16 -mx-8 md:mx-0 md:rounded-[32px] overflow-hidden shadow-2xl shadow-slate-900/10">
             <div className="relative aspect-[21/9] bg-slate-900">
-              <Image
+              <img
                 src={item.imageUrl}
                 alt={item.title}
-                fill
-                className="object-cover"
-                priority
+                className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
             </div>
@@ -130,7 +130,7 @@ export function NewsView({ item }: NewsViewProps) {
         <header className="mb-20">
           <div className="flex items-center gap-4 mb-8">
             <div className="px-4 py-2 bg-white/80 backdrop-blur-xl rounded-full border border-slate-200 shadow-sm">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <span className="text-xs font-bold uppercase tracking-wide text-slate-700">
                 {item.category}
               </span>
             </div>
@@ -147,11 +147,11 @@ export function NewsView({ item }: NewsViewProps) {
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1] text-slate-950 mb-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-10">
             {item.title}
           </h1>
 
-          <p className="text-xl md:text-2xl text-slate-600 leading-relaxed font-light max-w-4xl">
+          <p className="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-4xl">
             {item.summary}
           </p>
 
@@ -201,7 +201,32 @@ export function NewsView({ item }: NewsViewProps) {
           {/* Main Content */}
           <article className="lg:col-span-8">
             <div className="space-y-12">
-              {contentSections.length > 0 ? (
+              {isHtml ? (
+                <div 
+                  className="prose prose-slate prose-lg max-w-none
+                    prose-headings:font-bold prose-headings:tracking-tight
+                    prose-h2:text-3xl prose-h2:mb-6 prose-h2:mt-12 prose-h2:pb-4 
+                    prose-h2:border-b-2 prose-h2:border-emerald-200
+                    prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-8
+                    prose-p:text-slate-700 prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-lg
+                    prose-strong:text-slate-950 prose-strong:font-bold
+                    prose-em:text-slate-700 prose-em:italic
+                    prose-ul:my-6 prose-ul:list-disc prose-ul:ml-6
+                    prose-ol:my-6 prose-ol:list-decimal prose-ol:ml-6
+                    prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
+                    prose-li:marker:text-emerald-600
+                    prose-blockquote:border-l-4 prose-blockquote:border-emerald-600 
+                    prose-blockquote:bg-emerald-50/50 prose-blockquote:py-4 prose-blockquote:px-6
+                    prose-blockquote:italic prose-blockquote:text-slate-800 prose-blockquote:my-6
+                    prose-blockquote:rounded-r-xl
+                    prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8
+                    prose-a:text-emerald-600 prose-a:underline hover:prose-a:text-emerald-700
+                    prose-hr:border-emerald-200 prose-hr:my-12
+                    prose-code:bg-slate-100 prose-code:px-2 prose-code:py-1 prose-code:rounded
+                    prose-code:text-slate-800 prose-code:text-base"
+                  dangerouslySetInnerHTML={{ __html: item.content }} 
+                />
+              ) : contentSections.length > 0 ? (
                 contentSections.map((section, idx) => (
                   <section key={idx} className="scroll-mt-32">
                     {/* Section Header */}
@@ -251,17 +276,6 @@ export function NewsView({ item }: NewsViewProps) {
                     </div>
                   </section>
                 ))
-              ) : item.content ? (
-                <div 
-                  className="prose prose-slate prose-lg max-w-none
-                    prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h2:text-3xl prose-h2:mb-6 prose-h2:mt-12 prose-h2:pb-4 
-                    prose-h2:border-b-2 prose-h2:border-emerald-200
-                    prose-p:text-slate-700 prose-p:leading-[1.8] prose-p:mb-6
-                    prose-strong:text-slate-950 prose-strong:font-bold
-                    prose-li:marker:text-emerald-600"
-                  dangerouslySetInnerHTML={{ __html: item.content }} 
-                />
               ) : (
                 <p className="text-slate-500 italic">No content available</p>
               )}
@@ -334,7 +348,7 @@ export function NewsView({ item }: NewsViewProps) {
               <div className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 rounded-[24px] p-5 border border-emerald-100/60">
                 <div className="flex items-center gap-2.5 mb-4">
                   <Zap size={16} className="text-emerald-600" />
-                  <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">Quick Info</span>
+                  <span className="text-xs font-bold text-emerald-900 uppercase tracking-wide">Quick Info</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <StatBox label="Read Time" value={`${readingTime}m`} />
@@ -345,7 +359,7 @@ export function NewsView({ item }: NewsViewProps) {
               {/* Tags */}
               {item.tags.length > 0 && (
                 <div className="bg-white/70 backdrop-blur-sm rounded-[24px] p-5 border border-slate-200/60">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Related Topics</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Related Topics</p>
                   <div className="flex flex-wrap gap-2">
                     {item.tags.map((tag, i) => (
                       <span 
@@ -362,7 +376,7 @@ export function NewsView({ item }: NewsViewProps) {
               {/* Source Link */}
               {item.source && (
                 <div className="bg-slate-50 rounded-[24px] p-5 border border-slate-200">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Source</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Source</p>
                   <p className="text-sm font-semibold text-slate-900">{item.source}</p>
                 </div>
               )}

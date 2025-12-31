@@ -3,6 +3,17 @@
 import type { ParsedContent, ContentSection } from '@/types/analyse';
 
 /**
+ * Detects if content is HTML or Markdown
+ */
+export function isHtmlContent(content: string): boolean {
+  if (!content) return false;
+  
+  // Check for common HTML tags
+  const htmlTags = /<(h[1-6]|p|div|strong|em|ul|ol|li|br|img|a|blockquote|hr)[^>]*>/i;
+  return htmlTags.test(content);
+}
+
+/**
  * Berechnet die Lesezeit basierend auf Wortanzahl
  * @param content - Der zu analysierende Text
  * @returns Geschätzte Lesezeit in Minuten
@@ -10,8 +21,11 @@ import type { ParsedContent, ContentSection } from '@/types/analyse';
 export function calculateReadingTime(content: string): number {
   if (!content) return 0;
   
+  // Strip HTML tags for word count
+  const textOnly = content.replace(/<[^>]*>/g, ' ');
+  
   const wordsPerMinute = 200;
-  const wordCount = content.trim().split(/\s+/).length;
+  const wordCount = textOnly.trim().split(/\s+/).length;
   const minutes = Math.ceil(wordCount / wordsPerMinute);
   
   return Math.max(1, minutes); // Minimum 1 Minute

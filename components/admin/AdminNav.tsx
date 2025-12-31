@@ -23,10 +23,10 @@ export function AdminNav() {
             key={it.href}
             href={it.href}
             className={
-              "min-h-[44px] px-4 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 border transition-all " +
+              "px-6 py-3 rounded-xl text-sm font-semibold inline-flex items-center gap-2 border transition-all " +
               (active
-                ? "bg-slate-900 text-white border-slate-900 shadow-md"
-                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50")
+                ? "bg-slate-900 text-white border-slate-900 shadow-lg"
+                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300")
             }
           >
             {it.icon}

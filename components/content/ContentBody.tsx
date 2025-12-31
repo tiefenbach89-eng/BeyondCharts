@@ -14,30 +14,58 @@ interface ContentBodyProps {
 
 /**
  * Hilfsfunktion zur Berechnung der Lesezeit (Words per Minute: 200)
+ * Stripped HTML tags für korrekten Word Count
  */
 export function calculateReadingTime(text: string): number {
   if (!text) return 0;
+  
+  // Strip HTML tags for accurate word count
+  const textOnly = text.replace(/<[^>]*>/g, ' ');
+  
   const wordsPerMinute = 200;
-  const words = text.trim().split(/\s+/).length;
+  const words = textOnly.trim().split(/\s+/).length;
   return Math.ceil(words / wordsPerMinute);
 }
 
 /**
+ * Detects if content is HTML or Markdown
+ */
+function isHtmlContent(content: string): boolean {
+  if (!content) return false;
+  
+  // Check for common HTML tags
+  const htmlTags = /<(h[1-6]|p|div|strong|em|ul|ol|li|br|img|a|blockquote|hr)[^>]*>/i;
+  return htmlTags.test(content);
+}
+
+/**
  * Hilfsfunktion zum Kürzen des Textes für die Vorschau-Ansicht
+ * Works with both HTML and plain text
  */
 function makePreviewText(input: string, maxChars: number): string {
   const raw = (input || "").trim();
   if (!raw) return "";
-  if (raw.length <= maxChars) return raw;
+  
+  // Strip HTML tags for preview
+  const textOnly = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  
+  if (textOnly.length <= maxChars) return textOnly;
 
   // Schneidet sauber an der letzten Wortgrenze vor dem Limit ab
-  const slice = raw.slice(0, maxChars);
+  const slice = textOnly.slice(0, maxChars);
   const lastSpace = slice.lastIndexOf(" ");
   const safe = lastSpace > 80 ? slice.slice(0, lastSpace) : slice;
 
   return safe.trimEnd() + "…";
 }
 
+/**
+ * ContentBody - Smart component that handles both HTML and Markdown
+ * 
+ * - New articles (Tiptap): HTML → renders with dangerouslySetInnerHTML
+ * - Old articles: Markdown → renders with ReactMarkdown
+ * - Auto-detects format based on content
+ */
 export function ContentBody({
   content,
   mode = "full",
@@ -48,20 +76,35 @@ export function ContentBody({
   // Falls Content fehlt, geben wir nichts aus
   if (!content) return null;
 
-  // Falls Vorschaumodus aktiv ist, kürzen wir den Text vorher
-  const displayText = mode === "preview" 
-    ? makePreviewText(content, previewChars) 
-    : content;
+  const isHtml = isHtmlContent(content);
 
-  return (
-    <div className={`markdown-root ${className}`}>
-      {/* ReactMarkdown wandelt Markdown-Syntax (##, -, ---) 
-          in semantische HTML-Tags (h2, li, hr) um. 
-          Das Styling erfolgt über die 'prose' Klassen in der jeweiligen View.
-      */}
-      <ReactMarkdown>
-        {displayText}
-      </ReactMarkdown>
-    </div>
-  );
+  // Preview mode: strip to text only
+  if (mode === "preview") {
+    const previewText = makePreviewText(content, previewChars);
+    return (
+      <div className={`text-slate-600 leading-relaxed ${className}`}>
+        {previewText}
+      </div>
+    );
+  }
+
+  // Full mode: render based on format
+  if (isHtml) {
+    // Modern HTML content (from Tiptap)
+    return (
+      <div 
+        className={`prose prose-slate max-w-none ${className}`}
+        dangerouslySetInnerHTML={{ __html: content }} 
+      />
+    );
+  } else {
+    // Legacy Markdown content
+    return (
+      <div className={`markdown-root prose prose-slate max-w-none ${className}`}>
+        <ReactMarkdown>
+          {content}
+        </ReactMarkdown>
+      </div>
+    );
+  }
 }

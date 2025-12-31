@@ -47,7 +47,7 @@ export function NewsCard({
                 className="absolute inset-0 flex h-full w-full items-center justify-center"
                 style={{ background: defaultImage }}
               >
-                <span className="text-[8px] font-bold text-white/10 uppercase text-center px-1 tracking-widest">
+                <span className="text-xs font-semibold text-white/10 uppercase text-center px-1 tracking-wide">
                   Beyond Charts
                 </span>
               </div>
@@ -56,16 +56,16 @@ export function NewsCard({
 
           {/* Text */}
           <div className="flex flex-1 flex-col pr-4 py-4 min-w-0">
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-400 mb-1">
               <span className="text-blue-600 transition-colors">{category}</span>
               <span className="opacity-30">•</span>
               <span className="truncate">{sourceLabel}</span>
               <span className="opacity-30">•</span>
-              <span className="font-medium whitespace-nowrap">{formatRelative(publishedAt)}</span>
+              <span className="whitespace-nowrap">{formatRelative(publishedAt)}</span>
             </div>
 
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm sm:text-base font-bold leading-tight text-slate-900 transition-colors line-clamp-2">
+              <h3 className="text-sm sm:text-base font-semibold leading-tight text-slate-900 transition-colors line-clamp-2">
                 {title}
               </h3>
               {isPremium && (
@@ -75,21 +75,21 @@ export function NewsCard({
               )}
             </div>
 
-            <p className="mt-2 text-xs leading-relaxed text-slate-500 line-clamp-2">{summary}</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-2">{summary}</p>
 
             <div className="mt-auto pt-3 flex items-center justify-between">
               <div className="flex flex-wrap gap-2">
                 {tags?.slice(0, 2).map((t) => (
                   <span
                     key={t}
-                    className="text-[9px] font-medium text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 transition-colors"
+                    className="text-xs font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 transition-colors"
                   >
                     #{t}
                   </span>
                 ))}
               </div>
 
-              {/* Auf Touch nicht “unsichtbar”: sichtbar, aber dezent; auf Hover/Focus stärker */}
+              {/* Auf Touch nicht "unsichtbar": sichtbar, aber dezent; auf Hover/Focus stärker */}
               <ArrowRight className="h-4 w-4 text-blue-600/60 transition-all duration-300 group-hover:text-blue-600 group-hover:translate-x-[2px] group-focus-visible:text-blue-600 group-focus-visible:translate-x-[2px]" />
             </div>
           </div>

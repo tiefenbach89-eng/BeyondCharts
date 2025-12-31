@@ -2,36 +2,72 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-12 border-t border-[rgb(var(--border))]">
-      <div className="ff-container py-10 md:py-14">
+    <footer className="mt-12 border-t border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 py-10 md:py-14">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            <div className="text-sm font-semibold">BeyondCharts</div>
-            <p className="mt-2 text-sm ff-muted">
+            <div className="text-sm font-semibold text-slate-900">BeyondCharts</div>
+            <p className="mt-2 text-sm text-slate-600 leading-relaxed">
               Kuratierte Finanz-News und Analysen im ruhigen, vertrauenswürdigen Stil.
               Keine Anlageberatung.
             </p>
           </div>
           
           <div className="grid gap-2 text-sm">
-            <div className="font-semibold">Produkt</div>
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/premium">Premium</Link>
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/news">News</Link>
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/analysen">Analysen</Link>
+            <div className="font-semibold text-slate-900">Produkt</div>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/premium"
+            >
+              Premium
+            </Link>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/news"
+            >
+              News
+            </Link>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/analysen"
+            >
+              Analysen
+            </Link>
           </div>
           
           <div className="grid gap-2 text-sm">
-            <div className="font-semibold">Rechtliches</div>
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/impressum">Impressum</Link>
-            {/* NEU: Link zum Haftungsausschluss hinzugefügt */}
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/haftungsausschluss">Haftungsausschluss</Link>
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/datenschutz">Datenschutz</Link>
-            <Link className="ff-muted hover:text-[rgb(var(--text))]" href="/agb">AGB</Link>
+            <div className="font-semibold text-slate-900">Rechtliches</div>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/impressum"
+            >
+              Impressum
+            </Link>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/haftungsausschluss"
+            >
+              Haftungsausschluss
+            </Link>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/datenschutz"
+            >
+              Datenschutz
+            </Link>
+            <Link 
+              className="text-slate-600 hover:text-slate-900 transition-colors" 
+              href="/agb"
+            >
+              AGB
+            </Link>
           </div>
         </div>
         
         <div className="mt-10 flex items-center justify-between">
-          <div className="text-xs ff-muted">© {new Date().getFullYear()} BeyondCharts</div>
+          <div className="text-xs text-slate-500">
+            © {new Date().getFullYear()} BeyondCharts
+          </div>
         </div>
       </div>
     </footer>

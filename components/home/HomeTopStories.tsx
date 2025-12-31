@@ -30,20 +30,20 @@ export function HomeTopStories({ allNews }: { allNews: NewsItem[] }) {
     <section>
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-slate-900">
+          <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">
             News
           </h2>
-          <p className="mt-2 text-slate-500 font-medium">
+          <p className="mt-2 text-slate-600 leading-relaxed">
             Aktuelle Finanz- und Marktnews auf einen Blick.
           </p>
         </div>
 
         <Link
           href="/news"
-          className="text-sm font-bold text-blue-600 hover:underline flex items-center gap-1"
+          className="group inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all hover:shadow-lg"
         >
           Alle News
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
 
@@ -67,7 +67,7 @@ export function HomeTopStories({ allNews }: { allNews: NewsItem[] }) {
       <div className="mt-10 flex justify-center">
         <button
           onClick={() => setShowAllNews(!showAllNews)}
-          className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-3 text-sm font-medium text-slate-600 transition-all active:scale-95 shadow-sm"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-8 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 active:scale-95 shadow-sm"
         >
           {showAllNews ? (
             <>Weniger anzeigen <ChevronUp className="h-4 w-4" /></>

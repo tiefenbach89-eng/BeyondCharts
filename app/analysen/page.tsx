@@ -42,12 +42,12 @@ export default async function AnalysenPage() {
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1] text-slate-950 mb-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-8">
               Analysen
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-slate-600 font-light leading-relaxed max-w-3xl mb-10">
+            <p className="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-3xl mb-10">
               Unternehmensmodelle <span className="font-semibold text-slate-900">verstehen</span> und Risiken <span className="font-semibold text-slate-900">objektiv</span> bewerten.
             </p>
 
@@ -246,7 +246,7 @@ export default async function AnalysenPage() {
         )}
 
         {/* CTA Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[40px] border border-slate-700">
+        <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl border border-slate-700">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_50%)]" />
           
           <div className="relative p-12 md:p-16 text-center">
@@ -260,7 +260,7 @@ export default async function AnalysenPage() {
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
               Tiefere Einblicke benötigt?
             </h2>
-            <p className="text-xl text-slate-300 font-light mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
               Erhalte Zugang zu exklusiven Premium-Analysen mit detaillierten Finanzmodellen und Szenarien.
             </p>
 

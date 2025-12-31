@@ -37,12 +37,12 @@ export default async function NewsPage() {
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1] text-slate-950 mb-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-8">
               Market News
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-slate-600 font-light leading-relaxed max-w-3xl mb-10">
+            <p className="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-3xl mb-10">
               Kurz, klar und relevant — mit <span className="font-semibold text-slate-900">Kontext</span>, <span className="font-semibold text-slate-900">Katalysatoren</span> und <span className="font-semibold text-slate-900">Watchpoints</span>.
             </p>
 
@@ -168,7 +168,7 @@ export default async function NewsPage() {
         )}
 
         {/* Newsletter CTA (Optional) */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-900 rounded-[40px] border border-emerald-800">
+        <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-900 rounded-3xl border border-emerald-800">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_50%)]" />
           
           <div className="relative p-12 md:p-16 text-center">
@@ -182,7 +182,7 @@ export default async function NewsPage() {
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
               Verpasse keine wichtigen News
             </h2>
-            <p className="text-xl text-emerald-100 font-light mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
               Erhalte Breaking News und Market Updates direkt in dein Postfach.
             </p>
 

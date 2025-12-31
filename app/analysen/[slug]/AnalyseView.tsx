@@ -56,9 +56,19 @@ export function AnalyseView({ item }: AnalyseViewProps) {
   }, []);
 
   // Safe data extraction
-  const snapshot = item.snapshot || {};
+  // Map analysis fields to snapshot for backwards compatibility
+  const analysis = item.analysis || {};
+  const snapshot = {
+    thesis: analysis.overview || '',
+    profitability: analysis.businessModel || '',
+    substance: analysis.scenarios || '',
+    risk: analysis.risks || '',
+  };
   const readingTime = calculateReadingTime(item.content || "");
-  const { sections: contentSections } = parseStructuredContent(item.content || "");
+  
+  // Check if content is HTML or Markdown
+  const isHtml = item.content && /<(h[1-6]|p|div|strong|em|ul|ol|li)[^>]*>/i.test(item.content);
+  const { sections: contentSections } = !isHtml ? parseStructuredContent(item.content || "") : { sections: [] };
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen antialiased">
@@ -125,7 +135,7 @@ export function AnalyseView({ item }: AnalyseViewProps) {
           <div className="flex items-center gap-6 mb-12">
             <div className="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-xl rounded-full border border-slate-200/50 shadow-sm">
               <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+              <span className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 {item.category || "Institutional Research"}
               </span>
             </div>
@@ -142,11 +152,22 @@ export function AnalyseView({ item }: AnalyseViewProps) {
             </div>
           </div>
 
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-[-0.045em] leading-[0.92] text-slate-950 mb-12">
+          {/* Hero Image */}
+          {item.imageUrl && (
+            <div className="relative w-full aspect-[21/9] mb-12 rounded-3xl overflow-hidden shadow-2xl">
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          <h1 className="text-6xl md:text-6xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-12 break-words">
             {item.title}
           </h1>
 
-          <p className="text-2xl md:text-3xl text-slate-600/90 leading-[1.5] font-light max-w-5xl">
+          <p className="text-2xl md:text-3xl text-slate-600/90 leading-[1.5] max-w-5xl break-words">
             {item.summary}
           </p>
         </header>
@@ -188,7 +209,31 @@ export function AnalyseView({ item }: AnalyseViewProps) {
           {/* Main Content */}
           <article className="lg:col-span-8">
             <div className="space-y-16">
-              {contentSections.length > 0 ? (
+              {isHtml ? (
+                <div 
+                  className="prose prose-slate prose-xl max-w-none
+                    prose-headings:font-bold prose-headings:tracking-tight
+                    prose-h2:text-4xl prose-h2:mb-8 prose-h2:mt-16 prose-h2:pb-6 
+                    prose-h2:border-b-2 prose-h2:border-slate-200
+                    prose-h3:text-3xl prose-h3:mb-6 prose-h3:mt-12
+                    prose-p:text-slate-700 prose-p:leading-[1.85] prose-p:mb-8 prose-p:text-lg
+                    prose-strong:text-slate-950 prose-strong:font-bold
+                    prose-em:text-slate-700 prose-em:italic
+                    prose-ul:my-8 prose-ul:list-disc prose-ul:ml-6
+                    prose-ol:my-8 prose-ol:list-decimal prose-ol:ml-6
+                    prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
+                    prose-blockquote:border-l-4 prose-blockquote:border-blue-500 
+                    prose-blockquote:bg-blue-50/30 prose-blockquote:py-4 prose-blockquote:px-6
+                    prose-blockquote:italic prose-blockquote:text-slate-800 prose-blockquote:my-8
+                    prose-blockquote:rounded-r-xl
+                    prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-12
+                    prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-700
+                    prose-hr:border-slate-300 prose-hr:my-16
+                    prose-code:bg-slate-100 prose-code:px-2 prose-code:py-1 prose-code:rounded
+                    prose-code:text-slate-800 prose-code:text-base"
+                  dangerouslySetInnerHTML={{ __html: item.content }} 
+                />
+              ) : contentSections.length > 0 ? (
                 contentSections.map((section, idx) => (
                   <section key={idx} className="scroll-mt-32">
                     {/* Section Header */}
@@ -236,16 +281,6 @@ export function AnalyseView({ item }: AnalyseViewProps) {
                     </div>
                   </section>
                 ))
-              ) : item.content ? (
-                <div 
-                  className="prose prose-slate prose-xl max-w-none
-                    prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h2:text-4xl prose-h2:mb-8 prose-h2:mt-16 prose-h2:pb-6 
-                    prose-h2:border-b-2 prose-h2:border-slate-200
-                    prose-p:text-slate-700 prose-p:leading-[1.85] prose-p:mb-8 prose-p:text-lg
-                    prose-strong:text-slate-950 prose-strong:font-bold"
-                  dangerouslySetInnerHTML={{ __html: item.content }} 
-                />
               ) : (
                 <p className="text-slate-500 italic">No content available</p>
               )}
@@ -304,7 +339,7 @@ export function AnalyseView({ item }: AnalyseViewProps) {
               <div className="bg-gradient-to-br from-blue-50 via-white to-violet-50 rounded-[28px] p-6 border border-blue-100/60 backdrop-blur-xl">
                 <div className="flex items-center gap-3 mb-4">
                   <TrendingUp size={20} className="text-blue-600" />
-                  <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">Analysis Metrics</span>
+                  <span className="text-xs font-bold text-blue-900 uppercase tracking-wide">Analysis Metrics</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <StatBox label="Reading Time" value={`${readingTime}m`} />
@@ -349,7 +384,7 @@ function MetricCard({ label, value, icon, gradient, isRisk }: MetricCardProps) {
         <div className={`w-14 h-14 rounded-[20px] bg-gradient-to-br ${gradient} flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3`}>
           <div className="text-white">{icon}</div>
         </div>
-        <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">{label}</p>
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-4">{label}</p>
         <p className="text-base font-semibold leading-snug text-slate-900">
           {value}
         </p>
