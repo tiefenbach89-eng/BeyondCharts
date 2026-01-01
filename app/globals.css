@@ -71,7 +71,7 @@ button, a {
 }
 
 ::selection {
-  background-color: rgba(59, 130, 246, 0.15);
+  background: rgba(var(--primary), 0.18);
 }
 
 @layer components {
@@ -93,9 +93,9 @@ button, a {
    Versteckt globalen Header auf Detail-Pages
 ============================================ */
 
-/* Verstecke ALLE headers und nav elements außer die mit fixed class */
-body.immersive-reading header:not([class*="fixed"]),
-body.immersive-reading nav:not([class*="fixed"]) {
+/* Verstecke nur den ERSTEN header/nav (global navigation), nicht alle */
+body.immersive-reading > header:not([class*="fixed"]):first-of-type,
+body.immersive-reading > nav:not([class*="fixed"]):first-of-type {
   display: none !important;
 }
 
@@ -113,140 +113,4 @@ body.immersive-reading > div:first-child {
 header:not([class*="fixed"]),
 nav:not([class*="fixed"]) {
   transition: opacity 0.3s ease, transform 0.3s ease;
-}
-/* Tiptap Editor Styles */
-
-.ProseMirror {
-  min-height: 600px;
-  padding: 2rem;
-  outline: none;
-}
-
-.ProseMirror p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: rgb(148 163 184);
-  pointer-events: none;
-  height: 0;
-}
-
-.ProseMirror h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  color: rgb(15 23 42);
-}
-
-.ProseMirror h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.3;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-  color: rgb(15 23 42);
-}
-
-.ProseMirror p {
-  margin: 1rem 0;
-  line-height: 1.7;
-  color: rgb(51 65 85);
-}
-
-.ProseMirror strong {
-  font-weight: 700;
-  color: rgb(15 23 42);
-}
-
-.ProseMirror em {
-  font-style: italic;
-}
-
-.ProseMirror code {
-  background: rgb(241 245 249);
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.375rem;
-  font-family: 'Monaco', 'Courier New', monospace;
-  font-size: 0.875em;
-  color: rgb(100 116 139);
-}
-
-.ProseMirror ul,
-.ProseMirror ol {
-  padding-left: 2rem;
-  margin: 1.5rem 0;
-}
-
-.ProseMirror ul {
-  list-style-type: disc;
-}
-
-.ProseMirror ol {
-  list-style-type: decimal;
-}
-
-.ProseMirror li {
-  margin: 0.5rem 0;
-  line-height: 1.7;
-  color: rgb(51 65 85);
-}
-
-.ProseMirror li p {
-  margin: 0.25rem 0;
-}
-
-.ProseMirror blockquote {
-  border-left: 4px solid rgb(59 130 246);
-  padding-left: 1.5rem;
-  margin: 2rem 0;
-  font-style: italic;
-  color: rgb(71 85 105);
-  background: rgb(248 250 252);
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-}
-
-.ProseMirror hr {
-  border: none;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgb(203 213 225), transparent);
-  margin: 3rem 0;
-}
-
-.ProseMirror img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 1rem;
-  margin: 2rem 0;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-}
-
-.ProseMirror a {
-  color: rgb(37 99 235);
-  text-decoration: underline;
-  transition: color 0.2s;
-}
-
-.ProseMirror a:hover {
-  color: rgb(29 78 216);
-}
-
-/* Selection */
-.ProseMirror ::selection {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: rgb(15 23 42);
-}
-
-/* Focus */
-.ProseMirror:focus {
-  outline: none;
-}
-
-/* Placeholder for empty paragraphs */
-.ProseMirror p.is-empty::before {
-  content: '';
-  float: left;
-  height: 0;
-  pointer-events: none;
 }
