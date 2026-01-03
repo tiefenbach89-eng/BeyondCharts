@@ -1,13 +1,18 @@
-import type {
-  BaseContent,
-  AnalysisItem,
-  AnalysisDeepDive,
-} from "@/lib/content.server";
+import type { BaseContent } from "@/lib/content.server";
+import type { Analyse } from "@/types/analyse";
 
 type ViewMode = "full" | "preview";
 
+// Define AnalysisDeepDive locally since it's not exported
+export type AnalysisDeepDive = {
+  overview?: string;
+  businessModel?: string;
+  risks?: string;
+  scenarios?: string;
+};
+
 export type AnalysisViewModel = {
-  item: AnalysisItem;
+  item: Analyse;
   content: string;
   mode: ViewMode;
   isLocked: boolean;
@@ -28,7 +33,7 @@ function makePreviewText(input: string, maxChars: number): string {
 }
 
 export function buildAnalysisViewModel(
-  item: AnalysisItem,
+  item: Analyse,
   opts: {
     paywallEnabled: boolean;
     previewChars?: number;
@@ -42,11 +47,13 @@ export function buildAnalysisViewModel(
     opts.paywallEnabled &&
     opts.allowFullAccess !== true;
 
+  const itemWithAnalysis = item as any;
+  
   const deepDive: AnalysisDeepDive = {
-    overview: item.analysis?.overview,
-    businessModel: item.analysis?.businessModel,
-    risks: item.analysis?.risks,
-    scenarios: item.analysis?.scenarios,
+    overview: itemWithAnalysis.analysis?.overview,
+    businessModel: itemWithAnalysis.analysis?.businessModel,
+    risks: itemWithAnalysis.analysis?.risks,
+    scenarios: itemWithAnalysis.analysis?.scenarios,
   };
 
   const hasDeepDive = Boolean(

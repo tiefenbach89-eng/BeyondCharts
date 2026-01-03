@@ -40,10 +40,7 @@ export interface NewsItem {
   
   // News specific
   category: string;
-<<<<<<< HEAD
   ticker?: string;
-=======
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
   source: string;
   sourceUrl?: string;
   sourceType: SourceType;

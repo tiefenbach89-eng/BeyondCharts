@@ -1,4 +1,3 @@
-// components/admin/AdminPreview.tsx
 'use client';
 
 import React from 'react';
@@ -9,7 +8,7 @@ import type { Analyse } from '@/types/analyse';
 
 interface AdminPreviewProps {
   kind: 'news' | 'analyses';
-  item: any; // Partial data from form
+  item: any;
 }
 
 export function AdminPreview({ kind, item }: AdminPreviewProps) {
@@ -61,11 +60,11 @@ export function AdminPreview({ kind, item }: AdminPreviewProps) {
     auditNotes: item.auditNotes,
     auditedAt: item.auditedAt,
     snapshot: item.analysis ? {
-      investmentThesis: item.analysis.overview || '',
-      catalyst: item.analysis.businessModel || '',
+      overview: item.analysis.overview || '',
+      businessModel: item.analysis.businessModel || '',
       risks: item.analysis.risks || '',
-      valuation: item.analysis.scenarios || '',
-    } : undefined,
+      scenarios: item.analysis.scenarios || '',
+    } as any : undefined,
   };
 
   return <AnalyseView item={analyseItem} />;

@@ -38,10 +38,6 @@ export default async function AnalysenPage() {
                   Deep Research
                 </span>
               </div>
-<<<<<<< HEAD
-=======
-              <Badge tone="neutral" className="px-4 py-2">Szenarien</Badge>
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
             </div>
 
             {/* Title */}
@@ -87,11 +83,7 @@ export default async function AnalysenPage() {
                   Premium Deep Dives
                 </h2>
                 <p className="text-sm text-slate-500 font-medium">
-<<<<<<< HEAD
                   Exklusive Analysen auf institutionellem Research-Niveau
-=======
-                  Exklusive Institutional-Grade Research
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                 </p>
               </div>
             </div>
@@ -260,11 +252,7 @@ export default async function AnalysenPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
               <Sparkles size={14} className="text-blue-400" />
               <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">
-<<<<<<< HEAD
                 Premium Zugang
-=======
-                Premium Access
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               </span>
             </div>
 

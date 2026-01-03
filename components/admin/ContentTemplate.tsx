@@ -12,11 +12,10 @@ interface ContentTemplateProps {
 export function ContentTemplate({ type }: ContentTemplateProps) {
   const [copied, setCopied] = useState(false);
 
-  const templates = {
-    news: {
-      title: "Fed senkt Leitzins um 0,25% – Märkte reagieren verhalten",
-      summary: "Die US-Notenbank hat den Leitzins wie erwartet um 25 Basispunkte gesenkt. Die Reaktion an den Märkten fiel jedoch verhalten aus, da Investoren auf weitere Signale zur Zinspolitik warten.",
-      content: `## Hintergrund
+  const newsTemplate = {
+    title: "Fed senkt Leitzins um 0,25% – Märkte reagieren verhalten",
+    summary: "Die US-Notenbank hat den Leitzins wie erwartet um 25 Basispunkte gesenkt. Die Reaktion an den Märkten fiel jedoch verhalten aus, da Investoren auf weitere Signale zur Zinspolitik warten.",
+    content: `## Hintergrund
 
 Die Federal Reserve hat heute den Leitzins um 0,25 Prozentpunkte auf eine Spanne von 4,25% bis 4,50% gesenkt. Diese Entscheidung war weitgehend erwartet worden.
 
@@ -43,14 +42,15 @@ Für Investoren bedeutet dies:
 - Niedrigere Kreditkosten
 - Potenziell höhere Bewertungen für Growth-Aktien
 - Druck auf den US-Dollar`,
-      source: "Reuters",
-      sourceUrl: "https://reuters.com/...",
-      impact: "High" as const,
-    },
-    analyses: {
-      title: "Nvidia: KI-Boom trifft auf Bewertungsfragen",
-      summary: "Nvidia profitiert massiv vom KI-Boom, doch die Bewertung wirft Fragen auf. Wir analysieren das Geschäftsmodell, Risiken und mögliche Szenarien.",
-      content: `## Executive Summary
+    source: "Reuters",
+    sourceUrl: "https://reuters.com/...",
+    impact: "High" as const,
+  };
+
+  const analysesTemplate = {
+    title: "Nvidia: KI-Boom trifft auf Bewertungsfragen",
+    summary: "Nvidia profitiert massiv vom KI-Boom, doch die Bewertung wirft Fragen auf. Wir analysieren das Geschäftsmodell, Risiken und mögliche Szenarien.",
+    content: `## Executive Summary
 
 Nvidia dominiert den KI-Chip-Markt mit einem geschätzten Marktanteil von 80-90% bei Datacenter-GPUs. Das Unternehmen profitiert vom exponentiellen Wachstum der KI-Infrastruktur.
 
@@ -115,20 +115,20 @@ Solides Wachstum, leichter Margendruck
 ### Bear Case (15% Wahrscheinlichkeit)
 KI-Investitionen verlangsamen sich, Wettbewerb intensiviert
 → Kursziel: $300-400`,
-      overview: "Nvidia dominiert KI-Chips mit 80-90% Marktanteil. CUDA-Ökosystem bietet starken Burggraben.",
-      businessModel: "Verkauf von High-End GPUs für KI-Training/Inference plus Software-Plattform. 60-70% Margen im Datacenter-Segment.",
-      risks: "Wachsende Konkurrenz (AMD, Custom-Chips), Export-Beschränkungen, Commoditisierung",
-      scenarios: "Bull: $800+ | Base: $500-600 | Bear: $300-400",
-    },
+    overview: "Nvidia dominiert KI-Chips mit 80-90% Marktanteil. CUDA-Ökosystem bietet starken Burggraben.",
+    businessModel: "Verkauf von High-End GPUs für KI-Training/Inference plus Software-Plattform. 60-70% Margen im Datacenter-Segment.",
+    risks: "Wachsende Konkurrenz (AMD, Custom-Chips), Export-Beschränkungen, Commoditisierung",
+    scenarios: "Bull: $800+ | Base: $500-600 | Bear: $300-400",
   };
-
-  const template = type === 'news' ? templates.news : templates.analyses;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Type-safe template selection
+  const template = type === 'news' ? newsTemplate : analysesTemplate;
 
   return (
     <Card className="p-6 border-blue-200 bg-blue-50/50">
@@ -196,7 +196,7 @@ KI-Investitionen verlangsamen sich, Wettbewerb intensiviert
                 Quelle
               </label>
               <div className="p-2 bg-white rounded-lg border border-slate-200 text-slate-700">
-                {template.source}
+                {newsTemplate.source}
               </div>
             </div>
             <div>
@@ -204,7 +204,7 @@ KI-Investitionen verlangsamen sich, Wettbewerb intensiviert
                 Impact
               </label>
               <div className="p-2 bg-white rounded-lg border border-slate-200 text-slate-700">
-                {template.impact}
+                {newsTemplate.impact}
               </div>
             </div>
           </div>
@@ -216,19 +216,19 @@ KI-Investitionen verlangsamen sich, Wettbewerb intensiviert
             <div className="space-y-2 text-xs">
               <div>
                 <span className="font-medium text-slate-700">Overview:</span>
-                <p className="text-slate-600 mt-1">{template.overview}</p>
+                <p className="text-slate-600 mt-1">{analysesTemplate.overview}</p>
               </div>
               <div>
                 <span className="font-medium text-slate-700">Business Model:</span>
-                <p className="text-slate-600 mt-1">{template.businessModel}</p>
+                <p className="text-slate-600 mt-1">{analysesTemplate.businessModel}</p>
               </div>
               <div>
                 <span className="font-medium text-slate-700">Risks:</span>
-                <p className="text-slate-600 mt-1">{template.risks}</p>
+                <p className="text-slate-600 mt-1">{analysesTemplate.risks}</p>
               </div>
               <div>
                 <span className="font-medium text-slate-700">Scenarios:</span>
-                <p className="text-slate-600 mt-1">{template.scenarios}</p>
+                <p className="text-slate-600 mt-1">{analysesTemplate.scenarios}</p>
               </div>
             </div>
           </div>
