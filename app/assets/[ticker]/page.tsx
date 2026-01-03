@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
@@ -37,7 +37,7 @@ function getTradingViewSymbol(ticker: string): string {
     'VWCE.DE': 'XETR:VWCE',
     'EUNL.DE': 'XETR:EUNL',
     'IUSN.DE': 'XETR:IUSN',
-    
+
     // US Aktien
     'AAPL': 'NASDAQ:AAPL',
     'MSFT': 'NASDAQ:MSFT',
@@ -46,13 +46,13 @@ function getTradingViewSymbol(ticker: string): string {
     'NVDA': 'NASDAQ:NVDA',
     'TSLA': 'NASDAQ:TSLA',
     'AMZN': 'NASDAQ:AMZN',
-    
+
     // ETFs
     'SPY': 'AMEX:SPY',
     'QQQ': 'NASDAQ:QQQ',
     'DIA': 'AMEX:DIA',
   };
-  
+
   return symbolMap[ticker] || `NASDAQ:${ticker}`;
 }
 
@@ -90,48 +90,80 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
   const [currency, setCurrency] = useState<'EUR' | 'USD'>('EUR');
   const [relatedAnalyses, setRelatedAnalyses] = useState<any[]>([]);
   const [relatedNews, setRelatedNews] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchAssetDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/assets/${params.ticker}`);
-      if (!response.ok) throw new Error('Asset nicht gefunden');
-      
-      const data = await response.json();
-      setAsset(data);
-      setLoading(false);
-      
-      // Hole related content (Analysen & News mit diesem Ticker)
-      fetchRelatedContent(params.ticker);
-    } catch (error) {
-      console.error('Error:', error);
-      setLoading(false);
-    }
-  };
+  const abortRef = useRef<AbortController | null>(null);
+  const isFetchingRef = useRef(false);
 
-  const fetchRelatedContent = async (ticker: string) => {
+  const fetchRelatedContent = useCallback(async (ticker: string) => {
     try {
+      const cleanTicker = ticker.replace('.DE', '');
+
       // Suche nach Analysen mit diesem Ticker
-      const analysesRes = await fetch(`/api/analysen?ticker=${ticker.replace('.DE', '')}`);
+      const analysesRes = await fetch(`/api/analysen?ticker=${cleanTicker}`, { cache: 'no-store' });
       if (analysesRes.ok) {
         const analysesData = await analysesRes.json();
-        setRelatedAnalyses(analysesData.slice(0, 3)); // Max 3
+        setRelatedAnalyses(Array.isArray(analysesData) ? analysesData.slice(0, 3) : []);
+      } else {
+        setRelatedAnalyses([]);
       }
-      
+
       // Suche nach News mit diesem Ticker
-      const newsRes = await fetch(`/api/news?ticker=${ticker.replace('.DE', '')}`);
+      const newsRes = await fetch(`/api/news?ticker=${cleanTicker}`, { cache: 'no-store' });
       if (newsRes.ok) {
         const newsData = await newsRes.json();
-        setRelatedNews(newsData.slice(0, 3)); // Max 3
+        setRelatedNews(Array.isArray(newsData) ? newsData.slice(0, 3) : []);
+      } else {
+        setRelatedNews([]);
       }
     } catch (error) {
       console.error('Error fetching related content:', error);
+      // Defensive: wenn ein Request scheitert, UI nicht “stale” lassen
+      setRelatedAnalyses([]);
+      setRelatedNews([]);
     }
-  };
+  }, []);
+
+  const fetchAssetDetails = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
+    try {
+      setRefreshing(true);
+      setLoading(true);
+
+      const response = await fetch(`/api/assets/${params.ticker}`, {
+        signal: abortRef.current.signal,
+        cache: 'no-store',
+      });
+
+      if (!response.ok) throw new Error('Asset nicht gefunden');
+
+      const data = await response.json();
+      setAsset(data);
+      setLoading(false);
+
+      // Hole related content (Analysen & News mit diesem Ticker)
+      await fetchRelatedContent(params.ticker);
+    } catch (error: any) {
+      if (error?.name !== 'AbortError') {
+        console.error('Error:', error);
+        setAsset(null);
+      }
+      setLoading(false);
+    } finally {
+      setRefreshing(false);
+      isFetchingRef.current = false;
+    }
+  }, [params.ticker, fetchRelatedContent]);
 
   useEffect(() => {
     fetchAssetDetails();
-  }, [params.ticker]);
+    return () => abortRef.current?.abort();
+  }, [fetchAssetDetails]);
 
   if (loading) {
     return (
@@ -170,7 +202,7 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        
+
         {/* Back Button - Mobile Optimized */}
         <Link
           href="/assets"
@@ -216,10 +248,10 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
                 {/* Change */}
                 <div className="flex items-center gap-3">
                   <div className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
-                    isPositive 
-                      ? 'bg-emerald-50 text-emerald-700' 
-                      : isNeutral 
-                      ? 'bg-slate-50 text-slate-600' 
+                    isPositive
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : isNeutral
+                      ? 'bg-slate-50 text-slate-600'
                       : 'bg-red-50 text-red-700'
                   }`}>
                     {isPositive ? (
@@ -273,9 +305,10 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
               {/* Refresh Button */}
               <button
                 onClick={fetchAssetDetails}
-                className="px-4 py-2 bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl transition-all flex items-center justify-center gap-2 font-semibold text-sm text-slate-700"
+                disabled={refreshing}
+                className="px-4 py-2 bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl transition-all flex items-center justify-center gap-2 font-semibold text-sm text-slate-700 disabled:opacity-50"
               >
-                <RefreshCw className="h-4 w-4" />
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
                 Aktualisieren
               </button>
             </div>
@@ -291,7 +324,7 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
               Live
             </Badge>
           </div>
-          
+
           {/* TradingView Chart - Responsive */}
           <div className="w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden bg-slate-50">
             <iframe
@@ -344,7 +377,7 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
         {/* Fundamentals - Mobile Optimized Grid */}
         <Card className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm">
           <h2 className="text-xl font-bold text-slate-900 mb-6">Fundamentaldaten</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Market Cap */}
             <div className="flex items-start gap-3">

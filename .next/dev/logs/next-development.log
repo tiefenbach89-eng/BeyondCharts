@@ -1,0 +1,18 @@
+[00:00:01.020] Server  LOG     ✓ Ready in 658ms
+[00:00:29.947] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:36.603] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:38.002] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:38.939] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:40.461] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:41.490] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:44.400] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:45.327] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:45.906] Server  WARN    Error: Route "/api/admin/[type]" used `params.type`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:58.916] Server  ERROR   Error fetching VOW3: Error: Finnhub error for VOW3
+[00:00:58.992] Server  ERROR   Error fetching SAP: Error: Finnhub error for SAP
+[00:00:59.067] Server  ERROR   Error fetching SIE: Error: Finnhub error for SIE
+[00:00:59.150] Server  ERROR   Error fetching AIR: Error: Finnhub error for AIR
+[00:00:59.648] Server  ERROR   Error fetching VOW3: Error: Finnhub error for VOW3
+[00:00:59.721] Server  ERROR   Error fetching SIE: Error: Finnhub error for SIE
+[00:00:59.791] Server  ERROR   Error fetching SAP: Error: Finnhub error for SAP
+[00:00:59.865] Server  ERROR   Error fetching AIR: Error: Finnhub error for AIR

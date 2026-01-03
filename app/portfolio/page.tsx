@@ -1,7 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Upload, TrendingUp, TrendingDown, RefreshCw, Download, X, FileText, AlertCircle, Loader2, PieChart } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  TrendingUp,
+  TrendingDown,
+  RefreshCw,
+  X,
+  FileText,
+  AlertCircle,
+  Loader2,
+  PieChart,
+} from 'lucide-react';
 
 interface Position {
   isin: string;
@@ -24,71 +33,146 @@ interface PortfolioData {
   totalGainPercent: number;
 }
 
-const PortfolioPage = () => {
+const STORAGE_KEY = 'beyondcharts_portfolio';
+
+export default function PortfolioPage() {
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Prevent parallel refreshes + allow abort on navigation/new refresh
+  const abortRef = useRef<AbortController | null>(null);
+  const isRefreshingRef = useRef(false);
+  const isMountedRef = useRef(true);
+
   useEffect(() => {
-    const saved = localStorage.getItem('beyondcharts_portfolio');
-    if (saved) {
-      const data = JSON.parse(saved);
-      setPortfolio(data);
-      refreshPrices(data.positions);
-    }
-    setLoading(false);
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      abortRef.current?.abort();
+    };
   }, []);
 
-  const refreshPrices = async (positions: Position[]) => {
-    setRefreshing(true);
-    
+  const computePortfolio = useCallback((positions: Position[]): PortfolioData => {
+    const totalValue = positions.reduce((s, p) => s + (p.value || 0), 0);
+    const totalCost = positions.reduce((s, p) => s + (p.shares * p.avgPrice), 0);
+    const totalGain = totalValue - totalCost;
+    const totalGainPercent = totalCost > 0 ? (totalGain / totalCost) * 100 : 0;
+
+    const normalized = positions.map((p) => ({
+      ...p,
+      allocation: totalValue > 0 ? ((p.value || 0) / totalValue) * 100 : 0,
+    }));
+
+    return {
+      positions: normalized,
+      totalValue,
+      totalCost,
+      totalGain,
+      totalGainPercent,
+    };
+  }, []);
+
+  const persistPortfolio = useCallback((data: PortfolioData) => {
     try {
-      const updated = await Promise.all(
-        positions.map(async (pos) => {
-          try {
-            const res = await fetch(`/api/price/${pos.ticker}`);
-            const data = await res.json();
-            
-            const currentPrice = data.price || pos.avgPrice;
-            const value = pos.shares * currentPrice;
-            const cost = pos.shares * pos.avgPrice;
-            const gain = value - cost;
-            const gainPercent = (gain / cost) * 100;
-            
-            return { ...pos, currentPrice, value, gain, gainPercent };
-          } catch {
-            return pos;
-          }
-        })
-      );
-      
-      const totalValue = updated.reduce((s, p) => s + p.value, 0);
-      const totalCost = updated.reduce((s, p) => s + (p.shares * p.avgPrice), 0);
-      const totalGain = totalValue - totalCost;
-      const totalGainPercent = (totalGain / totalCost) * 100;
-      
-      updated.forEach(p => {
-        p.allocation = (p.value / totalValue) * 100;
-      });
-      
-      const portfolioData: PortfolioData = {
-        positions: updated,
-        totalValue,
-        totalCost,
-        totalGain,
-        totalGainPercent,
-      };
-      
-      setPortfolio(portfolioData);
-      localStorage.setItem('beyondcharts_portfolio', JSON.stringify(portfolioData));
-    } catch (error) {
-      console.error('Refresh error:', error);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error('LocalStorage write error:', e);
     }
-    
-    setRefreshing(false);
-  };
+  }, []);
+
+  const refreshPrices = useCallback(
+    async (positions: Position[]) => {
+      if (!positions || positions.length === 0) return;
+      if (isRefreshingRef.current) return;
+
+      isRefreshingRef.current = true;
+      if (isMountedRef.current) setRefreshing(true);
+
+      // Abort previous in-flight refresh
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+      const signal = abortRef.current.signal;
+
+      try {
+        const updatedResults = await Promise.allSettled(
+          positions.map(async (pos) => {
+            try {
+              const res = await fetch(`/api/price/${pos.ticker}`, {
+                signal,
+                cache: 'no-store',
+              });
+
+              if (!res.ok) return pos;
+
+              const data = await res.json();
+              const currentPrice = typeof data?.price === 'number' ? data.price : pos.avgPrice;
+
+              const value = pos.shares * currentPrice;
+              const cost = pos.shares * pos.avgPrice;
+              const gain = value - cost;
+              const gainPercent = cost > 0 ? (gain / cost) * 100 : 0;
+
+              return { ...pos, currentPrice, value, gain, gainPercent };
+            } catch (err: any) {
+              if (err?.name === 'AbortError') {
+                // Let abort bubble to finally
+                throw err;
+              }
+              return pos;
+            }
+          })
+        );
+
+        // If aborted, stop quietly
+        // (Promise.allSettled will include rejections if we threw AbortError)
+        const aborted = updatedResults.some(
+          (r) => r.status === 'rejected' && (r.reason?.name === 'AbortError' || r.reason?.message?.includes('AbortError'))
+        );
+        if (aborted) return;
+
+        const updated: Position[] = updatedResults.map((r, idx) => {
+          if (r.status === 'fulfilled') return r.value;
+          // fallback to original position
+          return positions[idx];
+        });
+
+        const portfolioData = computePortfolio(updated);
+
+        if (isMountedRef.current) {
+          setPortfolio(portfolioData);
+          persistPortfolio(portfolioData);
+        }
+      } catch (error: any) {
+        if (error?.name !== 'AbortError') {
+          console.error('Refresh error:', error);
+        }
+      } finally {
+        isRefreshingRef.current = false;
+        if (isMountedRef.current) setRefreshing(false);
+      }
+    },
+    [computePortfolio, persistPortfolio]
+  );
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved) as PortfolioData;
+        setPortfolio(data);
+        // refresh prices based on saved positions
+        refreshPrices(data.positions);
+      }
+    } catch (e) {
+      console.error('LocalStorage read error:', e);
+    } finally {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePDFUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -99,84 +183,100 @@ const PortfolioPage = () => {
 
     try {
       const aggregatedPositions = new Map<string, Position>();
-      
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
-        try {
-          // Send to API for server-side parsing
-          const formData = new FormData();
-          formData.append('file', file);
-          
-          const response = await fetch('/api/parse-tr-pdf', {
-            method: 'POST',
-            body: formData,
-          });
-          
-          if (!response.ok) {
+
+        // Send to API for server-side parsing
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/parse-tr-pdf', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          let errorMessage = `Fehler beim Parsen von ${file.name}`;
+          try {
             const errorData = await response.json();
-            throw new Error(errorData.error || `Fehler beim Parsen von ${file.name}`);
+            errorMessage = errorData?.error || errorMessage;
+          } catch {
+            // ignore json parse errors
           }
-          
-          const parsed = await response.json();
-          
-          console.log('Parsed data:', parsed);
-          
-          if (parsed.isin && parsed.shares && parsed.price) {
-            const existing = aggregatedPositions.get(parsed.isin);
-            
-            if (existing) {
-              const totalShares = existing.shares + parsed.shares;
-              const totalCost = (existing.shares * existing.avgPrice) + (parsed.shares * parsed.price);
-              const avgPrice = totalCost / totalShares;
-              
-              aggregatedPositions.set(parsed.isin, {
-                ...existing,
-                shares: totalShares,
-                avgPrice: avgPrice,
-                currentPrice: avgPrice,
-                value: totalShares * avgPrice,
-              });
-            } else {
-              aggregatedPositions.set(parsed.isin, {
-                isin: parsed.isin,
-                ticker: parsed.ticker,
-                name: parsed.name,
-                shares: parsed.shares,
-                avgPrice: parsed.price,
-                currentPrice: parsed.price,
-                value: parsed.shares * parsed.price,
-                gain: 0,
-                gainPercent: 0,
-                allocation: 0,
-              });
-            }
+          throw new Error(errorMessage);
+        }
+
+        const parsed = await response.json();
+
+        // Expecting: { isin, ticker, name, shares, price }
+        if (parsed?.isin && parsed?.shares && parsed?.price) {
+          const existing = aggregatedPositions.get(parsed.isin);
+
+          if (existing) {
+            const totalShares = existing.shares + parsed.shares;
+            const totalCost =
+              existing.shares * existing.avgPrice + parsed.shares * parsed.price;
+            const avgPrice = totalShares > 0 ? totalCost / totalShares : existing.avgPrice;
+
+            aggregatedPositions.set(parsed.isin, {
+              ...existing,
+              shares: totalShares,
+              avgPrice,
+              currentPrice: avgPrice,
+              value: totalShares * avgPrice,
+            });
+          } else {
+            aggregatedPositions.set(parsed.isin, {
+              isin: parsed.isin,
+              ticker: parsed.ticker,
+              name: parsed.name,
+              shares: parsed.shares,
+              avgPrice: parsed.price,
+              currentPrice: parsed.price,
+              value: parsed.shares * parsed.price,
+              gain: 0,
+              gainPercent: 0,
+              allocation: 0,
+            });
           }
-        } catch (fileError: any) {
-          console.error(`Error parsing ${file.name}:`, fileError);
-          throw fileError;
         }
       }
-      
+
       const positions = Array.from(aggregatedPositions.values());
-      
       if (positions.length === 0) {
         throw new Error('Keine Positionen in den PDFs gefunden');
       }
-      
-      await refreshPrices(positions);
-      setUploading(false);
-      
+
+      // Persist initial state immediately (so user sees content even if price refresh fails)
+      const initialPortfolio = computePortfolio(
+        positions.map((p) => ({
+          ...p,
+          // ensure computed fields exist
+          value: p.shares * p.currentPrice,
+          gain: 0,
+          gainPercent: 0,
+        }))
+      );
+
+      setPortfolio(initialPortfolio);
+      persistPortfolio(initialPortfolio);
+
+      // Then refresh prices
+      await refreshPrices(initialPortfolio.positions);
     } catch (error: any) {
       console.error('Upload error:', error);
-      setUploadError(error.message || 'Fehler beim Upload');
+      setUploadError(error?.message || 'Fehler beim Upload');
+    } finally {
       setUploading(false);
+      // allow selecting same file again
+      if (event.target) event.target.value = '';
     }
   };
 
   const handleReset = () => {
     if (confirm('Portfolio wirklich löschen?')) {
-      localStorage.removeItem('beyondcharts_portfolio');
+      localStorage.removeItem(STORAGE_KEY);
       setPortfolio(null);
     }
   };
@@ -204,7 +304,7 @@ const PortfolioPage = () => {
               <div className="flex-1">
                 <p className="text-sm font-semibold text-red-900">{uploadError}</p>
               </div>
-              <button onClick={() => setUploadError(null)}>
+              <button onClick={() => setUploadError(null)} aria-label="Fehlermeldung schließen">
                 <X className="h-5 w-5 text-red-600" />
               </button>
             </div>
@@ -220,7 +320,7 @@ const PortfolioPage = () => {
                 className="hidden"
                 disabled={uploading}
               />
-              
+
               <div className="p-12 bg-white border-2 border-dashed border-slate-200 rounded-3xl hover:border-primary hover:bg-primary/5 transition-all">
                 <div className="text-center space-y-4">
                   {uploading ? (
@@ -230,7 +330,7 @@ const PortfolioPage = () => {
                       <FileText className="h-10 w-10 text-primary" />
                     </div>
                   )}
-                  
+
                   <div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-2">
                       {uploading ? 'Parse PDFs...' : 'Trade Republic PDFs hochladen'}
@@ -249,7 +349,7 @@ const PortfolioPage = () => {
   }
 
   const topPositions = [...portfolio.positions]
-    .sort((a, b) => b.allocation - a.allocation)
+    .sort((a, b) => (b.allocation || 0) - (a.allocation || 0))
     .slice(0, 5);
 
   return (
@@ -261,7 +361,7 @@ const PortfolioPage = () => {
               <h1 className="text-2xl font-bold text-slate-900">Portfolio</h1>
               <p className="text-sm text-slate-500">{portfolio.positions.length} Positionen</p>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <button
                 onClick={() => refreshPrices(portfolio.positions)}
@@ -271,10 +371,11 @@ const PortfolioPage = () => {
                 <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Refresh</span>
               </button>
-              
+
               <button
                 onClick={handleReset}
                 className="p-2 hover:bg-red-50 border-2 border-slate-200 hover:border-red-200 rounded-xl transition-all"
+                aria-label="Portfolio löschen"
               >
                 <X className="h-5 w-5 text-slate-600 hover:text-red-600" />
               </button>
@@ -302,7 +403,8 @@ const PortfolioPage = () => {
           <div className="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
             <div className="text-sm font-semibold text-slate-500 mb-1">Gewinn/Verlust</div>
             <div className={`text-3xl font-bold ${portfolio.totalGain >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-              {portfolio.totalGain >= 0 ? '+' : ''}{portfolio.totalGain.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €
+              {portfolio.totalGain >= 0 ? '+' : ''}
+              {portfolio.totalGain.toLocaleString('de-DE', { minimumFractionDigits: 2 })} €
             </div>
           </div>
 
@@ -310,7 +412,8 @@ const PortfolioPage = () => {
             <div className="text-sm font-semibold text-slate-500 mb-1">Performance</div>
             <div className={`text-3xl font-bold flex items-center gap-2 ${portfolio.totalGainPercent >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {portfolio.totalGainPercent >= 0 ? <TrendingUp className="h-8 w-8" /> : <TrendingDown className="h-8 w-8" />}
-              {portfolio.totalGainPercent >= 0 ? '+' : ''}{(portfolio.totalGainPercent || 0).toFixed(2)}%
+              {portfolio.totalGainPercent >= 0 ? '+' : ''}
+              {(portfolio.totalGainPercent || 0).toFixed(2)}%
             </div>
           </div>
         </div>
@@ -321,7 +424,7 @@ const PortfolioPage = () => {
               <PieChart className="h-5 w-5" />
               Top Positionen
             </h3>
-            
+
             <div className="space-y-4">
               {topPositions.map((pos) => (
                 <div key={pos.isin}>
@@ -340,9 +443,9 @@ const PortfolioPage = () => {
                     <span className="text-sm font-bold text-slate-900">{(pos.allocation || 0).toFixed(1)}%</span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full"
-                      style={{ width: `${pos.allocation * 5}%` }}
+                      style={{ width: `${Math.min(100, (pos.allocation || 0) * 5)}%` }}
                     />
                   </div>
                 </div>
@@ -352,10 +455,10 @@ const PortfolioPage = () => {
 
           <div className="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
             <h3 className="text-lg font-bold text-slate-900 mb-6">Performance</h3>
-            
+
             <div className="space-y-4">
               {[...portfolio.positions]
-                .sort((a, b) => b.gainPercent - a.gainPercent)
+                .sort((a, b) => (b.gainPercent || 0) - (a.gainPercent || 0))
                 .slice(0, 5)
                 .map((pos) => (
                   <div key={pos.isin} className="flex items-center justify-between">
@@ -370,8 +473,9 @@ const PortfolioPage = () => {
                       />
                       <span className="font-semibold text-slate-900">{pos.ticker}</span>
                     </div>
-                    <span className={`font-bold ${pos.gainPercent >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                      {pos.gainPercent >= 0 ? '+' : ''}{(pos.gainPercent || 0).toFixed(2)}%
+                    <span className={`font-bold ${(pos.gainPercent || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {(pos.gainPercent || 0) >= 0 ? '+' : ''}
+                      {(pos.gainPercent || 0).toFixed(2)}%
                     </span>
                   </div>
                 ))}
@@ -416,18 +520,28 @@ const PortfolioPage = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-slate-900">{(pos.shares || 0).toFixed(4)}</td>
-                    <td className="px-6 py-4 text-right font-semibold text-slate-900">{(pos.avgPrice || 0).toFixed(2)} €</td>
-                    <td className="px-6 py-4 text-right font-semibold text-slate-900">{(pos.currentPrice || 0).toFixed(2)} €</td>
-                    <td className="px-6 py-4 text-right font-semibold text-slate-900">{(pos.value || 0).toFixed(2)} €</td>
+                    <td className="px-6 py-4 text-right font-semibold text-slate-900">
+                      {(pos.shares || 0).toFixed(4)}
+                    </td>
+                    <td className="px-6 py-4 text-right font-semibold text-slate-900">
+                      {(pos.avgPrice || 0).toFixed(2)} €
+                    </td>
+                    <td className="px-6 py-4 text-right font-semibold text-slate-900">
+                      {(pos.currentPrice || 0).toFixed(2)} €
+                    </td>
+                    <td className="px-6 py-4 text-right font-semibold text-slate-900">
+                      {(pos.value || 0).toFixed(2)} €
+                    </td>
                     <td className="px-6 py-4 text-right">
-                      <span className={`font-bold ${pos.gain >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                        {pos.gain >= 0 ? '+' : ''}{(pos.gain || 0).toFixed(2)} €
+                      <span className={`font-bold ${(pos.gain || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {(pos.gain || 0) >= 0 ? '+' : ''}
+                        {(pos.gain || 0).toFixed(2)} €
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className={`font-bold ${pos.gainPercent >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                        {pos.gainPercent >= 0 ? '+' : ''}{(pos.gainPercent || 0).toFixed(2)}%
+                      <span className={`font-bold ${(pos.gainPercent || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {(pos.gainPercent || 0) >= 0 ? '+' : ''}
+                        {(pos.gainPercent || 0).toFixed(2)}%
                       </span>
                     </td>
                   </tr>
@@ -450,6 +564,4 @@ const PortfolioPage = () => {
       </div>
     </div>
   );
-};
-
-export default PortfolioPage;
+}

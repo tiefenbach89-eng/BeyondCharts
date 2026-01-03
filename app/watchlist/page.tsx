@@ -1,37 +1,75 @@
-"use client";
+'use client';
 
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRole } from "@/components/role/RoleProvider";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import React from "react";
 
 const STORAGE_KEY = "ff_watchlist";
 
-type Item = { ticker: string; note?: string };
+type Item = {
+  ticker: string;
+  note?: string;
+};
 
 export default function WatchlistPage() {
   const { role, setRole, isPremium } = useRole();
-  const [items, setItems] = React.useState<Item[]>([]);
-  const [ticker, setTicker] = React.useState("");
 
-  React.useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    setItems(raw ? JSON.parse(raw) : [{ ticker: "DAX" }, { ticker: "MSFT" }]);
+  const [items, setItems] = useState<Item[]>([]);
+  const [ticker, setTicker] = useState("");
+
+  /* -------------------------------------------------------------------------- */
+  /* Load from localStorage                                                      */
+  /* -------------------------------------------------------------------------- */
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        setItems(JSON.parse(raw));
+      } else {
+        // Default demo items
+        setItems([{ ticker: "DAX" }, { ticker: "MSFT" }]);
+      }
+    } catch (error) {
+      console.error("Watchlist localStorage error:", error);
+      setItems([{ ticker: "DAX" }, { ticker: "MSFT" }]);
+    }
   }, []);
 
-  const save = (next: Item[]) => {
-    setItems(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  };
+  /* -------------------------------------------------------------------------- */
+  /* Helpers                                                                     */
+  /* -------------------------------------------------------------------------- */
 
-  const add = () => {
+  const persist = useCallback((next: Item[]) => {
+    setItems(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch (error) {
+      console.error("Watchlist save error:", error);
+    }
+  }, []);
+
+  const add = useCallback(() => {
     const t = ticker.trim().toUpperCase();
     if (!t) return;
     if (items.some((i) => i.ticker === t)) return;
-    save([{ ticker: t }, ...items]);
+
+    persist([{ ticker: t }, ...items]);
     setTicker("");
-  };
+  }, [ticker, items, persist]);
+
+  const remove = useCallback(
+    (t: string) => {
+      persist(items.filter((x) => x.ticker !== t));
+    },
+    [items, persist]
+  );
+
+  /* -------------------------------------------------------------------------- */
+  /* Render                                                                      */
+  /* -------------------------------------------------------------------------- */
 
   return (
     <div className="ff-container py-6 md:py-10">
@@ -39,9 +77,15 @@ export default function WatchlistPage() {
         <div>
           <div className="flex items-center gap-2">
             <Badge>Watchlist</Badge>
-            <Badge tone="neutral">{role === "guest" ? "Gast" : role === "free" ? "Free" : "Premium"}</Badge>
+            <Badge tone="neutral">
+              {role === "guest" ? "Gast" : role === "free" ? "Free" : "Premium"}
+            </Badge>
           </div>
-          <h1 className="mt-3 text-2xl font-semibold md:text-3xl">Watchlist</h1>
+
+          <h1 className="mt-3 text-2xl font-semibold md:text-3xl">
+            Watchlist
+          </h1>
+
           <p className="mt-1 text-sm ff-muted">
             Lokal gespeichert. Später via Supabase + Alerts (Premium).
           </p>
@@ -59,9 +103,13 @@ export default function WatchlistPage() {
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-12">
+        {/* ------------------------------------------------------------------ */}
+        {/* Watchlist                                                           */}
+        {/* ------------------------------------------------------------------ */}
         <div className="md:col-span-8">
           <Card className="p-4 md:p-5">
             <div className="text-sm font-semibold">Assets hinzufügen</div>
+
             <div className="mt-3 flex gap-2">
               <input
                 value={ticker}
@@ -79,12 +127,17 @@ export default function WatchlistPage() {
               <Card key={i.ticker} className="p-4 md:p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-semibold">{i.ticker}</div>
-                    <div className="mt-1 text-xs ff-muted">News-Cluster & Alerts in Phase 2.</div>
+                    <div className="text-sm font-semibold">
+                      {i.ticker}
+                    </div>
+                    <div className="mt-1 text-xs ff-muted">
+                      News-Cluster & Alerts in Phase 2.
+                    </div>
                   </div>
+
                   <button
                     className="text-sm ff-muted hover:text-[rgb(var(--text))]"
-                    onClick={() => save(items.filter((x) => x.ticker !== i.ticker))}
+                    onClick={() => remove(i.ticker)}
                   >
                     Entfernen
                   </button>
@@ -94,16 +147,28 @@ export default function WatchlistPage() {
           </div>
         </div>
 
+        {/* ------------------------------------------------------------------ */}
+        {/* Premium Preview                                                     */}
+        {/* ------------------------------------------------------------------ */}
         <div className="md:col-span-4">
           <Card className="p-4 md:p-5">
-            <div className="text-sm font-semibold">Premium Alerts (Preview)</div>
+            <div className="text-sm font-semibold">
+              Premium Alerts (Preview)
+            </div>
+
             <p className="mt-2 text-sm ff-muted">
-              Preisbewegungen, Earnings, Makro-Events, Breaking-News — alles auf deine Watchlist.
+              Preisbewegungen, Earnings, Makro-Events, Breaking-News — alles
+              auf deine Watchlist.
             </p>
+
             <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-white p-3">
               <div className="text-xs ff-muted">Beispiel</div>
-              <div className="mt-1 text-sm font-medium">MSFT · Earnings in 7 Tagen</div>
-              <div className="mt-1 text-xs ff-muted">Push/Email (Phase 2)</div>
+              <div className="mt-1 text-sm font-medium">
+                MSFT · Earnings in 7 Tagen
+              </div>
+              <div className="mt-1 text-xs ff-muted">
+                Push/Email (Phase 2)
+              </div>
             </div>
           </Card>
         </div>
