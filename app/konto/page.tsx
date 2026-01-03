@@ -61,7 +61,7 @@ export default function AccountPage() {
           data: {
             role: newUserRole,
           },
-          emailRedirectTo: `${window.location.origin}/konto`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/konto`,
         },
       });
 
