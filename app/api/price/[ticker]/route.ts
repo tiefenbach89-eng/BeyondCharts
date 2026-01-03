@@ -1,49 +1,42 @@
 // app/api/price/[ticker]/route.ts
-// Live-Preis-Endpoint für Portfolio-Refresh
-// Next.js 16 / App Router / Vercel-safe
+// ✅ Simple price endpoint – Next.js 16 / Vercel safe
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-/**
- * Diese Route MUSS dynamisch sein:
- * - externe Live-API (Finnhub)
- * - no-store Fetch
- * - ticker als URL-Param
- */
-export const dynamic = 'force-dynamic';
-
-/**
- * Node.js Runtime ist erforderlich:
- * - Finnhub ist nicht Edge-stabil
- */
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || '';
 
 export async function GET(
-  _request: Request,
-  { params }: { params: { ticker: string } }
+  request: NextRequest,
+  context: { params: Promise<{ ticker: string }> }
 ) {
   try {
-    const ticker = params.ticker;
+    const { ticker: rawTicker } = await context.params;
 
-    if (!ticker) {
+    if (!rawTicker) {
       return NextResponse.json(
         { error: 'Missing ticker' },
         { status: 400 }
       );
     }
 
-    const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(
-      ticker
-    )}&token=${FINNHUB_API_KEY}`;
+    const ticker = rawTicker.replace('.DE', '');
 
-    const response = await fetch(url, {
-      cache: 'no-store',
-    });
+    /* ------------------------------------------------------------ */
+    /* Finnhub Quote                                                 */
+    /* ------------------------------------------------------------ */
+
+    const response = await fetch(
+      `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(
+        ticker
+      )}&token=${FINNHUB_API_KEY}`,
+      { cache: 'no-store' }
+    );
 
     if (!response.ok) {
-      throw new Error(`Finnhub error for ${ticker}`);
+      throw new Error('Failed to fetch price');
     }
 
     const data = await response.json();
@@ -52,7 +45,7 @@ export async function GET(
     const previousClose = typeof data.pc === 'number' ? data.pc : 0;
     const change = currentPrice - previousClose;
     const changePercent =
-      previousClose > 0 ? (change / previousClose) * 100 : 0;
+      previousClose !== 0 ? (change / previousClose) * 100 : 0;
 
     return NextResponse.json(
       {
@@ -68,11 +61,11 @@ export async function GET(
         },
       }
     );
-  } catch (error) {
-    console.error('Price fetch error:', error);
+  } catch (error: any) {
+    console.error('❌ Price API error:', error);
 
     return NextResponse.json(
-      { error: 'Failed to fetch price' },
+      { error: error.message || 'Failed to fetch price' },
       { status: 500 }
     );
   }
