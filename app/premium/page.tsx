@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { useRole } from "@/components/role/RoleProvider";
+import { useRole } from "@/components/auth/AuthProvider";
 import { 
   Check, 
   Lock, 

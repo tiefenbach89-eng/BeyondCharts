@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRole } from "@/components/role/RoleProvider";
+import { useRole } from "@/components/auth/AuthProvider";
 
 export function PremiumGate({
   children,

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/loel/Desktop/Coding/3.0/app/admin/layout.tsx"],"sourcesContent":["\"use client\";\n\nimport React from \"react\";\n\nexport default function AdminLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <div className=\"min-h-screen bg-[rgb(var(--bg))]\">\n      <div className=\"mx-auto w-full max-w-6xl px-4 md:px-6\">\n        {children}\n      </div>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;;AAIe,SAAS,YAAY,EAAE,QAAQ,EAAiC;IAC7E,qBACE,6LAAC;QAAI,WAAU;kBACb,cAAA,6LAAC;YAAI,WAAU;sBACZ;;;;;;;;;;;AAIT;KARwB"}}]
-}

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/admin/[type]": {},
+    "/api/admin/settings": {},
+    "/api/assets": {},
+    "/api/assets/[ticker]": {},
+    "/api/markets/live": {},
+    "/api/price/[ticker]": {}
+  }
+}

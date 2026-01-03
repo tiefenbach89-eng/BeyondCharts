@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
       options: {
         data: {
-          role: 'free', // Default role for new users
+          role: 'free',
         },
       },
     });
@@ -110,14 +110,24 @@ export function useAuth() {
   return ctx;
 }
 
-// Backwards compatibility - keep useRole for existing code
+// ⭐ BACKWARDS COMPATIBILITY - So können alte Pages useRole() weiter nutzen!
 export function useRole() {
   const auth = useAuth();
+  
   return {
     role: auth.role,
-    setRole: () => {
-      console.warn('setRole is deprecated with Supabase Auth. Role is managed server-side.');
-    },
     isPremium: auth.isPremium,
+    // setRole als Dummy-Funktion die nur warnt
+    setRole: (newRole: Role) => {
+      console.warn(
+        `⚠️ setRole("${newRole}") wurde aufgerufen, aber wird ignoriert!`,
+        '\nRoles werden jetzt durch Supabase Auth verwaltet.',
+        '\nÄndere die Role im Supabase Dashboard mit SQL:',
+        `\nUPDATE auth.users SET raw_app_meta_data = jsonb_set(raw_app_meta_data, '{role}', '"${newRole}"') WHERE email = 'your@email.com';`
+      );
+    }
   };
 }
+
+// ⭐ AUCH RoleProvider exportieren für backwards compatibility
+export const RoleProvider = AuthProvider;

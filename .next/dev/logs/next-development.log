@@ -1,1 +1,5 @@
-[00:00:02.897] Server  LOG     ✓ Ready in 2.1s
+[00:00:01.299] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:01.599] Server  LOG     ✓ Ready in 1207ms
+[00:00:08.096] Server  LOG     ○ Compiling / ...
+[00:00:10.849] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:11.465] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes

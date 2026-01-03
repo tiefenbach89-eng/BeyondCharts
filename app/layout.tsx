@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { RoleProvider } from "@/components/role/RoleProvider";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 
@@ -37,14 +37,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" className={inter.variable}>
       <body className="antialiased">
-        <RoleProvider>
+        <AuthProvider>
           <SearchProvider>
             <Header />
             <main className="pt-16 md:pt-20">{children}</main>
             <Footer />
             <SearchOverlay />
           </SearchProvider>
-        </RoleProvider>
+        </AuthProvider>
       </body>
     </html>
   );
