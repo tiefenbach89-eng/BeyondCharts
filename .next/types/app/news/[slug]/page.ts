@@ -1,4 +1,4 @@
-// File: C:\Users\loel\Desktop\Supabase\app\news\[slug]\page.tsx
+// File: C:\Users\loel\Desktop\Coding\3.0\app\news\[slug]\page.tsx
 import * as entry from '../../../../../app/news/[slug]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

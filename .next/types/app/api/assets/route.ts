@@ -1,4 +1,4 @@
-// File: C:\Users\loel\Desktop\Supabase\app\api\assets\route.ts
+// File: C:\Users\loel\Desktop\Coding\3.0\app\api\assets\route.ts
 import * as entry from '../../../../../app/api/assets/route.js'
 import type { NextRequest } from 'next/server.js'
 

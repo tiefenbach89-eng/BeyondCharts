@@ -1,4 +1,4 @@
-// File: C:\Users\loel\Desktop\Supabase\app\agb\page.tsx
+// File: C:\Users\loel\Desktop\Coding\3.0\app\agb\page.tsx
 import * as entry from '../../../../app/agb/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

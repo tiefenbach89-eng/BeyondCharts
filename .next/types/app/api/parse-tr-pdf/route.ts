@@ -1,4 +1,4 @@
-// File: C:\Users\loel\Desktop\Supabase\app\api\parse-tr-pdf\route.ts
+// File: C:\Users\loel\Desktop\Coding\3.0\app\api\parse-tr-pdf\route.ts
 import * as entry from '../../../../../app/api/parse-tr-pdf/route.js'
 import type { NextRequest } from 'next/server.js'
 

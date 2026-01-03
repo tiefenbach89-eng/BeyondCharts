@@ -1,4 +1,4 @@
-// File: C:\Users\loel\Desktop\Supabase\app\api\price\[ticker]\route.ts
+// File: C:\Users\loel\Desktop\Coding\3.0\app\api\price\[ticker]\route.ts
 import * as entry from '../../../../../../app/api/price/[ticker]/route.js'
 import type { NextRequest } from 'next/server.js'
 

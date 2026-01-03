@@ -1,4 +1,4 @@
-// File: C:\Users\loel\Desktop\Supabase\app\haftungsausschluss\page.tsx
+// File: C:\Users\loel\Desktop\Coding\3.0\app\haftungsausschluss\page.tsx
 import * as entry from '../../../../app/haftungsausschluss/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

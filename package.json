@@ -6,17 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-<<<<<<< HEAD
     "lint": "next lint",
     "migrate:supabase": "tsx scripts/migrate-to-supabase.ts"
   },
   "dependencies": {
-=======
-    "lint": "next lint"
-  },
-  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
     "@tiptap/extension-character-count": "^3.14.0",
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
     "@tiptap/extension-image": "^3.14.0",
     "@tiptap/extension-link": "^3.14.0",
     "@tiptap/extension-placeholder": "^3.14.0",
@@ -25,17 +20,11 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.542.0",
     "next": "14.2.18",
-<<<<<<< HEAD
     "pdf-parse": "^2.4.5",
     "pdfjs-dist": "^5.4.530",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "@supabase/supabase-js": "^2.45.4"
-=======
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0"
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
@@ -43,19 +32,13 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
+    "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.18",
-<<<<<<< HEAD
     "knip": "^5.79.0",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10",
-    "typescript": "^5.6.2",
-    "dotenv": "^16.4.5",
-    "tsx": "^4.19.2"
-=======
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.10",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.2"
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
   }
 }

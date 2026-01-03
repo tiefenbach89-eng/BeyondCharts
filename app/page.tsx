@@ -19,7 +19,6 @@ import { AnalysesGrid } from "@/components/home/AnalysesGrid";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-<<<<<<< HEAD
   const allNewsRaw = await listContent("news");
   const allAnalyses = await listContent("analyses");
   
@@ -35,10 +34,6 @@ export default async function HomePage() {
     } as any; // Cast to any to satisfy HomeTopStories component
   });
   
-=======
-  const allNews = await listContent("news");
-  const allAnalyses = await listContent("analyses");
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
   const featuredAnalysis = allAnalyses.find((a: any) => a.isPremium) || allAnalyses[0];
 
   return (
@@ -116,25 +111,16 @@ export default async function HomePage() {
                   
                   {/* Card Wrapper with proper clipping */}
                   <div className="relative overflow-hidden rounded-[40px]">
-<<<<<<< HEAD
                     <Card className="relative border-none shadow-2xl text-white transform hover:scale-[1.02] transition-all duration-500 overflow-hidden min-h-[420px]">
                       
                       {/* Full Background Image */}
                       {featuredAnalysis.imageUrl ? (
                         <div className="absolute inset-0">
-=======
-                    <Card className="relative border-none bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 shadow-2xl text-white transform hover:scale-[1.02] transition-all duration-500">
-                      
-                      {/* Image Header - Upper Third */}
-                      {featuredAnalysis.imageUrl && (
-                        <div className="relative h-44 md:h-52 -mx-8 -mt-8 md:-mx-10 md:-mt-10">
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                           <img
                             src={featuredAnalysis.imageUrl}
                             alt={featuredAnalysis.title}
                             className="w-full h-full object-cover"
                           />
-<<<<<<< HEAD
                           {/* Dark gradient overlay for text readability */}
                           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-900/95" />
                         </div>
@@ -193,78 +179,6 @@ export default async function HomePage() {
                         )}
 
                         {/* CTA Button - Moved up slightly */}
-=======
-                          {/* Smooth gradient fade - eliminates hard cut */}
-                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/40 to-slate-900" />
-                          
-                          {/* Badges on Image */}
-                          <div className="absolute top-4 right-4 flex items-center gap-2">
-                            {featuredAnalysis.ticker && (
-                              <div className="px-3 py-1.5 bg-slate-900/90 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg">
-                                <span className="text-xs font-bold text-white">
-                                  {featuredAnalysis.ticker}
-                                </span>
-                              </div>
-                            )}
-                            {featuredAnalysis.isPremium && <PremiumIcon />}
-                          </div>
-                        </div>
-                      )}
-
-                    <div className="p-8 md:p-10">
-                      {/* Top Bar - "ANALYSE" Badge */}
-                      <div className="flex items-center justify-between mb-5">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-400/30 rounded-full">
-                          <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-                          <span className="text-xs font-bold text-blue-300 uppercase tracking-wide">
-                            Analyse
-                          </span>
-                        </div>
-                        
-                        {/* Show ticker/premium only if no image */}
-                        {!featuredAnalysis.imageUrl && (
-                          <div className="flex items-center gap-2">
-                            {featuredAnalysis.ticker && (
-                              <div className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg">
-                                <span className="text-xs font-bold text-white">
-                                  {featuredAnalysis.ticker}
-                                </span>
-                              </div>
-                            )}
-                            {featuredAnalysis.isPremium && <PremiumIcon />}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Title */}
-                      <h2 className="text-xl md:text-2xl font-bold leading-tight text-white mb-5 line-clamp-2 break-words">
-                        {featuredAnalysis.title}
-                      </h2>
-
-                      {/* Summary (instead of thesis) */}
-                      {featuredAnalysis.summary && (
-                        <p className="text-sm text-slate-300 leading-relaxed mb-5 line-clamp-3">
-                          {featuredAnalysis.summary}
-                        </p>
-                      )}
-
-                      {/* Meta Footer */}
-                      {(featuredAnalysis.category || featuredAnalysis.content) && (
-                        <div className="flex items-center gap-2 mb-5 text-xs text-slate-400">
-                          {featuredAnalysis.category && (
-                            <>
-                              <span className="font-medium">{featuredAnalysis.category}</span>
-                              <span>•</span>
-                            </>
-                          )}
-                          {featuredAnalysis.content && (
-                            <span>{Math.max(1, Math.ceil(featuredAnalysis.content.split(/\s+/).length / 200))} min</span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* CTA Button */}
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                       <Link
                         href={`/analysen/${featuredAnalysis.slug}`}
                         className="group/btn relative flex items-center justify-between w-full px-5 py-3.5 rounded-xl overflow-hidden transition-all hover:scale-[1.02]"
@@ -295,7 +209,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-<<<<<<< HEAD
       {/* NEWS SECTION */}
       <section className="max-w-7xl mx-auto px-4 px-4 py-20 border-b border-slate-100">
         <HomeTopStories allNews={allNews} />
@@ -325,9 +238,6 @@ export default async function HomePage() {
       </section>
 
       {/* STATS SECTION - Moved after Analyses */}
-=======
-      {/* STATS SECTION */}
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {[
@@ -398,44 +308,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-<<<<<<< HEAD
-=======
-      {/* NEWS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 px-4 py-20 border-b border-slate-100">
-        <HomeTopStories allNews={allNews} />
-      </section>
-
-      {/* ANALYSES SECTION */}
-      <section className="max-w-7xl mx-auto px-4 px-4 py-20 border-b border-slate-100">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full mb-4">
-              <Zap size={14} className="text-blue-600" />
-              <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
-                Deep Dives
-              </span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-950 mb-4">
-              Aktuelle Analysen
-            </h2>
-            <p className="text-lg text-slate-600 max-w-2xl">
-              Unternehmen verstehen, statt nur den Kurs zu raten.
-            </p>
-          </div>
-
-          <Link
-            href="/analysen"
-            className="group inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-semibold text-sm transition-all hover:shadow-lg"
-          >
-            Alle Analysen
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-
-        <AnalysesGrid analyses={allAnalyses} />
-      </section>
-
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
       {/* CTA SECTION */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-y border-slate-700">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_50%)]" />

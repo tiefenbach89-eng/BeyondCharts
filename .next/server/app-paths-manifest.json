@@ -1,34 +1,29 @@
 {
-<<<<<<< HEAD
   "/_not-found/page": "app/_not-found/page.js",
   "/account/page": "app/account/page.js",
   "/agb/page": "app/agb/page.js",
   "/analysen/[slug]/page": "app/analysen/[slug]/page.js",
   "/assets/[ticker]/page": "app/assets/[ticker]/page.js",
-  "/datenschutz/page": "app/datenschutz/page.js",
   "/assets/page": "app/assets/page.js",
-  "/impressum/page": "app/impressum/page.js",
+  "/datenschutz/page": "app/datenschutz/page.js",
   "/haftungsausschluss/page": "app/haftungsausschluss/page.js",
+  "/impressum/page": "app/impressum/page.js",
   "/maerkte/page": "app/maerkte/page.js",
   "/portfolio/page": "app/portfolio/page.js",
   "/premium/page": "app/premium/page.js",
   "/watchlist/page": "app/watchlist/page.js",
-  "/api/assets/[ticker]/route": "app/api/assets/[ticker]/route.js",
+  "/analysen/page": "app/analysen/page.js",
   "/api/admin/settings/route": "app/api/admin/settings/route.js",
   "/api/admin/[type]/route": "app/api/admin/[type]/route.js",
-  "/api/assets/route": "app/api/assets/route.js",
-  "/analysen/page": "app/analysen/page.js",
+  "/api/assets/[ticker]/route": "app/api/assets/[ticker]/route.js",
   "/api/price/[ticker]/route": "app/api/price/[ticker]/route.js",
-  "/api/markets/live/route": "app/api/markets/live/route.js",
   "/api/parse-tr-pdf/route": "app/api/parse-tr-pdf/route.js",
-  "/news/[slug]/page": "app/news/[slug]/page.js",
+  "/api/assets/route": "app/api/assets/route.js",
+  "/api/markets/live/route": "app/api/markets/live/route.js",
   "/news/page": "app/news/page.js",
+  "/news/[slug]/page": "app/news/[slug]/page.js",
   "/page": "app/page.js",
   "/suche/page": "app/suche/page.js",
   "/admin/page": "app/admin/page.js",
   "/admin/settings/page": "app/admin/settings/page.js"
-=======
-  "/page": "app/page.js",
-  "/analysen/[slug]/page": "app/analysen/[slug]/page.js"
->>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 }
