@@ -1,0 +1,80 @@
+[
+  {
+    "id": "a_mjvwojjh_re39x",
+    "slug": "nvidia-die-unangefochtene-vormachtstellung-im-ki-zeitalter-1",
+    "title": "NVIDIA – Die unangefochtene Vormachtstellung im KI-Zeitalter",
+    "summary": "NVIDIA hat sich vom Grafikkartenhersteller zum Herzstück der globalen KI-Infrastruktur gewandelt. Mit einer Marktdominanz von über 80% bei KI-Beschleunigern profitiert das Unternehmen massiv vom Ausbau der Rechenzentren weltweit. Trotz hoher Bewertung bleibt NVIDIA das Basisinvestment für den Megatrend Künstliche Intelligenz.",
+    "content": "<p><strong>1. Die CUDA-Burgmauer</strong></p><p>NVIDIAs wahrer Vorsprung liegt nicht nur in der Hardware, sondern in <strong>CUDA</strong>. Seit fast zwei Jahrzehnten entwickeln Programmierer auf dieser Software-Plattform. Ein Wechsel zur Konkurrenz (AMD oder Intel) würde für Unternehmen massive Umschulungs- und Portierungskosten bedeuten. Dieser \"Lock-in-Effekt\" sichert NVIDIA langfristige Preismacht.</p><p><strong>2. Blackwell: Der nächste Quantensprung</strong></p><p>Mit der neuen <strong>Blackwell-Plattform</strong> setzt NVIDIA die Messlatte erneut höher. Die Rechenleistung für LLMs (Large Language Models) steigt drastisch an, während der Energieverbrauch sinkt. In einer Welt, in der Rechenkapazität das \"neue Öl\" ist, bleibt NVIDIA der Hauptförderer.</p><p><strong>3. Risiken im Blick behalten</strong></p><p>Kein Investment ist ohne Risiko. Die geopolitischen Spannungen zwischen den USA und China könnten den Zugang zu einem der wichtigsten Märkte weiter erschweren. Zudem versuchen Kunden wie Amazon (Trainium) und Google (TPU), eigene Chips zu entwickeln, um die Abhängigkeit von NVIDIA zu verringern.</p><p><strong>Fazit</strong></p><p>NVIDIA bleibt das \"Pick-and-Shovel\"-Investment (Schaufelverkäufer) des Goldrauschs unserer Zeit. Solange die Skalierung von KI-Modellen nicht stagniert, führt an dieser Aktie kaum ein Weg vorbei.</p>",
+    "imageUrl": "/uploads/1767299818731-8f2d4a9ec31b9f33.jpeg",
+    "imageSource": "https://www.nvidia.com/de-de/geforce/graphics-cards/",
+    "tags": [],
+    "isPremium": true,
+    "status": "published",
+    "createdAt": "2026-01-01T20:36:58.733Z",
+    "updatedAt": "2026-01-03T11:56:49.839Z",
+    "publishedAt": "2026-01-01T20:36:58.702Z",
+    "auditStatus": "approved",
+    "auditNotes": "",
+    "auditedAt": "2026-01-01T20:36:58.733Z",
+    "ticker": "NVDA",
+    "category": "Technologie / Halbleiter",
+    "analysis": {
+      "overview": "Dominanz durch CUDA-Ökosystem & technologischen Vorsprung bei High-End-GPUs.",
+      "businessModel": "Markteinführung der Blackwell-Architektur und steigende Nachfrage durch Sovereign AI.",
+      "risks": "Mögliche Exportbeschränkungen (China) und zunehmender Wettbewerb durch Eigenentwicklungen der Big Techs.",
+      "scenarios": "Überragende operative Margen (>50%) und extrem starker Free Cashflow."
+    },
+    "image": "/uploads/1767299818731-8f2d4a9ec31b9f33.jpeg"
+  },
+  {
+    "id": "a_mjuczz13_q4hyb",
+    "slug": "test-amd-1-1-1",
+    "title": "Test AMD ",
+    "summary": "AMD wurde am 1. Mai 1969 unter dem Namen Sanders Association von Jerry Sanders III und Ed Turney gegründet. Das Startkapital wurde durch Investoren, darunter Intel-Gründer Robert Noyce, bereitgestellt. Die ersten integrierten Schaltkreise wurden im November 1969 produziert. Diese bildeten die Grundlage für das erste selbst entwickelte Produkt Am2501, welches 1970 auf den Markt kam.",
+    "content": "<p><strong>Advanced Micro Devices, Inc.</strong> (<strong>AMD</strong>) ist ein <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Vereinigte_Staaten\">US-amerikanisches</a> Unternehmen der <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Halbleiterindustrie\">Halbleiterindustrie</a> mit Hauptsitz in <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Santa_Clara_(Kalifornien)\">Santa Clara</a>, <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Kalifornien\">Kalifornien</a>. AMD entwickelt und vertreibt <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Integrierter_Schaltkreis\">Computerchips</a>, <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Mikroprozessor\">Mikroprozessoren</a>, <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Chipsatz\">Chipsätze</a>, <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Grafikprozessor\">Grafikprozessoren</a> (<u>GPUs</u>) und <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/System-on-a-Chip\">System-on-a-Chip</a>-Lösungen (<u>SoC</u>). Damit richtet sich das Unternehmen im <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Business-to-Business\">B2B</a>-Bereich speziell an die Computer- und Kommunikationsbranche aber auch direkt an <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Verbraucher\">Verbraucher</a>. AMD hat seit der <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Spin-off_(Unternehmensfinanzierung)\">Ausgründung</a> der eigentlichen Halbleiterherstellung im Jahr 2009 in <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Globalfoundries\">Globalfoundries</a> keine eigene Fabrikationsstätte mehr&nbsp;– das Unternehmen wird daher als <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Fabless\"><em>fabless</em></a> bezeichnet.</p><p>AMD ist seit dem 20.&nbsp;März 2017 im <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/S%26P_500\">Standard-&amp;-Poors-500</a>-Aktienindex gelistet, beschäftigt weltweit rund 28.000 Mitarbeiter (Stand: 2024)<a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/AMD#cite_note-3\">[3]</a> und ist nach <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Intel\">Intel</a> der zweitgrößte <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/X86-Prozessor\">x86-Prozessorhersteller</a> der Welt (Stand: 2011).<a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/AMD#cite_note-4\">[4]</a> Die Aktien des Unternehmens wurden von 1979 bis 2014 an der <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/New_York_Stock_Exchange\"><u>New York Stock Exchange</u></a> gehandelt, seit dem 2. Januar 2015 sind sie an der <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/Nasdaq\">Nasdaq</a> notiert.<a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/AMD#cite_note-5\">[5]</a><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 hover:text-blue-700 underline\" href=\"https://de.wikipedia.org/wiki/AMD#cite_note-6\">[6]</a></p>",
+    "tags": [],
+    "isPremium": true,
+    "status": "published",
+    "createdAt": "2025-12-31T18:38:13.527Z",
+    "updatedAt": "2026-01-01T20:33:16.045Z",
+    "auditStatus": "approved",
+    "auditNotes": "",
+    "auditedAt": "2025-12-31T18:38:13.527Z",
+    "category": "Tech",
+    "analysis": {
+      "overview": "12121",
+      "businessModel": "21212",
+      "risks": "121221",
+      "scenarios": "21212"
+    },
+    "publishedAt": "2025-12-31T18:38:26.997Z",
+    "imageUrl": "/uploads/1767298265227-3e2376ff6ee9a2d8.jpeg",
+    "image": "/uploads/1767298265227-3e2376ff6ee9a2d8.jpeg",
+    "ticker": "AMD"
+  },
+  {
+    "id": "a_mjlwjvgx_0tllx",
+    "slug": "amazon-aws-geschaeftsmodell1-1-1",
+    "title": "Amazon: Mehr als E-Commerce – warum AWS der eigentliche Werttreiber ist",
+    "summary": "Amazon wird häufig als Onlinehändler wahrgenommen. Tatsächlich stammt ein Großteil der operativen Profitabilität aus dem Cloud-Geschäft AWS. Diese Analyse zeigt, wo Amazon wirklich Geld verdient, wie abhängig das Geschäftsmodell von AWS ist und welche Risiken Investoren kennen sollten.",
+    "content": "## Einordnung & zentrale These\n\nAmazon wird an der Börse häufig wie ein klassischer Onlinehändler bewertet.\nDiese Sicht greift zu kurz. Der langfristige Unternehmenswert hängt primär\nvom Cloud-Geschäft AWS ab, das strukturell höhere Margen und planbare Umsätze liefert.\n\nDie zentrale These dieser Analyse:\nNicht der Handel, sondern AWS bestimmt die Investitionsqualität von Amazon.\n\n---\n\n## Wie verdient Amazon sein Geld?\n\nAmazon gliedert sich operativ in mehrere Geschäftsbereiche:\n\n- Onlinehandel (1P & 3P)\n- AWS (Cloud-Infrastruktur)\n- Werbung & Abonnements\n- Logistik & Fulfillment-Services\n\nDer Onlinehandel generiert den größten Umsatz, arbeitet jedoch mit niedrigen\noder teilweise negativen Margen. AWS hingegen liefert einen überproportionalen\nAnteil am operativen Gewinn.\n\n---\n\n## Wo entsteht der eigentliche Unternehmenswert?\n\nAWS bietet skalierbare Cloud-Dienste für Unternehmen, Startups und staatliche\nInstitutionen. Kunden binden sich langfristig an die Infrastruktur, was zu\nwiederkehrenden Umsätzen und hoher Preissetzungsmacht führt.\n\nDie Gewinne aus AWS ermöglichen:\n- Investitionen in Logistik\n- Preiskämpfe im Handel\n- Expansion in neue Geschäftsfelder\n\nAWS fungiert damit als finanzielles Fundament des Gesamtkonzerns.\n\n---\n\n## Abhängigkeiten & strukturelle Kopplungen\n\nAmazon ist in mehrfacher Hinsicht abhängig von AWS:\n\n- Finanzierung neuer Projekte\n- Stabilisierung schwacher Handelsmargen\n- Technologische Infrastruktur interner Systeme\n\nEin Abschwung im Cloud-Geschäft würde sich daher direkt auf die\nInvestitionsfähigkeit des gesamten Konzerns auswirken.\n\n---\n\n## Wettbewerb & Vergleich\n\nIm Cloud-Markt konkurriert AWS primär mit Microsoft Azure und Google Cloud.\nWährend Microsoft stärker im Enterprise-Segment verankert ist, profitiert AWS\nvon seiner Marktführerschaft und breiten Servicepalette.\n\nIm Handel steht Amazon unter zunehmendem Margendruck durch:\n- steigende Logistikkosten\n- regulatorische Anforderungen\n- Konkurrenz aus China\n\n---\n\n## Was sollten Investoren beobachten?\n\nFür langfristige Investoren sind folgende Punkte entscheidend:\n\n- Wachstum und Marge von AWS\n- Entwicklung der Cloud-Nachfrage\n- Regulatorische Eingriffe\n- Kostenstruktur im Handel\n\nNicht der kurzfristige Kursverlauf, sondern diese Faktoren bestimmen,\nob Amazon langfristig Wert schafft.\n",
+    "imageUrl": "https://kartedirekt.de/cdn-cgi/imagedelivery/Pk8Ky-xDyeK8TLUvfplArQ/geschenkkarten-amazon-banner-mobile-1669749303.png-1760271584.2826/public",
+    "tags": [],
+    "isPremium": true,
+    "status": "published",
+    "createdAt": "2025-12-25T20:35:39.153Z",
+    "updatedAt": "2026-01-01T20:32:40.529Z",
+    "auditStatus": "approved",
+    "auditNotes": "",
+    "auditedAt": "2025-12-25T20:35:39.153Z",
+    "category": "Analysen",
+    "analysis": {
+      "overview": "Amazon ist eines der größten Unternehmen der Welt und operiert in mehreren Geschäftsfeldern:\n",
+      "businessModel": "1. E-Commerce (Retail)\n\nHoher Umsatz, niedrige Margen\n\nStark abhängig von Logistik-, Personal- und Energiekosten\n\nDient strategisch als Kundenbasis und Datenquelle\n\n2. AWS (Amazon Web Services)\n\nCloud-Infrastruktur für Unternehmen und Behörden\n\nSehr hohe operative Margen\n\nWiederkehrende Umsätze\n\nFundament für viele Zukunftsinvestitionen des Konzerns\n\n3. Werbung & Services\n\nWerbeumsätze auf der Plattform wachsen stark\n\nHohe Skalierbarkeit\n\nZusätzliche Margenquelle neben AWS\n\n👉 Kernaussage:\nAWS finanziert große Teile der Expansion und kompensiert die schwachen Margen im Handel.",
+      "risks": "",
+      "scenarios": ""
+    },
+    "publishedAt": "2025-12-25T20:36:00.832Z",
+    "image": "https://kartedirekt.de/cdn-cgi/imagedelivery/Pk8Ky-xDyeK8TLUvfplArQ/geschenkkarten-amazon-banner-mobile-1669749303.png-1760271584.2826/public"
+  }
+]

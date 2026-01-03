@@ -1,0 +1,1 @@
+{"version":1,"functions":{"/api/admin/settings":{},"/api/markets/live":{},"/api/assets":{},"/api/assets/[ticker]":{},"/api/admin/[type]":{},"/api/parse-tr-pdf":{},"/api/price/[ticker]":{},"/news/[slug]":{},"/news":{},"/suche":{},"/analysen":{},"/":{}}}

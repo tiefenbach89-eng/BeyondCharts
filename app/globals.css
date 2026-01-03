@@ -1,0 +1,123 @@
+/* app/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   BEYONDCHARTS DESIGN SYSTEM v2.0
+   Trade Republic-inspired calm, high-contrast, minimal UI
+============================================ */
+
+:root {
+  /* Base Colors */
+  --bg: 250 250 250;
+  --card: 255 255 255;
+  --text: 14 14 14;
+  --muted: 106 112 118;
+  --border: 231 234 238;
+
+  /* Brand Colors */
+  --primary: 22 163 74; /* Green - Main Brand Color */
+  --primary-2: 16 185 129; /* Light Green */
+  --warning: 245 158 11; /* Orange */
+  --danger: 239 68 68; /* Red */
+  --premium: 17 24 39; /* Near-Black for Premium Elements */
+  --chip: 244 246 248;
+
+  /* Typography Scale - Single Source of Truth */
+  --fs-0: 0.75rem;   /* 12px - text-xs */
+  --fs-1: 0.875rem;  /* 14px - text-sm */
+  --fs-2: 1rem;      /* 16px - text-base */
+  --fs-3: 1.125rem;  /* 18px - text-lg */
+  --fs-4: 1.5rem;    /* 24px - text-xl */
+  --fs-5: 2rem;      /* 32px - text-2xl */
+  --fs-6: 2.5rem;    /* 40px - text-3xl */
+  --fs-7: 3rem;      /* 48px - text-4xl */
+  --fs-8: 4rem;      /* 64px - text-5xl */
+  --fs-9: 6rem;      /* 96px - text-6xl - Hero Headlines */
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+  font-family: var(--font-sans), ui-sans-serif, system-ui;
+  font-size: var(--fs-2);
+  line-height: 1.55;
+  transition: padding-top 0.3s ease;
+}
+
+/* Ensure consistent default typography everywhere */
+h1, h2, h3, h4, h5, h6 {
+  color: rgb(var(--text));
+}
+
+a {
+  color: inherit;
+}
+
+/* Touch ergonomics */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ff-tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Text Selection Styling - Trade Republic Blue */
+::selection {
+  background: rgba(37, 99, 235, 0.25); /* TR Blue - #2563eb */
+  color: rgb(var(--text));
+}
+
+::-moz-selection {
+  background: rgba(37, 99, 235, 0.25);
+  color: rgb(var(--text));
+}
+
+@layer components {
+  .ff-container {
+    @apply mx-auto w-full max-w-6xl px-4 md:px-6;
+  }
+  .ff-card {
+    background: rgb(var(--card));
+    border: 1px solid rgb(var(--border));
+    @apply rounded-2xl shadow-card;
+  }
+  .ff-muted {
+    color: rgb(var(--muted));
+  }
+}
+
+/* ============================================
+   IMMERSIVE READING MODE
+   Versteckt globalen Header auf Detail-Pages
+============================================ */
+
+/* Verstecke nur den ERSTEN header/nav (global navigation), nicht alle */
+body.immersive-reading > header:not([class*="fixed"]):first-of-type,
+body.immersive-reading > nav:not([class*="fixed"]):first-of-type {
+  display: none !important;
+}
+
+/* Entferne padding-top vom body falls vorhanden */
+body.immersive-reading {
+  padding-top: 0 !important;
+}
+
+/* Falls dein Layout einen Container hat, auch da padding entfernen */
+body.immersive-reading > div:first-child {
+  padding-top: 0 !important;
+}
+
+/* Smooth transitions */
+header:not([class*="fixed"]),
+nav:not([class*="fixed"]) {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
