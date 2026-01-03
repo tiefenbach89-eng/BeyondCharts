@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { listContent, upsertContent, deleteContent } from "@/lib/content.server";
 import { getSettings } from "@/lib/settings.server";
 import { processImageUrl } from "@/lib/imageStorage";
@@ -21,17 +21,11 @@ async function triggerRevalidation(
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
 
-    const response = await fetch(`${baseUrl}/api/revalidate`, {
+    await fetch(`${baseUrl}/api/revalidate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type, slug, action }),
     });
-
-    if (response.ok) {
-      console.log(`✅ Revalidation triggered for ${type}${slug ? `/${slug}` : ""}`);
-    } else {
-      console.warn(`⚠️ Revalidation returned status ${response.status}`);
-    }
   } catch (err) {
     console.error("⚠️ Revalidation failed (non-critical):", err);
   }
@@ -40,15 +34,16 @@ async function triggerRevalidation(
 /* ===================== GET ===================== */
 
 export async function GET(
-  request: Request,
-  context: { params: { type: string } }
+  request: NextRequest,
+  context: { params: Promise<{ type: string }> }
 ) {
-  const type = context.params.type as ContentType;
+  const { type } = await context.params;
+  const contentType = type as ContentType;
 
-  const url = new URL(request.url);
-  const includeDrafts = url.searchParams.get("includeDrafts") === "1";
+  const includeDrafts =
+    request.nextUrl.searchParams.get("includeDrafts") === "1";
 
-  const items = await listContent(type, { includeDrafts });
+  const items = await listContent(contentType, { includeDrafts });
 
   return NextResponse.json(items);
 }
@@ -56,14 +51,16 @@ export async function GET(
 /* ===================== POST ===================== */
 
 export async function POST(
-  request: Request,
-  context: { params: { type: string } }
+  request: NextRequest,
+  context: { params: Promise<{ type: string }> }
 ) {
-  const type = context.params.type as ContentType;
+  const { type } = await context.params;
+  const contentType = type as ContentType;
+
   const body = await request.json();
   const settings = await getSettings();
 
-  const error = validatePayload(type, body, settings);
+  const error = validatePayload(contentType, body, settings);
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
   }
@@ -72,7 +69,7 @@ export async function POST(
     body.imageUrl = await processImageUrl(body.imageUrl);
   }
 
-  if (type === "analyses" && body.snapshot) {
+  if (contentType === "analyses" && body.snapshot) {
     body.analysis = {
       overview: body.snapshot.thesis || "",
       businessModel: body.snapshot.profitability || "",
@@ -82,10 +79,10 @@ export async function POST(
     delete body.snapshot;
   }
 
-  const item = await upsertContent(type, body);
+  const item = await upsertContent(contentType, body);
 
   if (item.status === "published") {
-    await triggerRevalidation(type, item.slug, "create");
+    await triggerRevalidation(contentType, item.slug, "create");
   }
 
   return NextResponse.json(item);
@@ -94,14 +91,16 @@ export async function POST(
 /* ===================== PUT ===================== */
 
 export async function PUT(
-  request: Request,
-  context: { params: { type: string } }
+  request: NextRequest,
+  context: { params: Promise<{ type: string }> }
 ) {
-  const type = context.params.type as ContentType;
-  const body = await request.json();
+  const { type } = await context.params;
+  const contentType = type as ContentType;
 
+  const body = await request.json();
   const settings = await getSettings();
-  const error = validatePayload(type, body, settings);
+
+  const error = validatePayload(contentType, body, settings);
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
   }
@@ -114,7 +113,7 @@ export async function PUT(
     }
   }
 
-  if (type === "analyses" && body.snapshot) {
+  if (contentType === "analyses" && body.snapshot) {
     body.analysis = {
       overview: body.snapshot.thesis || "",
       businessModel: body.snapshot.profitability || "",
@@ -124,10 +123,10 @@ export async function PUT(
     delete body.snapshot;
   }
 
-  const item = await upsertContent(type, body);
+  const item = await upsertContent(contentType, body);
 
   if (item.status === "published") {
-    await triggerRevalidation(type, item.slug, "update");
+    await triggerRevalidation(contentType, item.slug, "update");
   }
 
   return NextResponse.json(item);
@@ -136,20 +135,19 @@ export async function PUT(
 /* ===================== DELETE ===================== */
 
 export async function DELETE(
-  request: Request,
-  context: { params: { type: string } }
+  request: NextRequest,
+  context: { params: Promise<{ type: string }> }
 ) {
-  const type = context.params.type as ContentType;
+  const { type } = await context.params;
+  const contentType = type as ContentType;
 
-  const url = new URL(request.url);
-  const id = url.searchParams.get("id");
-
+  const id = request.nextUrl.searchParams.get("id");
   if (!id) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }
 
-  await deleteContent(type, id);
-  await triggerRevalidation(type, undefined, "delete");
+  await deleteContent(contentType, id);
+  await triggerRevalidation(contentType, undefined, "delete");
 
   return NextResponse.json({ ok: true });
 }
