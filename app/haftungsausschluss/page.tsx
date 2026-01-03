@@ -89,7 +89,7 @@ export default function DisclaimerPage() {
                     3. Transparenz & Interessenkonflikte
                   </h2>
                   <p className="text-base text-slate-600 leading-relaxed">
-                    Wir praktizieren <strong className="text-slate-900">"Skin in the Game"</strong>. Autoren von BeyondCharts halten zum Zeitpunkt der Veröffentlichung möglicherweise Positionen in den besprochenen Wertpapieren (insbesondere innerhalb des Real-Money-Portfolios). Es kann daher ein Interessenkonflikt vorliegen. Wir berichten nach bestem Wissen und Gewissen, weisen jedoch darauf hin, dass unsere Ansichten subjektiv sind.
+                    Wir praktizieren <strong className="text-slate-900">{'Skin in the Game'}</strong>. Autoren von BeyondCharts halten zum Zeitpunkt der Veröffentlichung möglicherweise Positionen in den besprochenen Wertpapieren (insbesondere innerhalb des Real-Money-Portfolios). Es kann daher ein Interessenkonflikt vorliegen. Wir berichten nach bestem Wissen und Gewissen, weisen jedoch darauf hin, dass unsere Ansichten subjektiv sind.
                   </p>
                 </div>
               </div>

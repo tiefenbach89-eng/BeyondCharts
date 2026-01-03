@@ -38,7 +38,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
               <p className="text-sm text-slate-500 mt-1">
                 {q ? (
                   <>
-                    {totalResults} {totalResults === 1 ? 'Ergebnis' : 'Ergebnisse'} für <span className="font-semibold text-slate-700">"{searchParams.q}"</span>
+                    {totalResults} {totalResults === 1 ? 'Ergebnis' : 'Ergebnisse'} für <span className="font-semibold text-slate-700">&quot;{searchParams.q}&quot;</span>
                   </>
                 ) : (
                   'Gib einen Suchbegriff ein'
@@ -82,7 +82,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">Keine Ergebnisse gefunden</h3>
             <p className="text-slate-600 max-w-md mx-auto">
-              Für <span className="font-semibold">"{searchParams.q}"</span> wurden keine Treffer gefunden. 
+              Für <span className="font-semibold">&quot;{searchParams.q}&quot;</span> wurden keine Treffer gefunden.
               Versuche es mit anderen Begriffen.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-2">

@@ -107,7 +107,7 @@ export function SearchOverlay() {
                 className="mt-4 w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-violet-50 hover:from-blue-100 hover:to-violet-100 rounded-xl border border-blue-200 transition-all group"
               >
                 <span className="text-sm font-medium text-slate-700">
-                  Suche nach <span className="font-bold text-blue-700">"{query.trim()}"</span>
+                  Suche nach <span className="font-bold text-blue-700">&quot;{query.trim()}&quot;</span>
                 </span>
                 <ArrowRight className="h-4 w-4 text-blue-600 group-hover:translate-x-1 transition-transform" />
               </button>

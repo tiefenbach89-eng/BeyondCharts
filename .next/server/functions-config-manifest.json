@@ -1,1 +1,1 @@
-{"version":1,"functions":{"/api/admin/[type]":{},"/api/admin/settings":{},"/api/assets/[ticker]":{},"/api/markets/live":{},"/api/assets":{},"/api/parse-tr-pdf":{},"/api/price/[ticker]":{},"/analysen":{},"/news/[slug]":{},"/":{},"/news":{},"/suche":{}}}
+{"version":1,"functions":{"/api/admin/[type]":{},"/api/admin/settings":{},"/api/assets/[ticker]":{},"/api/parse-tr-pdf":{},"/api/assets":{},"/api/price/[ticker]":{},"/analysen":{},"/api/markets/live":{},"/news/[slug]":{},"/":{},"/news":{},"/suche":{}}}
