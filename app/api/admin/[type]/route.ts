@@ -5,8 +5,29 @@ import { processImageUrl } from "@/lib/imageStorage";
 
 export const runtime = "nodejs";
 
-
 type ContentType = "news" | "analyses";
+
+// 🔥 HELPER: Trigger Revalidation
+async function triggerRevalidation(type: ContentType, slug?: string, action?: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    
+    const response = await fetch(`${baseUrl}/api/revalidate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, slug, action })
+    });
+    
+    if (response.ok) {
+      console.log(`✅ Revalidation triggered for ${type}${slug ? `/${slug}` : ''}`);
+    } else {
+      console.warn(`⚠️ Revalidation returned status ${response.status}`);
+    }
+  } catch (err) {
+    console.error('⚠️ Revalidation failed (non-critical):', err);
+  }
+}
 
 export async function GET(
   req: NextRequest,
@@ -51,6 +72,12 @@ export async function POST(
   }
 
   const item = await upsertContent(params.type, body);
+  
+  // 🔥 TRIGGER REVALIDATION IF PUBLISHED
+  if (item.status === 'published') {
+    await triggerRevalidation(params.type, item.slug, 'create');
+  }
+
   return NextResponse.json(item);
 }
 
@@ -110,6 +137,11 @@ export async function PUT(
   
   console.log('✅ Saved! Returned imageUrl:', item.imageUrl);
   
+  // 🔥 TRIGGER REVALIDATION IF PUBLISHED
+  if (item.status === 'published') {
+    await triggerRevalidation(params.type, item.slug, 'update');
+  }
+  
   return NextResponse.json(item);
 }
 
@@ -125,6 +157,10 @@ export async function DELETE(
   }
 
   await deleteContent(params.type, id);
+  
+  // 🔥 TRIGGER REVALIDATION AFTER DELETE
+  await triggerRevalidation(params.type, undefined, 'delete');
+  
   return NextResponse.json({ ok: true });
 }
 
