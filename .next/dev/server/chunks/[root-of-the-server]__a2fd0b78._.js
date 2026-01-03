@@ -427,14 +427,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$imageStorage$2e$ts__$
 ;
 ;
 const runtime = "nodejs";
-// 🔥 HELPER: Trigger Revalidation
-async function triggerRevalidation(type, slug, action) {
+/* ===================== REVALIDATION ===================== */ async function triggerRevalidation(type, slug, action) {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-        const response = await fetch(`${baseUrl}/api/revalidate`, {
-            method: 'POST',
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+        await fetch(`${baseUrl}/api/revalidate`, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 type,
@@ -442,27 +441,25 @@ async function triggerRevalidation(type, slug, action) {
                 action
             })
         });
-        if (response.ok) {
-            console.log(`✅ Revalidation triggered for ${type}${slug ? `/${slug}` : ''}`);
-        } else {
-            console.warn(`⚠️ Revalidation returned status ${response.status}`);
-        }
     } catch (err) {
-        console.error('⚠️ Revalidation failed (non-critical):', err);
+        console.error("⚠️ Revalidation failed (non-critical):", err);
     }
 }
-async function GET(req, { params }) {
-    const url = new URL(req.url);
-    const includeDrafts = url.searchParams.get("includeDrafts") === "1";
-    const items = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["listContent"])(params.type, {
+async function GET(request, context) {
+    const { type } = await context.params;
+    const contentType = type;
+    const includeDrafts = request.nextUrl.searchParams.get("includeDrafts") === "1";
+    const items = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["listContent"])(contentType, {
         includeDrafts
     });
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(items);
 }
-async function POST(req, { params }) {
-    const body = await req.json();
+async function POST(request, context) {
+    const { type } = await context.params;
+    const contentType = type;
+    const body = await request.json();
     const settings = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$settings$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getSettings"])();
-    const error = validatePayload(params.type, body, settings);
+    const error = validatePayload(contentType, body, settings);
     if (error) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error
@@ -470,38 +467,30 @@ async function POST(req, { params }) {
             status: 400
         });
     }
-    // Process image URL (convert base64 to file if needed)
     if (body.imageUrl) {
         body.imageUrl = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$imageStorage$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["processImageUrl"])(body.imageUrl);
     }
-    // Convert snapshot to analysis for analyses type
-    if (params.type === 'analyses' && body.snapshot) {
+    if (contentType === "analyses" && body.snapshot) {
         body.analysis = {
-            overview: body.snapshot.thesis || '',
-            businessModel: body.snapshot.profitability || '',
-            risks: body.snapshot.risk || '',
-            scenarios: body.snapshot.substance || ''
+            overview: body.snapshot.thesis || "",
+            businessModel: body.snapshot.profitability || "",
+            risks: body.snapshot.risk || "",
+            scenarios: body.snapshot.substance || ""
         };
         delete body.snapshot;
     }
-    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["upsertContent"])(params.type, body);
-    // 🔥 TRIGGER REVALIDATION IF PUBLISHED
-    if (item.status === 'published') {
-        await triggerRevalidation(params.type, item.slug, 'create');
+    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["upsertContent"])(contentType, body);
+    if (item.status === "published") {
+        await triggerRevalidation(contentType, item.slug, "create");
     }
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(item);
 }
-async function PUT(req, { params }) {
-    const body = await req.json();
-    // 🔍 DEBUG LOG - Was kommt rein?
-    console.log('📦 PUT Request received:');
-    console.log('   Title:', body.title);
-    console.log('   Has imageUrl?', !!body.imageUrl);
-    console.log('   ImageUrl type:', typeof body.imageUrl);
-    console.log('   ImageUrl length:', body.imageUrl?.length || 0);
-    console.log('   ImageUrl preview:', body.imageUrl?.substring(0, 80));
+async function PUT(request, context) {
+    const { type } = await context.params;
+    const contentType = type;
+    const body = await request.json();
     const settings = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$settings$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getSettings"])();
-    const error = validatePayload(params.type, body, settings);
+    const error = validatePayload(contentType, body, settings);
     if (error) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error
@@ -509,45 +498,32 @@ async function PUT(req, { params }) {
             status: 400
         });
     }
-    // Process image URL (convert base64 to file if needed)
     if (body.imageUrl) {
         try {
-            console.log('🖼️ Starting image processing...');
-            const originalUrl = body.imageUrl;
             body.imageUrl = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$imageStorage$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["processImageUrl"])(body.imageUrl);
-            console.log('✅ Image processed!');
-            console.log('   Before:', originalUrl.substring(0, 50));
-            console.log('   After:', body.imageUrl);
         } catch (err) {
-            console.error('❌ Image processing ERROR:', err);
-            console.error('   Error message:', err instanceof Error ? err.message : 'Unknown error');
-        // Keep original URL if processing fails
+            console.error("❌ Image processing failed:", err);
         }
-    } else {
-        console.log('⚠️ No imageUrl in body');
     }
-    // Convert snapshot to analysis for analyses type
-    if (params.type === 'analyses' && body.snapshot) {
+    if (contentType === "analyses" && body.snapshot) {
         body.analysis = {
-            overview: body.snapshot.thesis || '',
-            businessModel: body.snapshot.profitability || '',
-            risks: body.snapshot.risk || '',
-            scenarios: body.snapshot.substance || ''
+            overview: body.snapshot.thesis || "",
+            businessModel: body.snapshot.profitability || "",
+            risks: body.snapshot.risk || "",
+            scenarios: body.snapshot.substance || ""
         };
         delete body.snapshot;
     }
-    console.log('💾 Saving to DB with imageUrl:', body.imageUrl);
-    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["upsertContent"])(params.type, body);
-    console.log('✅ Saved! Returned imageUrl:', item.imageUrl);
-    // 🔥 TRIGGER REVALIDATION IF PUBLISHED
-    if (item.status === 'published') {
-        await triggerRevalidation(params.type, item.slug, 'update');
+    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["upsertContent"])(contentType, body);
+    if (item.status === "published") {
+        await triggerRevalidation(contentType, item.slug, "update");
     }
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(item);
 }
-async function DELETE(req, { params }) {
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id");
+async function DELETE(request, context) {
+    const { type } = await context.params;
+    const contentType = type;
+    const id = request.nextUrl.searchParams.get("id");
     if (!id) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error: "Missing id"
@@ -555,21 +531,18 @@ async function DELETE(req, { params }) {
             status: 400
         });
     }
-    await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["deleteContent"])(params.type, id);
-    // 🔥 TRIGGER REVALIDATION AFTER DELETE
-    await triggerRevalidation(params.type, undefined, 'delete');
+    await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["deleteContent"])(contentType, id);
+    await triggerRevalidation(contentType, undefined, "delete");
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
         ok: true
     });
 }
 /* ===================== VALIDATION ===================== */ function validatePayload(type, payload, settings) {
-    // 1. Publish nur mit Audit
     if (payload.status === "published") {
         if (payload.auditStatus !== "approved") {
             return "Beitrag muss vor Veröffentlichung freigegeben werden.";
         }
     }
-    // 2. Externe News brauchen Quelle + Link
     if (type === "news") {
         const requireSource = settings?.legal?.requireSourceForExternalNews !== false;
         if (requireSource && payload.sourceType === "external") {
@@ -581,8 +554,6 @@ async function DELETE(req, { params }) {
             }
         }
     }
-    // 3. Premium darf gesetzt sein, aber Feature kann deaktiviert sein
-    // (kein Block – nur Content-Flag)
     return null;
 }
 function isValidHttpUrl(maybeUrl) {

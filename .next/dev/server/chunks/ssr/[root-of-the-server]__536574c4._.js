@@ -292,13 +292,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$news$2f5b$slug$5d2f$N
 ;
 ;
 ;
-/**
- * Type Guard: stellt sicher, dass es wirklich ein NewsItem ist
- */ function isNewsItem(item) {
+/* -------------------------------------------------------------------------- */ /* Type Guard                                                                 */ /* -------------------------------------------------------------------------- */ function isNewsItem(item) {
     return typeof item === "object" && item !== null && "source" in item && "sourceType" in item && "impact" in item;
 }
 async function generateMetadata({ params }) {
-    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getBySlug"])("news", params.slug);
+    const { slug } = await params;
+    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getBySlug"])("news", slug);
     if (!item || !isNewsItem(item)) {
         return {
             title: "News nicht gefunden"
@@ -327,12 +326,11 @@ async function generateMetadata({ params }) {
     };
 }
 async function NewsDetailPage({ params }) {
-    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getBySlug"])("news", params.slug);
-    // Not found oder falscher Content-Typ
+    const { slug } = await params;
+    const item = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$content$2e$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getBySlug"])("news", slug);
     if (!item || !isNewsItem(item)) {
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["notFound"])();
     }
-    // Nur veröffentlichte News anzeigen
     if (item.status !== "published") {
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["notFound"])();
     }
@@ -340,15 +338,14 @@ async function NewsDetailPage({ params }) {
         item: item
     }, void 0, false, {
         fileName: "[project]/app/news/[slug]/page.tsx",
-        lineNumber: 78,
+        lineNumber: 86,
         columnNumber: 10
     }, this);
-} /**
- * Optional: Generate Static Params for Static Generation
- */  /*
+} /* -------------------------------------------------------------------------- */  /* Optional Static Params (intentionally disabled)                             */  /* -------------------------------------------------------------------------- */  /*
 export async function generateStaticParams() {
   const { listContent } = await import("@/lib/content.server");
   const items = await listContent("news");
+
   return items.map((item) => ({
     slug: item.slug,
   }));

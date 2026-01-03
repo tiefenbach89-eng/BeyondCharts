@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Search, User, Sparkles } from "lucide-react";
+import { Search, User, Sparkles, Shield } from "lucide-react";
 import { useSearch } from "@/components/search/SearchProvider";
-import { useRole } from "@/components/role/RoleProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const nav = [
   { href: "/news", label: "News" },
@@ -20,15 +20,15 @@ const nav = [
 export function Header() {
   const pathname = usePathname();
   const { setOpen } = useSearch();
-  const { role } = useRole();
+  const { user, role, isPremium, isAdmin, loading } = useAuth();
 
-  const isAdmin = pathname?.startsWith("/admin");
+  const isAdminPage = pathname?.startsWith("/admin");
 
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b bg-white/95 backdrop-blur-md shadow-sm",
-        isAdmin ? "border-slate-200/70 bg-white/90" : "border-slate-200"
+        isAdminPage ? "border-slate-200/70 bg-white/90" : "border-slate-200"
       )}
     >
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between gap-3 px-4 md:h-20">
@@ -58,7 +58,7 @@ export function Header() {
           <nav
             className={cn(
               "hidden lg:flex items-center gap-1 rounded-2xl p-1.5 shadow-sm",
-              isAdmin 
+              isAdminPage 
                 ? "bg-white/50 backdrop-blur-sm border border-slate-200/60" 
                 : "bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200/50"
             )}
@@ -72,10 +72,10 @@ export function Header() {
                   className={cn(
                     "relative rounded-xl px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-all duration-200",
                     active
-                      ? isAdmin
+                      ? isAdminPage
                         ? "bg-white text-slate-900 shadow-md"
                         : "bg-white text-blue-600 shadow-md"
-                      : isAdmin
+                      : isAdminPage
                         ? "text-slate-500 hover:text-slate-900 hover:bg-white/50"
                         : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
                   )}
@@ -92,8 +92,8 @@ export function Header() {
 
         {/* Right Section - Actions */}
         <div className="flex items-center gap-2">
-          {/* Premium Badge */}
-          {role !== "premium" && (
+          {/* Premium Badge - Hide if already premium */}
+          {!isPremium && (
             <Link href="/premium" className="hidden sm:block">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-violet-600 rounded-xl opacity-20 group-hover:opacity-30 blur transition-opacity" />
@@ -101,6 +101,19 @@ export function Header() {
                   <Sparkles className="h-3 w-3" />
                   <span className="font-semibold">Premium</span>
                 </Badge>
+              </div>
+            </Link>
+          )}
+
+          {/* Admin Button - ONLY FOR ADMINS */}
+          {isAdmin && (
+            <Link href="/admin" className="hidden sm:block">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-xl opacity-20 group-hover:opacity-30 blur transition-opacity" />
+                <button className="relative inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl text-sm font-semibold">
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </button>
               </div>
             </Link>
           )}
@@ -114,11 +127,18 @@ export function Header() {
             <Search className="h-4 w-4 text-slate-600" />
           </button>
 
-          {/* Account Button */}
-          <Link href="/account" className="hidden sm:block">
-            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 hover:shadow-md text-sm font-semibold text-slate-700">
+          {/* Account Button - Shows role when logged in */}
+          <Link href="/konto" className="hidden sm:block">
+            <button className={cn(
+              "inline-flex items-center gap-2 h-10 px-4 rounded-xl border transition-all duration-200 hover:shadow-md text-sm font-semibold",
+              user
+                ? "border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700"
+                : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700"
+            )}>
               <User className="h-4 w-4" />
-              <span>Konto</span>
+              <span>
+                {loading ? '...' : user ? role.charAt(0).toUpperCase() + role.slice(1) : 'Konto'}
+              </span>
             </button>
           </Link>
         </div>
