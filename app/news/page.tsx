@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function NewsPage() {
   const items = await listContent("news");

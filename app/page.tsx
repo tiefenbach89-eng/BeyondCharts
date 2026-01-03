@@ -17,6 +17,7 @@ import { PremiumIcon } from "@/components/PremiumIcon";
 import { AnalysesGrid } from "@/components/home/AnalysesGrid";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function HomePage() {
   const allNewsRaw = await listContent("news");

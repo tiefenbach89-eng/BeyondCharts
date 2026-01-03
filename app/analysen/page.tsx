@@ -15,6 +15,7 @@ import {
 import { PremiumIcon } from "@/components/PremiumIcon";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function AnalysenPage() {
   const items = await listContent("analyses");
