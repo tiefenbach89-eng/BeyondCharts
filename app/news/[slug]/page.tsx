@@ -6,16 +6,20 @@ import { NewsView } from "./NewsView";
 import type { Metadata } from "next";
 import type { NewsItem } from "@/types/news";
 
-// Type-safe params
+/* -------------------------------------------------------------------------- */
+/* Types                                                                      */
+/* -------------------------------------------------------------------------- */
+
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-/**
- * Type Guard: stellt sicher, dass es wirklich ein NewsItem ist
- */
+/* -------------------------------------------------------------------------- */
+/* Type Guard                                                                 */
+/* -------------------------------------------------------------------------- */
+
 function isNewsItem(item: unknown): item is NewsItem {
   return (
     typeof item === "object" &&
@@ -26,13 +30,16 @@ function isNewsItem(item: unknown): item is NewsItem {
   );
 }
 
-/**
- * Generate Metadata for SEO
- */
+/* -------------------------------------------------------------------------- */
+/* Metadata                                                                   */
+/* -------------------------------------------------------------------------- */
+
 export async function generateMetadata(
   { params }: PageProps
 ): Promise<Metadata> {
-  const item = await getBySlug("news", params.slug);
+  const { slug } = await params;
+
+  const item = await getBySlug("news", slug);
 
   if (!item || !isNewsItem(item)) {
     return {
@@ -59,18 +66,19 @@ export async function generateMetadata(
   };
 }
 
-/**
- * Main Page Component
- */
-export default async function NewsDetailPage({ params }: PageProps) {
-  const item = await getBySlug("news", params.slug);
+/* -------------------------------------------------------------------------- */
+/* Page                                                                       */
+/* -------------------------------------------------------------------------- */
 
-  // Not found oder falscher Content-Typ
+export default async function NewsDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  const item = await getBySlug("news", slug);
+
   if (!item || !isNewsItem(item)) {
     notFound();
   }
 
-  // Nur veröffentlichte News anzeigen
   if (item.status !== "published") {
     notFound();
   }
@@ -78,13 +86,14 @@ export default async function NewsDetailPage({ params }: PageProps) {
   return <NewsView item={item} />;
 }
 
-/**
- * Optional: Generate Static Params for Static Generation
- */
+/* -------------------------------------------------------------------------- */
+/* Optional Static Params (intentionally disabled)                             */
+/* -------------------------------------------------------------------------- */
 /*
 export async function generateStaticParams() {
   const { listContent } = await import("@/lib/content.server");
   const items = await listContent("news");
+
   return items.map((item) => ({
     slug: item.slug,
   }));
