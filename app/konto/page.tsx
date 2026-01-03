@@ -12,58 +12,41 @@ import {
   LogOut, 
   Mail,
   Lock,
+  Eye,
+  EyeOff,
   Sparkles, 
-  Settings,
   Check,
   ArrowRight,
   AlertCircle,
   UserPlus,
-  Trash2,
-  Edit,
-  Eye,
-  EyeOff
+  Key
 } from "lucide-react";
-
-interface UserData {
-  id: string;
-  email: string;
-  role: string;
-  created_at: string;
-}
 
 export default function AccountPage() {
   const { user, role, isPremium, isAdmin, loading: authLoading, signOut } = useAuth();
-  const [users, setUsers] = useState<UserData[]>([]);
+  
+  // User Management State
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState<'free' | 'premium' | 'admin'>('free');
+  
+  // Password Change State
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  useEffect(() => {
-    if (isAdmin) {
-      loadUsers();
-    }
-  }, [isAdmin]);
-
-  const loadUsers = async () => {
-    try {
-      // Get all users from auth.users (requires service role in production!)
-      // For now, we'll show a message
-      setUsers([]);
-    } catch (err) {
-      console.error('Failed to load users:', err);
-    }
-  };
-
+  // ===== MAGIC LINK: User erstellen =====
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -71,26 +54,64 @@ export default function AccountPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // Send Magic Link statt Password!
+      const { data, error } = await supabase.auth.signInWithOtp({
         email: newUserEmail,
-        password: newUserPassword,
         options: {
           data: {
             role: newUserRole,
           },
+          emailRedirectTo: `${window.location.origin}/konto`,
         },
       });
 
       if (error) throw error;
 
-      setSuccess(`User ${newUserEmail} erfolgreich erstellt!`);
+      setSuccess(`✅ Magic Link wurde an ${newUserEmail} gesendet! Der User kann sich damit anmelden und dann ein Passwort setzen.`);
       setNewUserEmail('');
-      setNewUserPassword('');
       setNewUserRole('free');
+      
+      setTimeout(() => setSuccess(''), 8000);
+    } catch (err: any) {
+      setError(err.message || 'Fehler beim Senden des Magic Links');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===== PASSWORD CHANGE =====
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (newPassword !== confirmPassword) {
+      setError('Passwörter stimmen nicht überein!');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('Passwort muss mindestens 6 Zeichen lang sein!');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      setSuccess('✅ Passwort erfolgreich geändert!');
+      setNewPassword('');
+      setConfirmPassword('');
+      setShowPasswordChange(false);
       
       setTimeout(() => setSuccess(''), 5000);
     } catch (err: any) {
-      setError(err.message || 'Fehler beim Erstellen des Users');
+      setError(err.message || 'Fehler beim Ändern des Passworts');
     } finally {
       setLoading(false);
     }
@@ -148,6 +169,23 @@ export default function AccountPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       <div className="max-w-7xl mx-auto px-6 py-12">
         
+        {/* Global Messages */}
+        {error && (
+          <div className="mb-6 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <p className="text-sm">{error}</p>
+            <button onClick={() => setError('')} className="ml-auto text-red-400 hover:text-red-600">✕</button>
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700">
+            <Check className="h-5 w-5 flex-shrink-0" />
+            <p className="text-sm">{success}</p>
+            <button onClick={() => setSuccess('')} className="ml-auto text-emerald-400 hover:text-emerald-600">✕</button>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
@@ -175,8 +213,7 @@ export default function AccountPage() {
             </button>
           </div>
 
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border shadow-sm ${currentRole.color}">
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border shadow-sm ${currentRole.color}`}>
             <RoleIcon className="h-5 w-5" />
             <span className="text-sm font-bold">{currentRole.label}</span>
           </div>
@@ -184,12 +221,100 @@ export default function AccountPage() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           
-          {/* Left Column - Account Info */}
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             
             {/* Account Overview */}
             <Card className="p-8 bg-white border-none shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900 mb-6">Konto Übersicht</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-slate-900">Konto Übersicht</h2>
+                
+                {/* Password Change Button */}
+                <button
+                  onClick={() => setShowPasswordChange(!showPasswordChange)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl transition-all font-semibold text-sm"
+                >
+                  <Key className="h-4 w-4" />
+                  Passwort ändern
+                </button>
+              </div>
+
+              {/* Password Change Form */}
+              {showPasswordChange && (
+                <form onSubmit={handlePasswordChange} className="mb-6 p-6 bg-blue-50 rounded-xl space-y-4">
+                  <h3 className="font-semibold text-slate-900 mb-4">Neues Passwort setzen</h3>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-900 mb-2">
+                      Neues Passwort
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                      <input
+                        type={showNewPassword ? "text" : "password"}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="Mindestens 6 Zeichen"
+                        required
+                        minLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-900 mb-2">
+                      Passwort bestätigen
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="Passwort wiederholen"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50"
+                    >
+                      {loading ? 'Speichere...' : 'Passwort ändern'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowPasswordChange(false);
+                        setNewPassword('');
+                        setConfirmPassword('');
+                      }}
+                      className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all"
+                    >
+                      Abbrechen
+                    </button>
+                  </div>
+                </form>
+              )}
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
@@ -254,7 +379,7 @@ export default function AccountPage() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-xl font-bold text-slate-900">User Management</h2>
-                    <p className="text-sm text-slate-500 mt-1">Erstelle neue Admins oder Premium User</p>
+                    <p className="text-sm text-slate-500 mt-1">Sende Magic Links an neue User</p>
                   </div>
                   <button
                     onClick={() => setShowUserManagement(!showUserManagement)}
@@ -267,19 +392,11 @@ export default function AccountPage() {
 
                 {showUserManagement && (
                   <form onSubmit={handleCreateUser} className="space-y-4 p-6 bg-slate-50 rounded-xl">
-                    {error && (
-                      <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
-                        <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                        <p className="text-sm">{error}</p>
-                      </div>
-                    )}
-
-                    {success && (
-                      <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700">
-                        <Check className="h-5 w-5 flex-shrink-0" />
-                        <p className="text-sm">{success}</p>
-                      </div>
-                    )}
+                    <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 mb-4">
+                      <p className="text-sm text-blue-900">
+                        <strong>✨ Magic Link:</strong> Der User erhält eine Email mit einem Login-Link. Beim ersten Login kann er selbst ein Passwort setzen!
+                      </p>
+                    </div>
 
                     <div>
                       <label className="block text-sm font-semibold text-slate-900 mb-2">
@@ -295,31 +412,6 @@ export default function AccountPage() {
                           placeholder="user@example.com"
                           required
                         />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-900 mb-2">
-                        Passwort
-                      </label>
-                      <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          value={newUserPassword}
-                          onChange={(e) => setNewUserPassword(e.target.value)}
-                          className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
-                          placeholder="Mindestens 6 Zeichen"
-                          required
-                          minLength={6}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                        >
-                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                        </button>
                       </div>
                     </div>
 
@@ -361,16 +453,10 @@ export default function AccountPage() {
                       disabled={loading}
                       className="w-full py-3 px-6 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Erstelle User...' : 'User erstellen'}
+                      {loading ? 'Sende Magic Link...' : '✨ Magic Link senden'}
                     </button>
                   </form>
                 )}
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                  <p className="text-sm text-blue-900">
-                    <strong>💡 Tipp:</strong> Neue Admins können sich sofort anmelden und haben vollen CMS-Zugriff.
-                  </p>
-                </div>
               </Card>
             )}
 
@@ -379,7 +465,6 @@ export default function AccountPage() {
           {/* Right Column */}
           <div className="space-y-6">
             
-            {/* Premium CTA */}
             {!isPremium && !isAdmin && (
               <Card className="p-6 bg-gradient-to-br from-blue-600 to-violet-600 border-none shadow-xl text-white">
                 <Crown className="h-12 w-12 mb-4" />
@@ -397,33 +482,20 @@ export default function AccountPage() {
               </Card>
             )}
 
-            {/* Quick Links */}
             <Card className="p-6 bg-white border-none shadow-sm">
               <h3 className="text-lg font-bold text-slate-900 mb-4">Quick Links</h3>
               <div className="space-y-2">
-                <a
-                  href="/news"
-                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
-                >
+                <a href="/news" className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
                   📰 News
                 </a>
-                <a
-                  href="/analysen"
-                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
-                >
+                <a href="/analysen" className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
                   📊 Analysen
                 </a>
-                <a
-                  href="/assets"
-                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
-                >
+                <a href="/assets" className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
                   💼 Assets
                 </a>
                 {isAdmin && (
-                  <a
-                    href="/admin"
-                    className="block px-4 py-3 text-sm text-violet-700 hover:bg-violet-50 rounded-lg transition-colors font-semibold"
-                  >
+                  <a href="/admin" className="block px-4 py-3 text-sm text-violet-700 hover:bg-violet-50 rounded-lg transition-colors font-semibold">
                     🔧 Admin Dashboard
                   </a>
                 )}
