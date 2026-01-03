@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // File: C:\Users\loel\Desktop\Supabase\app\page.tsx
+=======
+// File: C:\Users\loel\Desktop\Coding\3.0\app\page.tsx
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 self.__REACT_LOADABLE_MANIFEST="{}";
+=======
+self.__REACT_LOADABLE_MANIFEST="{}"
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555

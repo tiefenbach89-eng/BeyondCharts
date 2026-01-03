@@ -1,5 +1,6 @@
 [
   {
+<<<<<<< HEAD
     "id": "n_mjwpl15q_q9zgx",
     "slug": "oioioi",
     "title": "oioioi",
@@ -47,12 +48,18 @@
     "ticker": "TSLA"
   },
   {
+=======
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
     "id": "n1",
     "slug": "story-1-1",
     "title": "iShares MSCI World: Marktreaktion auf neue Impulse (ASR)",
     "summary": "Kurzfazit: Was passiert ist, warum es relevant ist und welche Second-Order-Effekte möglich sind.",
     "content": "### TL;DR\n\n- Kernaussage in 3 Bulletpoints.\n- Relevanz für Privatanleger.\n- Mögliche nächste Katalysatoren.\n\n### Kontext\n\nEinordnung in Makro- und Marktregime. Fokus auf klare Kausalhypothesen statt Spekulation.\n\n### Was heißt das für…\n\n- **Kurzfristig:** Volatilität / Flow-getrieben.\n- **Mittelfristig:** Bewertung / Earnings / Makro.\n- **Risiken:** Tail-Risks, Event-Risks, Liquidität.\n\n### Quellen\n\n- IMF\n- Unternehmensmitteilung / offizielle Daten\n\n—\n*Hinweis: Keine Anlageberatung. Inhalte dienen ausschließlich der Information.*",
+<<<<<<< HEAD
     "category": "ETFs",
+=======
+    "category": "Cock",
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
     "tags": [],
     "source": "",
     "publishedAt": "2025-12-22T09:00:00.000Z",
@@ -60,13 +67,21 @@
     "impact": "Medium",
     "status": "published",
     "createdAt": "2025-12-22T09:00:00.000Z",
+<<<<<<< HEAD
     "updatedAt": "2026-01-01T20:08:51.924Z",
+=======
+    "updatedAt": "2025-12-31T14:34:46.028Z",
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
     "sourceUrl": "",
     "sourceType": "own",
     "auditStatus": "approved",
     "auditNotes": "",
+<<<<<<< HEAD
     "auditedAt": "2025-12-26T11:48:27.845Z",
     "imageUrl": "/uploads/1767298131922-7965b6be11460f28.jpeg",
     "image": "/uploads/1767298131922-7965b6be11460f28.jpeg"
+=======
+    "auditedAt": "2025-12-26T11:48:27.845Z"
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
   }
 ]

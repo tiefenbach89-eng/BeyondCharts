@@ -90,7 +90,11 @@ export function AnalyseView({ item }: AnalyseViewProps) {
         <div className="max-w-7xl mx-auto px-8 h-16 flex justify-between items-center">
           <Link href="/analysen" className="group flex items-center gap-2 hover:gap-3 transition-all">
             <ChevronLeft size={16} className="text-slate-600 group-hover:text-blue-600" />
+<<<<<<< HEAD
             <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">Analysen</span>
+=======
+            <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">Research</span>
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
           </Link>
           
           <div className="flex items-center gap-4">
@@ -126,7 +130,11 @@ export function AnalyseView({ item }: AnalyseViewProps) {
         <div className="mb-12">
           <Link href="/analysen" className="group inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
             <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+<<<<<<< HEAD
             <span>Zurück zur Übersicht</span>
+=======
+            <span>Back to Research</span>
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
           </Link>
         </div>
 
@@ -136,7 +144,11 @@ export function AnalyseView({ item }: AnalyseViewProps) {
             <div className="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-xl rounded-full border border-slate-200/50 shadow-sm">
               <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wide text-slate-600">
+<<<<<<< HEAD
                 {item.category || "Analyse"}
+=======
+                {item.category || "Institutional Research"}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               </span>
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-slate-300 via-slate-200 to-transparent" />
@@ -154,6 +166,7 @@ export function AnalyseView({ item }: AnalyseViewProps) {
 
           {/* Hero Image */}
           {item.imageUrl && (
+<<<<<<< HEAD
             <div className="mb-12">
               <div className="relative w-full aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl">
                 <img
@@ -169,6 +182,14 @@ export function AnalyseView({ item }: AnalyseViewProps) {
                   <span className="font-medium text-slate-700">© {item.imageSource}</span>
                 </p>
               )}
+=======
+            <div className="relative w-full aspect-[21/9] mb-12 rounded-3xl overflow-hidden shadow-2xl">
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
             </div>
           )}
 
@@ -181,29 +202,49 @@ export function AnalyseView({ item }: AnalyseViewProps) {
           </p>
         </header>
 
+<<<<<<< HEAD
         {/* Deep Dive Snapshot Cards */}
         {(snapshot.thesis || snapshot.profitability || snapshot.substance || snapshot.risk) && (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-32">
             <MetricCard 
               label="Investmentthese" 
+=======
+        {/* Premium Snapshot Cards */}
+        {(snapshot.thesis || snapshot.profitability || snapshot.substance || snapshot.risk) && (
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-32">
+            <MetricCard 
+              label="Investment Thesis" 
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               value={snapshot.thesis} 
               icon={<Target size={22} />}
               gradient="from-blue-500 to-cyan-500"
             />
             <MetricCard 
+<<<<<<< HEAD
               label="Zentraler Katalysator" 
+=======
+              label="Key Catalyst" 
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               value={snapshot.profitability} 
               icon={<Zap size={22} />}
               gradient="from-violet-500 to-purple-500"
             />
             <MetricCard 
+<<<<<<< HEAD
               label="Fundamentale Stärke" 
+=======
+              label="Fundamental Strength" 
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               value={snapshot.substance} 
               icon={<BarChart3 size={22} />}
               gradient="from-emerald-500 to-teal-500"
             />
             <MetricCard 
+<<<<<<< HEAD
               label="Risikobewertung" 
+=======
+              label="Risk Assessment" 
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               value={snapshot.risk} 
               icon={<ShieldAlert size={22} />}
               gradient="from-rose-500 to-orange-500"
@@ -302,6 +343,7 @@ export function AnalyseView({ item }: AnalyseViewProps) {
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
                     <Sparkles size={24} className="text-blue-400" />
+<<<<<<< HEAD
                     <h3 className="text-2xl font-bold text-white">Deep Dive verfügbar</h3>
                   </div>
                   <p className="text-slate-300 text-lg mb-8 leading-relaxed">
@@ -309,6 +351,15 @@ export function AnalyseView({ item }: AnalyseViewProps) {
                   </p>
                   <button className="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-sm hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-xl hover:shadow-2xl hover:scale-[1.02]">
                     Vollständigen Bericht herunterladen
+=======
+                    <h3 className="text-2xl font-bold text-white">Deep Dive Available</h3>
+                  </div>
+                  <p className="text-slate-300 text-lg mb-8 leading-relaxed">
+                    Access our complete institutional report with detailed financial models, scenario analysis, and competitive intelligence.
+                  </p>
+                  <button className="px-8 py-4 bg-white text-slate-900 rounded-2xl font-bold text-sm hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-xl hover:shadow-2xl hover:scale-[1.02]">
+                    Download Full Report
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                     <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </button>
                 </div>
@@ -334,12 +385,21 @@ export function AnalyseView({ item }: AnalyseViewProps) {
                 </div>
                 
                 <div className="space-y-5">
+<<<<<<< HEAD
                   <InfoRow label="Hauptanalyst" value={item.author || "Research Team"} />
                   <InfoRow label="Methodik" value="Fundamentalanalyse" />
                   <InfoRow label="Bewertung" value="Professionelle Analyse" highlight />
                   <InfoRow label="Sektor" value={item.category} />
                   {item.tags.length > 0 && (
                     <InfoRow label="Fokus" value={item.tags.slice(0, 2).join(", ")} />
+=======
+                  <InfoRow label="Lead Analyst" value={item.author || "Research Team"} />
+                  <InfoRow label="Methodology" value="Fundamental Analysis" />
+                  <InfoRow label="Rating" value="Institutional Grade" highlight />
+                  <InfoRow label="Sector" value={item.category} />
+                  {item.tags.length > 0 && (
+                    <InfoRow label="Focus" value={item.tags.slice(0, 2).join(", ")} />
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                   )}
                 </div>
               </div>
@@ -348,11 +408,19 @@ export function AnalyseView({ item }: AnalyseViewProps) {
               <div className="bg-gradient-to-br from-blue-50 via-white to-violet-50 rounded-[28px] p-6 border border-blue-100/60 backdrop-blur-xl">
                 <div className="flex items-center gap-3 mb-4">
                   <TrendingUp size={20} className="text-blue-600" />
+<<<<<<< HEAD
                   <span className="text-xs font-bold text-blue-900 uppercase tracking-wide">Analyse-Metriken</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <StatBox label="Lesezeit" value={`${readingTime}m`} />
                   <StatBox label="Status" value={item.isPremium ? "Premium" : "Kostenlos"} />
+=======
+                  <span className="text-xs font-bold text-blue-900 uppercase tracking-wide">Analysis Metrics</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <StatBox label="Reading Time" value={`${readingTime}m`} />
+                  <StatBox label="Status" value={item.isPremium ? "Premium" : "Free"} />
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                 </div>
               </div>
 
@@ -364,8 +432,13 @@ export function AnalyseView({ item }: AnalyseViewProps) {
                     <div className="flex items-center gap-3">
                       <Eye size={18} className="text-slate-600" />
                       <div>
+<<<<<<< HEAD
                         <p className="text-xs font-bold text-slate-600 mb-1">PREMIUM INHALT</p>
                         <p className="text-sm text-slate-900 font-medium">Exklusiver Zugang erforderlich</p>
+=======
+                        <p className="text-xs font-bold text-slate-600 mb-1">PREMIUM CONTENT</p>
+                        <p className="text-sm text-slate-900 font-medium">Exclusive access required</p>
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                       </div>
                     </div>
                   </div>

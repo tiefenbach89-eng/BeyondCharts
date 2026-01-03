@@ -76,11 +76,19 @@ export function NewsView({ item }: NewsViewProps) {
         <div className="max-w-5xl mx-auto px-8 h-16 flex justify-between items-center">
           <Link href="/news" className="group flex items-center gap-2 hover:gap-3 transition-all">
             <ChevronLeft size={16} className="text-slate-600 group-hover:text-emerald-600" />
+<<<<<<< HEAD
             <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">News</span>
           </Link>
           
           <div className="flex items-center gap-4">
             {/* Impact Badge REMOVED - überflüssig beim Scrollen */}
+=======
+            <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900">News Feed</span>
+          </Link>
+          
+          <div className="flex items-center gap-4">
+            <ImpactBadge level={item.impact} />
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
             <button 
               onClick={() => {
                 if (navigator.share) {
@@ -108,12 +116,35 @@ export function NewsView({ item }: NewsViewProps) {
         <div className="mb-12">
           <Link href="/news" className="group inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
             <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+<<<<<<< HEAD
             <span>Zurück zu News</span>
           </Link>
         </div>
         
         {/* Header - TITLE FIRST! */}
         <header className="mb-12">
+=======
+            <span>Back to News Feed</span>
+          </Link>
+        </div>
+        
+        {/* Hero Section with Image */}
+        {item.imageUrl && (
+          <div className="mb-16 -mx-8 md:mx-0 md:rounded-[32px] overflow-hidden shadow-2xl shadow-slate-900/10">
+            <div className="relative aspect-[21/9] bg-slate-900">
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+            </div>
+          </div>
+        )}
+
+        {/* Header */}
+        <header className="mb-20">
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
           <div className="flex items-center gap-4 mb-8">
             <div className="px-4 py-2 bg-white/80 backdrop-blur-xl rounded-full border border-slate-200 shadow-sm">
               <span className="text-xs font-bold uppercase tracking-wide text-slate-700">
@@ -133,6 +164,7 @@ export function NewsView({ item }: NewsViewProps) {
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* 1. ÜBERSCHRIFT */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-12">
             {item.title}
@@ -187,6 +219,55 @@ export function NewsView({ item }: NewsViewProps) {
             </div>
           )}
         </div>
+=======
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-950 mb-10">
+            {item.title}
+          </h1>
+
+          <p className="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-4xl">
+            {item.summary}
+          </p>
+
+          {/* Meta Info Bar */}
+          <div className="mt-12 flex flex-wrap items-center gap-6 pt-8 border-t border-slate-200">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center shadow-lg">
+                <User size={20} className="text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Author</p>
+                <p className="text-sm font-bold text-slate-900">{item.author || item.source || "Beyond Charts"}</p>
+              </div>
+            </div>
+
+            {item.sourceUrl && (
+              <a 
+                href={item.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors group"
+              >
+                <ExternalLink size={14} className="text-emerald-700" />
+                <span className="text-xs font-semibold text-emerald-800">View Source</span>
+                <ArrowUpRight size={12} className="text-emerald-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
+            )}
+
+            {item.tags.length > 0 && (
+              <div className="flex items-center gap-2">
+                {item.tags.slice(0, 3).map((tag, i) => (
+                  <span 
+                    key={i}
+                    className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold hover:bg-slate-200 transition-colors"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </header>
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
@@ -280,16 +361,27 @@ export function NewsView({ item }: NewsViewProps) {
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-4">
                   <TrendingUp size={22} className="text-emerald-400" />
+<<<<<<< HEAD
                   <h3 className="text-xl font-bold text-white">Bleib informiert</h3>
                 </div>
                 <p className="text-slate-300 text-base mb-6 leading-relaxed">
                   Verpasse keine wichtigen Markt-Updates und News mehr.
+=======
+                  <h3 className="text-xl font-bold text-white">Stay Informed</h3>
+                </div>
+                <p className="text-slate-300 text-base mb-6 leading-relaxed">
+                  Get breaking news and market-moving updates delivered to your inbox.
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                 </p>
                 <Link 
                   href="/news"
                   className="inline-flex items-center gap-3 px-6 py-3 bg-white text-slate-900 rounded-2xl font-bold text-sm hover:bg-emerald-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 group"
                 >
+<<<<<<< HEAD
                   Alle News ansehen
+=======
+                  Browse All News
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                   <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </Link>
               </div>
@@ -300,21 +392,31 @@ export function NewsView({ item }: NewsViewProps) {
           <aside className="lg:col-span-4">
             <div className="sticky top-32 space-y-6">
               
+<<<<<<< HEAD
               {/* Impact Info Card - KOMPLETT NEU */}
+=======
+              {/* Impact Info Card */}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
               <div className="bg-white/90 backdrop-blur-xl rounded-[28px] p-6 border border-slate-200 shadow-lg hover:shadow-xl transition-shadow">
                 <div className="flex items-center gap-3 mb-6">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-md ${getImpactColors(item.impact).bgGradient}`}>
                     {getImpactIcon(item.impact)}
                   </div>
                   <div>
+<<<<<<< HEAD
                     <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Markt-Impact</p>
                     <p className={`text-lg font-bold ${getImpactColors(item.impact).text}`}>
                       {item.impact === 'High' ? 'Hoch' : item.impact === 'Medium' ? 'Mittel' : 'Niedrig'}
                     </p>
+=======
+                    <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Impact Level</p>
+                    <p className={`text-lg font-bold ${getImpactColors(item.impact).text}`}>{item.impact}</p>
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                   </div>
                 </div>
                 
                 <div className="space-y-4">
+<<<<<<< HEAD
                   {/* Quellentyp + Link kombiniert */}
                   <InfoBox 
                     label="Quellentyp" 
@@ -345,6 +447,41 @@ export function NewsView({ item }: NewsViewProps) {
                     icon={<Calendar size={14} className="text-slate-500" />}
                   />
                   {/* STATUS ENTFERNT! */}
+=======
+                  <InfoBox 
+                    label="Source Type" 
+                    value={item.sourceType === "own" ? "Original Research" : "External Source"}
+                    icon={item.sourceType === "own" ? <Shield size={14} className="text-emerald-600" /> : <ExternalLink size={14} className="text-blue-600" />}
+                  />
+                  <InfoBox 
+                    label="Category" 
+                    value={item.category}
+                  />
+                  <InfoBox 
+                    label="Published" 
+                    value={formatDate(item.publishedAt || item.createdAt)}
+                    icon={<Calendar size={14} className="text-slate-500" />}
+                  />
+                  {item.auditStatus === "approved" && (
+                    <InfoBox 
+                      label="Status" 
+                      value="Verified"
+                      icon={<CheckCircle size={14} className="text-emerald-600" />}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 rounded-[24px] p-5 border border-emerald-100/60">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <Zap size={16} className="text-emerald-600" />
+                  <span className="text-xs font-bold text-emerald-900 uppercase tracking-wide">Quick Info</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <StatBox label="Read Time" value={`${readingTime}m`} />
+                  <StatBox label="Type" value={item.isPremium ? "Premium" : "Free"} />
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
                 </div>
               </div>
 
@@ -364,6 +501,17 @@ export function NewsView({ item }: NewsViewProps) {
                   </div>
                 </div>
               )}
+<<<<<<< HEAD
+=======
+
+              {/* Source Link */}
+              {item.source && (
+                <div className="bg-slate-50 rounded-[24px] p-5 border border-slate-200">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Source</p>
+                  <p className="text-sm font-semibold text-slate-900">{item.source}</p>
+                </div>
+              )}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
             </div>
           </aside>
         </div>

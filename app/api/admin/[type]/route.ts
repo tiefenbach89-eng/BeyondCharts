@@ -3,9 +3,12 @@ import { listContent, upsertContent, deleteContent } from "@/lib/content.server"
 import { getSettings } from "@/lib/settings.server";
 import { processImageUrl } from "@/lib/imageStorage";
 
+<<<<<<< HEAD
 export const runtime = "nodejs";
 
 
+=======
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 type ContentType = "news" | "analyses";
 
 export async function GET(
@@ -170,4 +173,8 @@ function isValidHttpUrl(maybeUrl: string) {
   } catch {
     return false;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555

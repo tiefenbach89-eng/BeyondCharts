@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "/_not-found/page": "app/_not-found/page.js",
   "/account/page": "app/account/page.js",
   "/agb/page": "app/agb/page.js",
@@ -26,4 +27,8 @@
   "/suche/page": "app/suche/page.js",
   "/admin/page": "app/admin/page.js",
   "/admin/settings/page": "app/admin/settings/page.js"
+=======
+  "/page": "app/page.js",
+  "/analysen/[slug]/page": "app/analysen/[slug]/page.js"
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 }

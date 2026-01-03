@@ -8,8 +8,13 @@ export function Footer() {
           <div>
             <div className="text-sm font-semibold text-slate-900">BeyondCharts</div>
             <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+<<<<<<< HEAD
               Fundierte Finanz-News & Analysen. Wir liefern den Kontext, Sie entscheiden.
               Inhalte stellen keine Anlageberatung dar.
+=======
+              Kuratierte Finanz-News und Analysen im ruhigen, vertrauenswürdigen Stil.
+              Keine Anlageberatung.
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
             </p>
           </div>
           

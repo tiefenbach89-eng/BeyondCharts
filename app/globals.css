@@ -70,6 +70,7 @@ button, a {
   min-width: 44px;
 }
 
+<<<<<<< HEAD
 /* Text Selection Styling - Trade Republic Blue */
 ::selection {
   background: rgba(37, 99, 235, 0.25); /* TR Blue - #2563eb */
@@ -79,6 +80,10 @@ button, a {
 ::-moz-selection {
   background: rgba(37, 99, 235, 0.25);
   color: rgb(var(--text));
+=======
+::selection {
+  background: rgba(var(--primary), 0.18);
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 }
 
 @layer components {

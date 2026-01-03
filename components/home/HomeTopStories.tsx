@@ -17,8 +17,11 @@ type NewsItem = {
   isPremium: boolean;
   impact: "Low" | "Medium" | "High";
   tags: string[];
+<<<<<<< HEAD
   imageUrl?: string; // ← ADD THIS!
   image?: string; // ← ADD THIS (fallback)
+=======
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
 };
 
 export function HomeTopStories({ allNews }: { allNews: NewsItem[] }) {
@@ -32,7 +35,11 @@ export function HomeTopStories({ allNews }: { allNews: NewsItem[] }) {
     <section>
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
+<<<<<<< HEAD
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+=======
+          <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
             News
           </h2>
           <p className="mt-2 text-slate-600 leading-relaxed">
@@ -60,8 +67,13 @@ export function HomeTopStories({ allNews }: { allNews: NewsItem[] }) {
             source={n.source}
             publishedAt={(n.publishedAt || n.createdAt) as string}
             isPremium={n.isPremium}
+<<<<<<< HEAD
             tags={n.tags}
             image={n.imageUrl || n.image} 
+=======
+            impact={n.impact}
+            tags={n.tags}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
           />
         ))}
       </div>
@@ -80,4 +92,8 @@ export function HomeTopStories({ allNews }: { allNews: NewsItem[] }) {
       </div>
     </section>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555

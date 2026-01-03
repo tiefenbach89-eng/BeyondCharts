@@ -246,8 +246,30 @@ export function TiptapEditor({ content, onChange, placeholder, onImageUpload }: 
 
       {/* Editor Content */}
       <EditorContent editor={editor} />
+<<<<<<< HEAD
       
       {/* ✅ FOOTER KOMPLETT ENTFERNT! */}
     </div>
   );
 }
+=======
+
+      {/* Footer Helper */}
+      <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span>💡 Tip: Markdown Shortcuts funktionieren!</span>
+            <span>•</span>
+            <span>**fett** für Fett</span>
+            <span>•</span>
+            <span>## für Überschrift</span>
+          </div>
+          <div>
+            {editor.storage.characterCount?.characters() || 0} Zeichen
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+>>>>>>> 1ad3d42fee7245012111a3a2033405f598854555
