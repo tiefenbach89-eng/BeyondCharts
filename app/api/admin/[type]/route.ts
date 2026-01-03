@@ -30,13 +30,16 @@ async function triggerRevalidation(type: ContentType, slug?: string, action?: st
 }
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { type: ContentType } }
+  _request: Request,
+  { params }: { params: { type: string } }
 ) {
-  const url = new URL(req.url);
-  const includeDrafts = url.searchParams.get("includeDrafts") === "1";
+  const url = new URL(_request.url);
+  const includeDrafts = url.searchParams.get('includeDrafts') === '1';
 
-  const items = await listContent(params.type, {
+  // Cast IM Body – nicht im Signature
+  const type = params.type as ContentType;
+
+  const items = await listContent(type, {
     includeDrafts,
   });
 
