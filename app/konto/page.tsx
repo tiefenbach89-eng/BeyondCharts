@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useSearchParams } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import { 
   User, 
@@ -18,17 +19,12 @@ import {
   Check,
   ArrowRight,
   AlertCircle,
-  UserPlus,
   Key
 } from "lucide-react";
 
 export default function AccountPage() {
   const { user, role, isPremium, isAdmin, loading: authLoading, signOut } = useAuth();
-  
-  // User Management State
-  const [showUserManagement, setShowUserManagement] = useState(false);
-  const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserRole, setNewUserRole] = useState<'free' | 'premium' | 'admin'>('free');
+  const searchParams = useSearchParams();
   
   // Password Change State
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -46,40 +42,16 @@ export default function AccountPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // ===== MAGIC LINK: User erstellen =====
-  const handleCreateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    try {
-      // Send Magic Link statt Password!
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email: newUserEmail,
-        options: {
-          data: {
-            role: newUserRole,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/konto`,
-        },
-      });
-
-      if (error) throw error;
-
-      setSuccess(`✅ Magic Link wurde an ${newUserEmail} gesendet! Der User kann sich damit anmelden und dann ein Passwort setzen.`);
-      setNewUserEmail('');
-      setNewUserRole('free');
-      
-      setTimeout(() => setSuccess(''), 8000);
-    } catch (err: any) {
-      setError(err.message || 'Fehler beim Senden des Magic Links');
-    } finally {
-      setLoading(false);
+  // Check for confirmation success
+  useEffect(() => {
+    const confirmed = searchParams?.get('confirmed');
+    if (confirmed === 'true') {
+      setSuccess('✅ Email erfolgreich bestätigt! Willkommen bei BeyondCharts!');
+      setTimeout(() => setSuccess(''), 5000);
     }
-  };
+  }, [searchParams]);
 
-  // ===== PASSWORD CHANGE =====
+  // PASSWORD CHANGE
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -154,7 +126,7 @@ export default function AccountPage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Nicht angemeldet</h2>
           <p className="text-slate-600 mb-6">Bitte melde dich an um dein Konto zu verwalten.</p>
           <a
-            href="/konto"
+            href="/login"
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all"
           >
             Zum Login
@@ -372,93 +344,6 @@ export default function AccountPage() {
                 )}
               </div>
             </Card>
-
-            {/* Admin: User Management */}
-            {isAdmin && (
-              <Card className="p-8 bg-white border-none shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">User Management</h2>
-                    <p className="text-sm text-slate-500 mt-1">Sende Magic Links an neue User</p>
-                  </div>
-                  <button
-                    onClick={() => setShowUserManagement(!showUserManagement)}
-                    className="flex items-center gap-2 px-4 py-2 bg-violet-100 hover:bg-violet-200 text-violet-700 rounded-xl transition-all font-semibold text-sm"
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    {showUserManagement ? 'Schließen' : 'Neuer User'}
-                  </button>
-                </div>
-
-                {showUserManagement && (
-                  <form onSubmit={handleCreateUser} className="space-y-4 p-6 bg-slate-50 rounded-xl">
-                    <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 mb-4">
-                      <p className="text-sm text-blue-900">
-                        <strong>✨ Magic Link:</strong> Der User erhält eine Email mit einem Login-Link. Beim ersten Login kann er selbst ein Passwort setzen!
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-900 mb-2">
-                        E-Mail
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <input
-                          type="email"
-                          value={newUserEmail}
-                          onChange={(e) => setNewUserEmail(e.target.value)}
-                          className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
-                          placeholder="user@example.com"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-900 mb-2">
-                        Rolle
-                      </label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {(['free', 'premium', 'admin'] as const).map((r) => {
-                          const config = roleConfig[r];
-                          const Icon = config.icon;
-                          return (
-                            <button
-                              key={r}
-                              type="button"
-                              onClick={() => setNewUserRole(r)}
-                              className={`p-4 rounded-xl border-2 transition-all ${
-                                newUserRole === r
-                                  ? 'border-violet-600 bg-violet-50'
-                                  : 'border-slate-200 bg-white hover:border-slate-300'
-                              }`}
-                            >
-                              <Icon className={`h-6 w-6 mx-auto mb-2 ${
-                                newUserRole === r ? 'text-violet-600' : 'text-slate-400'
-                              }`} />
-                              <div className={`text-sm font-semibold ${
-                                newUserRole === r ? 'text-violet-900' : 'text-slate-700'
-                              }`}>
-                                {config.label}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full py-3 px-6 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {loading ? 'Sende Magic Link...' : '✨ Magic Link senden'}
-                    </button>
-                  </form>
-                )}
-              </Card>
-            )}
 
           </div>
 
