@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -22,7 +22,8 @@ import {
   Key
 } from "lucide-react";
 
-export default function AccountPage() {
+// Wrap the component that uses useSearchParams in Suspense
+function AccountContent() {
   const { user, role, isPremium, isAdmin, loading: authLoading, signOut } = useAuth();
   const searchParams = useSearchParams();
   
@@ -392,5 +393,18 @@ export default function AccountPage() {
 
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function AccountPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <AccountContent />
+    </Suspense>
   );
 }
