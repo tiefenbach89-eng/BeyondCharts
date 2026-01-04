@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import { Lock, Mail, AlertCircle, Check, Eye, EyeOff } from 'lucide-react';
 
-export default function LoginPage() {
+// Wrap the component that uses useSearchParams in Suspense
+function LoginContent() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,13 +22,13 @@ export default function LoginPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Check for error in URL params
-  useState(() => {
+  // Check for error in URL params - FIXED: useEffect instead of useState
+  useEffect(() => {
     const urlError = searchParams?.get('error');
     if (urlError) {
       setError(decodeURIComponent(urlError));
     }
-  });
+  }, [searchParams]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -222,5 +223,18 @@ export default function LoginPage() {
 
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
