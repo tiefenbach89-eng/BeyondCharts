@@ -10,15 +10,15 @@ import {
   Zap, Shield, ArrowUpRight
 } from "lucide-react";
 import type { NewsItem, ImpactLevel } from "@/types/news";
-import { 
-  calculateReadingTime, 
+import {
+  calculateReadingTime,
   parseStructuredContent,
-  formatDate,
   isList,
   extractListItems,
   isHighlight,
   removeHighlightMarkers
 } from "@/lib/contentParser";
+import { formatDate } from "@/lib/date";
 
 interface NewsViewProps {
   item: NewsItem;

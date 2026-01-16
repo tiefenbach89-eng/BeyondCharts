@@ -9,21 +9,21 @@ import {
   Clock, Calendar, ChevronLeft, ArrowUpRight, Share2, 
   TrendingUp, Sparkles, Eye
 } from "lucide-react";
-import type { 
-  Analyse, 
-  MetricCardProps, 
-  InfoRowProps, 
-  StatBoxProps 
+import type {
+  Analyse,
+  MetricCardProps,
+  InfoRowProps,
+  StatBoxProps
 } from "@/types/analyse";
-import { 
-  calculateReadingTime, 
+import {
+  calculateReadingTime,
   parseStructuredContent,
-  formatDate,
   isList,
   extractListItems,
   isHighlight,
   removeHighlightMarkers
 } from "@/lib/contentParser";
+import { formatDate } from "@/lib/date";
 
 interface AnalyseViewProps {
   item: Analyse;
