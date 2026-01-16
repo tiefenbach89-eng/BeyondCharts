@@ -26,20 +26,6 @@ export function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-/**
- * Generates a unique slug by adding a timestamp or counter if needed
- */
-export function generateUniqueSlug(title: string, existingSlugs: string[] = []): string {
-  const baseSlug = generateSlug(title);
-  
-  if (!existingSlugs.includes(baseSlug)) {
-    return baseSlug;
-  }
-  
-  // Add timestamp to make it unique
-  const timestamp = Date.now().toString().slice(-6);
-  return `${baseSlug}-${timestamp}`;
-}
 
 /**
  * Auto-generates slug as user types

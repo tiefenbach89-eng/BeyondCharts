@@ -66,20 +66,6 @@ export function parseStructuredContent(content: string): ParsedContent {
   return { sections };
 }
 
-/**
- * Formatiert ein Datum für die Anzeige
- * @param dateString - ISO date string oder ähnliches
- * @returns Formatiertes Datum (YYYY-MM-DD)
- */
-export function formatDate(dateString?: string): string {
-  if (!dateString) return "Recent";
-  
-  try {
-    return dateString.slice(0, 10);
-  } catch {
-    return "Recent";
-  }
-}
 
 /**
  * Prüft ob ein Paragraph eine Liste enthält

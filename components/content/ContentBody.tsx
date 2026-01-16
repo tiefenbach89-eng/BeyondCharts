@@ -2,6 +2,7 @@
 
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import { isHtmlContent } from "@/lib/contentParser";
 
 type Mode = "full" | "preview";
 
@@ -10,32 +11,6 @@ interface ContentBodyProps {
   mode?: Mode;
   previewChars?: number;
   className?: string;
-}
-
-/**
- * Hilfsfunktion zur Berechnung der Lesezeit (Words per Minute: 200)
- * Stripped HTML tags für korrekten Word Count
- */
-export function calculateReadingTime(text: string): number {
-  if (!text) return 0;
-  
-  // Strip HTML tags for accurate word count
-  const textOnly = text.replace(/<[^>]*>/g, ' ');
-  
-  const wordsPerMinute = 200;
-  const words = textOnly.trim().split(/\s+/).length;
-  return Math.ceil(words / wordsPerMinute);
-}
-
-/**
- * Detects if content is HTML or Markdown
- */
-function isHtmlContent(content: string): boolean {
-  if (!content) return false;
-  
-  // Check for common HTML tags
-  const htmlTags = /<(h[1-6]|p|div|strong|em|ul|ol|li|br|img|a|blockquote|hr)[^>]*>/i;
-  return htmlTags.test(content);
 }
 
 /**

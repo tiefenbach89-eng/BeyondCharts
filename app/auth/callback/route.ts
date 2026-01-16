@@ -48,7 +48,12 @@ export async function GET(request: Request) {
 
     if (data.session) {
       console.log('✅ Session created for:', data.user?.email);
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
+      // If this is from email confirmation, add confirmed parameter
+      const redirectUrl = new URL(next, requestUrl.origin);
+      if (type === 'email') {
+        redirectUrl.searchParams.set('confirmed', 'true');
+      }
+      return NextResponse.redirect(redirectUrl);
     }
   }
 

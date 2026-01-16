@@ -1,4 +1,4 @@
-import { slugify } from "@/lib/slug";
+import { generateSlug as slugify } from "@/lib/slugGenerator";
 import { supabaseServer } from "@/lib/supabase/server";
 
 /* =====================
