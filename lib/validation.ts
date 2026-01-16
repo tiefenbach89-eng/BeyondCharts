@@ -93,6 +93,9 @@ export function sanitizeContent(content: {
   sourceUrl?: string;
   tags?: string[];
   imageUrl?: string;
+  snapshot?: any;
+  analysis?: any;
+  [key: string]: any; // Allow additional properties
 }): typeof content {
   const sanitized = { ...content };
 
