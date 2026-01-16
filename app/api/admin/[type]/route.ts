@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { listContent, upsertContent, deleteContent } from "@/lib/content.server";
 import { getSettings } from "@/lib/settings.server";
 import { processImageUrl } from "@/lib/imageStorage";
+import { requireAdmin } from "@/lib/auth.middleware";
+import { sanitizeContent, checkRateLimit } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
@@ -37,6 +39,12 @@ export async function GET(
   request: NextRequest,
   context: { params: Promise<{ type: string }> }
 ) {
+  // Check admin authentication
+  const authResult = await requireAdmin(request);
+  if (authResult instanceof NextResponse) {
+    return authResult; // Return error response
+  }
+
   const { type } = await context.params;
   const contentType = type as ContentType;
 
@@ -54,32 +62,58 @@ export async function POST(
   request: NextRequest,
   context: { params: Promise<{ type: string }> }
 ) {
+  // Check admin authentication
+  const authResult = await requireAdmin(request);
+  if (authResult instanceof NextResponse) {
+    return authResult; // Return error response
+  }
+
+  // Rate limiting (10 requests per minute per user)
+  const userId = authResult.user.id;
+  const rateLimit = checkRateLimit(`admin:${userId}`, 20, 60000);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Remaining": "0",
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        }
+      }
+    );
+  }
+
   const { type } = await context.params;
   const contentType = type as ContentType;
 
   const body = await request.json();
+
+  // Sanitize input to prevent XSS
+  const sanitizedBody = sanitizeContent(body);
+
   const settings = await getSettings();
 
-  const error = validatePayload(contentType, body, settings);
+  const error = validatePayload(contentType, sanitizedBody, settings);
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
   }
 
-  if (body.imageUrl) {
-    body.imageUrl = await processImageUrl(body.imageUrl);
+  if (sanitizedBody.imageUrl) {
+    sanitizedBody.imageUrl = await processImageUrl(sanitizedBody.imageUrl);
   }
 
-  if (contentType === "analyses" && body.snapshot) {
-    body.analysis = {
-      overview: body.snapshot.thesis || "",
-      businessModel: body.snapshot.profitability || "",
-      risks: body.snapshot.risk || "",
-      scenarios: body.snapshot.substance || "",
+  if (contentType === "analyses" && sanitizedBody.snapshot) {
+    sanitizedBody.analysis = {
+      overview: sanitizedBody.snapshot.thesis || "",
+      businessModel: sanitizedBody.snapshot.profitability || "",
+      risks: sanitizedBody.snapshot.risk || "",
+      scenarios: sanitizedBody.snapshot.substance || "",
     };
-    delete body.snapshot;
+    delete sanitizedBody.snapshot;
   }
 
-  const item = await upsertContent(contentType, body);
+  const item = await upsertContent(contentType, sanitizedBody);
 
   if (item.status === "published") {
     await triggerRevalidation(contentType, item.slug, "create");
@@ -94,36 +128,62 @@ export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ type: string }> }
 ) {
+  // Check admin authentication
+  const authResult = await requireAdmin(request);
+  if (authResult instanceof NextResponse) {
+    return authResult; // Return error response
+  }
+
+  // Rate limiting (10 requests per minute per user)
+  const userId = authResult.user.id;
+  const rateLimit = checkRateLimit(`admin:${userId}`, 20, 60000);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Remaining": "0",
+          "X-RateLimit-Reset": new Date(rateLimit.resetTime).toISOString(),
+        }
+      }
+    );
+  }
+
   const { type } = await context.params;
   const contentType = type as ContentType;
 
   const body = await request.json();
+
+  // Sanitize input to prevent XSS
+  const sanitizedBody = sanitizeContent(body);
+
   const settings = await getSettings();
 
-  const error = validatePayload(contentType, body, settings);
+  const error = validatePayload(contentType, sanitizedBody, settings);
   if (error) {
     return NextResponse.json({ error }, { status: 400 });
   }
 
-  if (body.imageUrl) {
+  if (sanitizedBody.imageUrl) {
     try {
-      body.imageUrl = await processImageUrl(body.imageUrl);
+      sanitizedBody.imageUrl = await processImageUrl(sanitizedBody.imageUrl);
     } catch (err) {
       console.error("❌ Image processing failed:", err);
     }
   }
 
-  if (contentType === "analyses" && body.snapshot) {
-    body.analysis = {
-      overview: body.snapshot.thesis || "",
-      businessModel: body.snapshot.profitability || "",
-      risks: body.snapshot.risk || "",
-      scenarios: body.snapshot.substance || "",
+  if (contentType === "analyses" && sanitizedBody.snapshot) {
+    sanitizedBody.analysis = {
+      overview: sanitizedBody.snapshot.thesis || "",
+      businessModel: sanitizedBody.snapshot.profitability || "",
+      risks: sanitizedBody.snapshot.risk || "",
+      scenarios: sanitizedBody.snapshot.substance || "",
     };
-    delete body.snapshot;
+    delete sanitizedBody.snapshot;
   }
 
-  const item = await upsertContent(contentType, body);
+  const item = await upsertContent(contentType, sanitizedBody);
 
   if (item.status === "published") {
     await triggerRevalidation(contentType, item.slug, "update");
@@ -138,6 +198,12 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ type: string }> }
 ) {
+  // Check admin authentication
+  const authResult = await requireAdmin(request);
+  if (authResult instanceof NextResponse) {
+    return authResult; // Return error response
+  }
+
   const { type } = await context.params;
   const contentType = type as ContentType;
 

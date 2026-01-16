@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Search, User, Sparkles, Shield } from "lucide-react";
 import { useSearch } from "@/components/search/SearchProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { MobileNav } from "./MobileNav";
 
 const nav = [
   { href: "/news", label: "News" },
@@ -92,6 +93,9 @@ export function Header() {
 
         {/* Right Section - Actions */}
         <div className="flex items-center gap-2">
+          {/* Mobile Navigation - Only visible on mobile */}
+          <MobileNav />
+
           {/* Premium Badge - Hide if already premium */}
           {!isPremium && (
             <Link href="/premium" className="hidden sm:block">

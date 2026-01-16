@@ -1,6 +1,7 @@
 // app/api/markets/live/route.ts
 // ✅ Live-Marktdaten: Yahoo Finance (Indizes) + Finnhub (Bitcoin)
 // ✅ Next.js 16 / App Router / Vercel-safe
+// ✅ Optimized with caching to reduce API calls and improve performance
 
 import { NextResponse } from 'next/server';
 
@@ -21,8 +22,42 @@ export const runtime = 'nodejs';
 
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || '';
 
+// In-memory cache for market data (30 seconds TTL)
+let marketDataCache: { data: any; timestamp: number } | null = null;
+const CACHE_TTL = 30 * 1000; // 30 seconds
+const FETCH_TIMEOUT = 5000; // 5 seconds timeout for each request
+
+// Helper function to fetch with timeout
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = FETCH_TIMEOUT) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+}
+
 export async function GET() {
   try {
+    // Check cache first
+    const now = Date.now();
+    if (marketDataCache && now - marketDataCache.timestamp < CACHE_TTL) {
+      return NextResponse.json(marketDataCache.data, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+          'X-Cache': 'HIT',
+        },
+      });
+    }
+
     // Indizes (Yahoo Finance)
     const indices = [
       { symbol: '^GSPC', name: 'S&P 500', region: 'US' },
@@ -35,7 +70,7 @@ export async function GET() {
     const indexPromises = indices.map(async ({ symbol, name, region }) => {
       const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1d&interval=1m`;
 
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0',
         },
@@ -76,7 +111,7 @@ export async function GET() {
     const btcPromise = (async () => {
       const url = `https://finnhub.io/api/v1/quote?symbol=BINANCE:BTCUSDT&token=${FINNHUB_API_KEY}`;
 
-      const response = await fetch(url, { cache: 'no-store' });
+      const response = await fetchWithTimeout(url, { cache: 'no-store' });
       if (!response.ok) {
         throw new Error('Finnhub error');
       }
@@ -125,9 +160,18 @@ export async function GET() {
 
     const btcData = await btcPromise;
 
-    return NextResponse.json([...indexData, btcData], {
+    const responseData = [...indexData, btcData];
+
+    // Update cache
+    marketDataCache = {
+      data: responseData,
+      timestamp: now,
+    };
+
+    return NextResponse.json(responseData, {
       headers: {
-        'Cache-Control': 'no-store, max-age=0',
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        'X-Cache': 'MISS',
       },
     });
   } catch (error) {
