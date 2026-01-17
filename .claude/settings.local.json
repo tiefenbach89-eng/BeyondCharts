@@ -6,7 +6,18 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(gh pr create:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(where npm:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout:*)",
+      "Bash(if exist .next rmdir /s /q .next)",
+      "Bash(cat:*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)",
+      "Bash(git stash:*)",
+      "Bash(echo \"Du musst in der Supabase Datenbank überprüfen, ob dein User die role=''admin'' hat.\n\nGehe zu Supabase Dashboard > Table Editor > profiles\nFinde deinen User und setze das ''role'' Feld auf ''admin''\n\nOder führe diese SQL Query aus:\nUPDATE profiles SET role = ''admin'' WHERE email = ''deine@email.com'';\")"
     ]
   }
 }

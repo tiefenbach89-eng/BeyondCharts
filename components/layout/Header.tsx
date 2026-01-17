@@ -109,14 +109,14 @@ export function Header() {
             </Link>
           )}
 
-          {/* Admin Button - ONLY FOR ADMINS */}
+          {/* CMS Button - ONLY FOR ADMINS */}
           {isAdmin && (
             <Link href="/admin" className="hidden sm:block">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-xl opacity-20 group-hover:opacity-30 blur transition-opacity" />
                 <button className="relative inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white transition-all duration-200 shadow-lg hover:shadow-xl text-sm font-semibold">
                   <Shield className="h-4 w-4" />
-                  <span>Admin</span>
+                  <span>CMS</span>
                 </button>
               </div>
             </Link>

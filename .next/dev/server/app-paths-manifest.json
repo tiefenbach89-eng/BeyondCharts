@@ -1,4 +1,15 @@
 {
+  "/analysen/[slug]/page": "app/analysen/[slug]/page.js",
+  "/analysen/page": "app/analysen/page.js",
+  "/api/assets/route": "app/api/assets/route.js",
+  "/api/markets/live/route": "app/api/markets/live/route.js",
+  "/assets/page": "app/assets/page.js",
   "/konto/page": "app/konto/page.js",
-  "/page": "app/page.js"
+  "/login/page": "app/login/page.js",
+  "/maerkte/page": "app/maerkte/page.js",
+  "/news/page": "app/news/page.js",
+  "/page": "app/page.js",
+  "/premium/page": "app/premium/page.js",
+  "/suche/page": "app/suche/page.js",
+  "/watchlist/page": "app/watchlist/page.js"
 }

@@ -277,10 +277,6 @@ function AccountContent() {
                 <div>
                   <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-1">Mein Account</h1>
                   <p className="text-sm text-slate-500">{user.email}</p>
-                  <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg mt-2 ${currentRole.color} text-xs font-bold`}>
-                    <RoleIcon className="h-3.5 w-3.5" />
-                    {currentRole.label}
-                  </div>
                 </div>
               </div>
 

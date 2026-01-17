@@ -1,5 +1,78 @@
-[00:00:01.299] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-[00:00:01.599] Server  LOG     ✓ Ready in 1207ms
-[00:00:08.096] Server  LOG     ○ Compiling / ...
-[00:00:10.849] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:11.465] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:01.308] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:01.543] Server  LOG     ✓ Ready in 1126ms
+[00:03:23.090] Server  ERROR   ⨯ Error: ENOENT: no such file or directory, open 'C:\Users\loel\.claude-worktrees\3.0\sweet-ramanujan\.next\dev\server\pages\_app\build-manifest.json'
+[00:03:23.096] Server  ERROR   TurbopackInternalError: Failed to write app endpoint /page
+
+Caused by:
+- [project]/app/globals.css [app-client] (css)
+- failed to write to C:\Users\loel\.claude-worktrees\3.0\sweet-ramanujan\.next\dev\build\chunks\[turbopack-node]_transforms_postcss_ts_6920245c._.js
+- Der Vorgang ist bei einer Datei mit einem geöffneten Bereich, der einem Benutzer zugeordnet ist, nicht anwendbar. (os error 1224)
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Execution of endpoint_write_to_disk failed
+- Execution of <AppEndpoint as Endpoint>::output failed
+- Failed to write app endpoint /page
+- Execution of AppEndpoint::output failed
+- Execution of AppProject::app_module_graphs failed
+- Execution of *<AppEndpoint as Endpoint>::additional_entries failed
+- Execution of *ModuleGraph::from_graphs failed
+- Execution of SingleModuleGraph::new_with_entries_visited_intern failed
+- [project]/app/globals.css [app-client] (css)
+- Execution of primary_chunkable_referenced_modules failed
+- Execution of <CssModuleAsset as Module>::references failed
+- Execution of parse_css failed
+- Execution of <PostCssTransformedAsset as Asset>::content failed
+- Execution of PostCssTransformedAsset::process failed
+- Execution of evaluate_webpack_loader failed
+- Execution of get_evaluate_pool failed
+- failed to write to C:\Users\loel\.claude-worktrees\3.0\sweet-ramanujan\.next\dev\build\chunks\[turbopack-node]_transforms_postcss_ts_6920245c._.js
+- Der Vorgang ist bei einer Datei mit einem geöffneten Bereich, der einem Benutzer zugeordnet ist, nicht anwendbar. (os error 1224)
+[00:03:23.137] Server  ERROR   ⨯ Error: ENOENT: no such file or directory, open 'C:\Users\loel\.claude-worktrees\3.0\sweet-ramanujan\.next\dev\server\pages\_app\build-manifest.json'
+[00:03:23.164] Server  ERROR   Error: ENOENT: no such file or directory, open 'C:\Users\loel\.claude-worktrees\3.0\sweet-ramanujan\.next\dev\server\pages\_app\build-manifest.json'
+[00:00:49.770] Server  LOG     ○ Compiling / ...
+[00:00:52.164] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:52.949] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:00.523] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:09.914] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:03.829] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:04.788] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:13.536] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:04:38.451] Server  WARN    Error: Route "/suche" used `searchParams.q`. `searchParams` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:12:14.201] Server  LOG     ✓ Compiled in 327ms
+[00:12:21.020] Server  LOG     ✓ Compiled in 394ms
+[00:12:27.495] Server  LOG     ✓ Compiled in 318ms
+[00:21:06.896] Server  LOG     ✓ Compiled in 332ms
+[00:21:19.555] Server  LOG     ✓ Compiled in 730ms
+[00:23:15.290] Server  LOG     ✓ Compiled in 317ms
+[00:23:33.132] Server  LOG     ✓ Compiled in 282ms
+[00:23:40.523] Server  LOG     ✓ Compiled in 649ms
+[00:23:41.467] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:50.603] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:57.662] Server  ERROR   Error fetching AIR: Error: Finnhub error for AIR
+[00:28:58.161] Server  ERROR   Error fetching SIE: Error: Finnhub error for SIE
+[00:28:58.226] Server  ERROR   Error fetching SAP: Error: Finnhub error for SAP
+[00:28:58.355] Server  ERROR   Error fetching VOW3: Error: Finnhub error for VOW3
+[00:28:59.509] Server  ERROR   Error fetching AIR: Error: Finnhub error for AIR
+[00:28:59.572] Server  ERROR   Error fetching SIE: Error: Finnhub error for SIE
+[00:28:59.629] Server  ERROR   Error fetching SAP: Error: Finnhub error for SAP
+[00:28:59.696] Server  ERROR   Error fetching VOW3: Error: Finnhub error for VOW3
+[00:29:27.668] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:29:37.646] Server  ERROR   Error fetching SIE: Error: Finnhub error for SIE
+[00:29:37.716] Server  ERROR   Error fetching SAP: Error: Finnhub error for SAP
+[00:29:37.803] Server  ERROR   Error fetching AIR: Error: Finnhub error for AIR
+[00:29:37.880] Server  ERROR   Error fetching VOW3: Error: Finnhub error for VOW3
+[00:29:39.788] Server  ERROR   Error fetching VOW3: Error: Finnhub error for VOW3
+[00:29:39.858] Server  ERROR   Error fetching AIR: Error: Finnhub error for AIR
+[00:29:39.916] Server  ERROR   Error fetching SIE: Error: Finnhub error for SIE
+[00:29:39.977] Server  ERROR   Error fetching SAP: Error: Finnhub error for SAP
+[00:30:44.831] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:45.022] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:30:48.964] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:31:00.445] Browser ERROR   Auth error: {"__isAuthError":true,"code":"invalid_credentials","name":"AuthApiError","status":400}
+[00:31:07.184] Browser ERROR   Auth error: {"__isAuthError":true,"code":"invalid_credentials","name":"AuthApiError","status":400}
+[00:31:39.511] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:31:39.693] Browser WARN    Image with src "https://trvsvikvoxgowiqhllkk.supabase.co/storage/v1/object/public/uploads/images/2026-01-03/6b4bc56b-af80-449b-9199-467774006f42.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:31:41.736] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:31:57.106] Browser ERROR   Auth error: {"__isAuthError":true,"code":"invalid_credentials","name":"AuthApiError","status":400}
+[00:32:22.589] Browser ERROR   Auth error: {"__isAuthError":true,"code":"invalid_credentials","name":"AuthApiError","status":400}
