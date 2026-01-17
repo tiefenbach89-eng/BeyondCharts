@@ -169,7 +169,7 @@ interface DeepDive {
 
 export default function ModernAdminCMS() {
   const router = useRouter();
-  const supabase = supabaseBrowser();
+  const [supabase] = useState(() => supabaseBrowser());
 
   const [view, setView] = useState<'list' | 'editor'>('list');
   const [type, setType] = useState<'news' | 'analysen'>('news');
