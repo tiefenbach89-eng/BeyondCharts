@@ -43,12 +43,17 @@ function LoginContent() {
           email,
           password,
         });
-        
+
         if (error) throw error;
 
-        // Success - redirect
-        router.push('/konto');
-        router.refresh();
+        // Success - show success message before redirect
+        setSuccess('✅ Erfolgreich angemeldet! Du wirst weitergeleitet...');
+
+        // Small delay to show success message
+        setTimeout(() => {
+          router.push('/konto');
+          router.refresh();
+        }, 1000);
       } else {
         // REGISTER
         const { data, error } = await supabase.auth.signUp({
@@ -72,7 +77,19 @@ function LoginContent() {
       }
     } catch (err: any) {
       console.error('Auth error:', err);
-      setError(err.message || 'Ein Fehler ist aufgetreten');
+
+      // Translate common Supabase errors to German
+      const germanErrors: Record<string, string> = {
+        'Invalid login credentials': 'Ungültige Anmeldedaten. Bitte überprüfe deine Email und Passwort.',
+        'Email not confirmed': 'Bitte bestätige zuerst deine Email-Adresse.',
+        'User already registered': 'Diese Email-Adresse ist bereits registriert.',
+        'Invalid email': 'Ungültige Email-Adresse.',
+        'Password should be at least 6 characters': 'Das Passwort muss mindestens 6 Zeichen lang sein.',
+        'Signup disabled': 'Registrierung ist derzeit deaktiviert.',
+        'Email rate limit exceeded': 'Zu viele Versuche. Bitte warte einen Moment.',
+      };
+
+      setError(germanErrors[err.message] || err.message || 'Ein Fehler ist aufgetreten');
     } finally {
       setLoading(false);
     }
@@ -136,9 +153,19 @@ function LoginContent() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold text-slate-900 mb-2">
-                Passwort
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-semibold text-slate-900">
+                  Passwort
+                </label>
+                {mode === 'login' && (
+                  <a
+                    href="/passwort-zuruecksetzen"
+                    className="text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+                  >
+                    Passwort vergessen?
+                  </a>
+                )}
+              </div>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input
