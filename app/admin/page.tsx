@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { supabaseBrowser } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -169,7 +169,7 @@ interface DeepDive {
 
 export default function ModernAdminCMS() {
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = supabaseBrowser();
 
   const [view, setView] = useState<'list' | 'editor'>('list');
   const [type, setType] = useState<'news' | 'analysen'>('news');
