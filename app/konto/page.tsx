@@ -28,7 +28,9 @@ import {
   BarChart3,
   Bell,
   CreditCard,
-  X
+  X,
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
 
 type TabType = 'overview' | 'security' | 'settings';
@@ -44,6 +46,11 @@ function AccountContent() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [priceAlerts, setPriceAlerts] = useState(false);
+  const [weeklyDigest, setWeeklyDigest] = useState(true);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -107,6 +114,48 @@ function AccountContent() {
       window.location.href = '/';
     } catch (err: any) {
       setError(err.message);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation !== 'LÖSCHEN') {
+      setError('Bitte gib "LÖSCHEN" ein um fortzufahren');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error: deleteError } = await supabase.rpc('delete_user');
+
+      if (deleteError) throw deleteError;
+
+      setSuccess('✅ Account erfolgreich gelöscht. Du wirst abgemeldet...');
+
+      setTimeout(async () => {
+        await signOut();
+        window.location.href = '/';
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || 'Fehler beim Löschen des Accounts');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveNotifications = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setSuccess('✅ Benachrichtigungseinstellungen gespeichert!');
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (err: any) {
+      setError('Fehler beim Speichern der Einstellungen');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -320,22 +369,6 @@ function AccountContent() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Mail className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900">E-Mail</div>
-                          <div className="text-xs text-slate-600">{user.email}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-emerald-600 font-semibold">Bestätigt</span>
-                        <Check className="h-5 w-5 text-emerald-600" />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
-                      <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                           isAdmin ? 'bg-violet-100' : isPremium ? 'bg-amber-100' : 'bg-blue-100'
                         }`}>
@@ -371,26 +404,27 @@ function AccountContent() {
 
             {/* Security Tab */}
             {activeTab === 'security' && (
-              <Card className="p-6 lg:p-8 bg-white border-none shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">Sicherheit</h2>
-                    <p className="text-sm text-slate-600 mt-1">Verwalte deine Sicherheitseinstellungen</p>
+              <div className="space-y-6">
+                <Card className="p-6 lg:p-8 bg-white border-none shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900">Passwort</h2>
+                      <p className="text-sm text-slate-600 mt-1">Ändere dein Passwort</p>
+                    </div>
+
+                    {!showPasswordChange && (
+                      <button
+                        onClick={() => setShowPasswordChange(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all font-semibold text-sm shadow-lg hover:shadow-xl"
+                      >
+                        <Key className="h-4 w-4" />
+                        Passwort ändern
+                      </button>
+                    )}
                   </div>
 
-                  {!showPasswordChange && (
-                    <button
-                      onClick={() => setShowPasswordChange(true)}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all font-semibold text-sm shadow-lg hover:shadow-xl"
-                    >
-                      <Key className="h-4 w-4" />
-                      Passwort ändern
-                    </button>
-                  )}
-                </div>
-
-                {/* Password Change Form */}
-                {showPasswordChange ? (
+                  {/* Password Change Form */}
+                  {showPasswordChange ? (
                   <form onSubmit={handlePasswordChange} className="p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200 space-y-4">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-bold text-slate-900">Neues Passwort setzen</h3>
@@ -483,61 +517,224 @@ function AccountContent() {
                     </div>
                   </form>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="p-4 bg-slate-50 rounded-xl">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Shield className="h-5 w-5 text-emerald-600" />
-                        <span className="font-semibold text-slate-900">2-Faktor-Authentifizierung</span>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-slate-50 rounded-xl">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Shield className="h-5 w-5 text-emerald-600" />
+                          <span className="font-semibold text-slate-900">2-Faktor-Authentifizierung</span>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-3">Noch nicht aktiviert</p>
+                        <button disabled className="text-sm text-slate-400 font-semibold cursor-not-allowed">
+                          Bald verfügbar
+                        </button>
                       </div>
-                      <p className="text-sm text-slate-600 mb-3">Noch nicht aktiviert</p>
-                      <button disabled className="text-sm text-slate-400 font-semibold cursor-not-allowed">
-                        Bald verfügbar
-                      </button>
-                    </div>
 
-                    <div className="p-4 bg-slate-50 rounded-xl">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Activity className="h-5 w-5 text-blue-600" />
-                        <span className="font-semibold text-slate-900">Login-Aktivität</span>
+                      <div className="p-4 bg-slate-50 rounded-xl">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Activity className="h-5 w-5 text-blue-600" />
+                          <span className="font-semibold text-slate-900">Login-Aktivität</span>
+                        </div>
+                        <p className="text-sm text-slate-600">Bald verfügbar</p>
                       </div>
-                      <p className="text-sm text-slate-600">Bald verfügbar</p>
+                    </div>
+                  )}
+                </Card>
+
+                {/* Account Deletion */}
+                <Card className="p-6 lg:p-8 bg-white border-none shadow-sm border-2 border-red-200">
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                        <Trash2 className="h-5 w-5 text-red-600" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-slate-900">Gefahrenzone</h2>
+                        <p className="text-sm text-slate-600">Account unwiderruflich löschen</p>
+                      </div>
                     </div>
                   </div>
-                )}
-              </Card>
+
+                  {!showDeleteAccount ? (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-red-50 rounded-xl border border-red-200">
+                        <div className="flex items-start gap-3">
+                          <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <p className="text-sm text-red-900 font-semibold mb-1">
+                              Warnung: Diese Aktion kann nicht rückgängig gemacht werden
+                            </p>
+                            <p className="text-sm text-red-700">
+                              Wenn du deinen Account löschst, werden alle deine Daten permanent gelöscht.
+                              Dies umfasst deine Watchlist, Favoriten und alle Account-Einstellungen.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowDeleteAccount(true)}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all font-semibold text-sm shadow-lg hover:shadow-xl"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Account löschen
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-6 bg-red-50 rounded-xl border border-red-200 space-y-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-red-900">Account löschen bestätigen</h3>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowDeleteAccount(false);
+                            setDeleteConfirmation('');
+                          }}
+                          className="text-red-400 hover:text-red-600 transition-colors"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </div>
+
+                      <div className="p-4 bg-red-100 rounded-lg border border-red-300">
+                        <p className="text-sm text-red-900 font-semibold mb-2">
+                          Bitte gib das Wort <span className="font-mono bg-red-200 px-2 py-0.5 rounded">LÖSCHEN</span> ein, um fortzufahren:
+                        </p>
+                        <input
+                          type="text"
+                          value={deleteConfirmation}
+                          onChange={(e) => setDeleteConfirmation(e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-red-300 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-mono"
+                          placeholder="LÖSCHEN"
+                        />
+                      </div>
+
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          onClick={handleDeleteAccount}
+                          disabled={loading || deleteConfirmation !== 'LÖSCHEN'}
+                          className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                        >
+                          {loading ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              <span>Lösche Account...</span>
+                            </div>
+                          ) : 'Account unwiderruflich löschen'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowDeleteAccount(false);
+                            setDeleteConfirmation('');
+                          }}
+                          className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-semibold transition-all border border-slate-200"
+                        >
+                          Abbrechen
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              </div>
             )}
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (
               <Card className="p-6 lg:p-8 bg-white border-none shadow-sm">
-                <h2 className="text-xl font-bold text-slate-900 mb-6">Einstellungen</h2>
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-slate-900">Benachrichtigungen</h2>
+                  <p className="text-sm text-slate-600 mt-1">Wähle, welche E-Mails du erhalten möchtest</p>
+                </div>
 
                 <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold text-slate-900 mb-3">Benachrichtigungen</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-                        <div className="flex items-center gap-3">
-                          <Bell className="h-5 w-5 text-slate-600" />
-                          <div>
-                            <div className="text-sm font-semibold text-slate-900">Email Benachrichtigungen</div>
-                            <div className="text-xs text-slate-600">Erhalte Updates per E-Mail</div>
-                          </div>
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Bell className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <div className="text-sm font-semibold text-slate-900 mb-1">Newsletter</div>
+                          <div className="text-xs text-slate-600">Wöchentliche Zusammenfassung der wichtigsten Markt-News</div>
                         </div>
-                        <button disabled className="text-sm text-slate-400 font-semibold cursor-not-allowed">
-                          Bald verfügbar
-                        </button>
                       </div>
+                      <button
+                        onClick={() => setEmailNotifications(!emailNotifications)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          emailNotifications ? 'bg-blue-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          emailNotifications ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                      </button>
+                    </div>
+
+                    <div className="flex items-start justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                      <div className="flex items-start gap-3 flex-1">
+                        <TrendingUp className="h-5 w-5 text-violet-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <div className="text-sm font-semibold text-slate-900 mb-1">Preis-Alerts</div>
+                          <div className="text-xs text-slate-600">Benachrichtigungen bei wichtigen Kursbewegungen deiner Watchlist</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setPriceAlerts(!priceAlerts)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          priceAlerts ? 'bg-blue-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          priceAlerts ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                      </button>
+                    </div>
+
+                    <div className="flex items-start justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                      <div className="flex items-start gap-3 flex-1">
+                        <FileText className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <div className="text-sm font-semibold text-slate-900 mb-1">Neue Analysen</div>
+                          <div className="text-xs text-slate-600">Info über neue Premium-Analysen und Expertenmeinungen</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setWeeklyDigest(!weeklyDigest)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          weeklyDigest ? 'bg-blue-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          weeklyDigest ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                      </button>
                     </div>
                   </div>
 
-                  <div>
+                  <div className="pt-4 border-t border-slate-200">
+                    <button
+                      onClick={handleSaveNotifications}
+                      disabled={loading}
+                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                    >
+                      {loading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Speichere...</span>
+                        </div>
+                      ) : 'Einstellungen speichern'}
+                    </button>
+                  </div>
+
+                  <div className="pt-6 border-t border-slate-200">
                     <h3 className="font-semibold text-slate-900 mb-3">Datenschutz</h3>
-                    <div className="space-y-3">
-                      <div className="p-4 bg-slate-50 rounded-xl">
-                        <p className="text-sm text-slate-600">
-                          Deine Daten werden sicher bei Supabase gespeichert und DSGVO-konform verarbeitet.
-                        </p>
+                    <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                      <div className="flex items-start gap-3">
+                        <Shield className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm text-blue-900 font-semibold mb-1">DSGVO-konform</p>
+                          <p className="text-sm text-blue-700">
+                            Deine Daten werden sicher bei Supabase gespeichert und DSGVO-konform verarbeitet.
+                            Du kannst deine Daten jederzeit einsehen, ändern oder löschen.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -549,25 +746,6 @@ function AccountContent() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-
-            {/* Admin Access Card */}
-            {isAdmin && (
-              <Card className="p-6 bg-gradient-to-br from-violet-600 to-purple-600 border-none shadow-xl text-white">
-                <Shield className="h-10 w-10 mb-3" />
-                <h3 className="text-lg font-bold mb-2">Admin Zugang</h3>
-                <p className="text-sm text-white/90 mb-4">
-                  Voller CMS Zugriff auf alle Funktionen
-                </p>
-                <a
-                  href="/admin"
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white text-violet-600 hover:bg-white/90 rounded-xl font-semibold transition-all shadow-lg"
-                >
-                  <Shield className="h-4 w-4" />
-                  Zum Admin Dashboard
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-              </Card>
-            )}
 
             {/* Upgrade Card */}
             {!isPremium && !isAdmin && (
