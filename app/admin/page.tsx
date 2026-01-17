@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -166,6 +168,9 @@ interface DeepDive {
 }
 
 export default function ModernAdminCMS() {
+  const router = useRouter();
+  const supabase = createClient();
+
   const [view, setView] = useState<'list' | 'editor'>('list');
   const [type, setType] = useState<'news' | 'analysen'>('news');
   const [posts, setPosts] = useState<Post[]>([]);
@@ -173,10 +178,14 @@ export default function ModernAdminCMS() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
+
+  // ✅ AUTH STATE
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   // ✅ TOAST STATE HINZUGEFÜGT
   const [toast, setToast] = useState<string | null>(null);
-  
+
   // ✅ DELETE CONFIRMATION STATE
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string; title: string }>({
     show: false,
@@ -212,6 +221,41 @@ export default function ModernAdminCMS() {
     risk: '',
   });
 
+  // ✅ CHECK AUTHENTICATION ON MOUNT
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        router.push('/konto?redirect=/admin');
+        return;
+      }
+
+      // Check if user has admin role
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile || profile.role !== 'admin') {
+        setToast('❌ Zugriff verweigert: Admin-Rechte erforderlich');
+        setTimeout(() => router.push('/'), 3000);
+        return;
+      }
+
+      setIsAdmin(true);
+      setIsCheckingAuth(false);
+    } catch (err) {
+      console.error('Auth check failed:', err);
+      router.push('/konto?redirect=/admin');
+    }
+  };
+
   // Auto-generate slug from title
   useEffect(() => {
     if (form.title && view === 'editor' && !editingPost) {
@@ -221,16 +265,30 @@ export default function ModernAdminCMS() {
 
   // Load posts on mount
   useEffect(() => {
-    loadPosts();
-  }, [type]);
+    if (isAdmin) {
+      loadPosts();
+    }
+  }, [type, isAdmin]);
 
   const loadPosts = async () => {
     try {
       const res = await fetch(`/api/admin/${type}?includeDrafts=1`);
+
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          setToast('❌ Session abgelaufen - bitte neu einloggen');
+          setTimeout(() => router.push('/konto?redirect=/admin'), 2000);
+          return;
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
+
       const data = await res.json();
       setPosts(data);
     } catch (error) {
       console.error('Error loading posts:', error);
+      setToast('❌ Fehler beim Laden der Beiträge');
+      setTimeout(() => setToast(null), 4000);
     }
   };
 
@@ -436,6 +494,26 @@ export default function ModernAdminCMS() {
       },
     }),
   };
+
+  // ✅ LOADING SCREEN WHILE CHECKING AUTH
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-blue-500/40 animate-pulse">
+            <Sparkles className="h-8 w-8 text-white" />
+          </div>
+          <p className="text-lg font-bold text-slate-700">Überprüfe Zugangsberechtigung...</p>
+          <p className="text-sm text-slate-500 mt-2">Einen Moment bitte</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ ACCESS DENIED SCREEN
+  if (!isAdmin) {
+    return null; // Will redirect, show nothing
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-50">
