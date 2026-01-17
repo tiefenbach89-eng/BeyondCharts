@@ -228,30 +228,42 @@ export default function ModernAdminCMS() {
 
   const checkAuth = async () => {
     try {
+      console.log('🔍 Starting auth check...');
       const { data: { user }, error } = await supabase.auth.getUser();
 
+      console.log('👤 User:', user);
+      console.log('❌ Error:', error);
+
       if (error || !user) {
+        console.log('🚫 No user or error, redirecting to /konto');
         router.push('/konto?redirect=/admin');
         return;
       }
 
+      console.log('✅ User authenticated, checking admin role...');
+
       // Check if user has admin role
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
 
+      console.log('📋 Profile:', profile);
+      console.log('❌ Profile Error:', profileError);
+
       if (!profile || profile.role !== 'admin') {
+        console.log('🚫 Not admin, showing toast and redirecting');
         setToast('❌ Zugriff verweigert: Admin-Rechte erforderlich');
         setTimeout(() => router.push('/'), 3000);
         return;
       }
 
+      console.log('✅ User is admin! Setting isAdmin=true');
       setIsAdmin(true);
       setIsCheckingAuth(false);
     } catch (err) {
-      console.error('Auth check failed:', err);
+      console.error('💥 Auth check failed:', err);
       router.push('/konto?redirect=/admin');
     }
   };
