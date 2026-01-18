@@ -2,6 +2,7 @@
 // Unified news interface - converts Finnhub to a common format
 
 import { fetchFinnhubMarketNews, fetchFinnhubMultiSymbolNews, POPULAR_SYMBOLS, type FinnhubNewsItem } from './finnhub';
+import { translateNewsItems } from './deepl';
 
 export interface UnifiedNewsItem {
   id: string;
@@ -35,7 +36,7 @@ function convertFinnhubToUnified(item: FinnhubNewsItem): UnifiedNewsItem {
 }
 
 /**
- * Fetch all news from Finnhub
+ * Fetch all news from Finnhub and translate to German
  * Combines market news + multi-symbol news
  */
 export async function fetchAllNews(limit: number = 20): Promise<UnifiedNewsItem[]> {
@@ -62,7 +63,26 @@ export async function fetchAllNews(limit: number = 20): Promise<UnifiedNewsItem[
       .slice(0, limit)
       .map(convertFinnhubToUnified);
 
-    return unifiedNews;
+    // Translate titles and descriptions to German
+    console.log('[Unified News] Translating news to German...');
+    const newsToTranslate = unifiedNews.map(item => ({
+      title: item.title,
+      description: item.description,
+    }));
+
+    const translations = await translateNewsItems(newsToTranslate);
+
+    // Apply translations
+    const translatedNews = unifiedNews.map((item, idx) => ({
+      ...item,
+      title: translations[idx].title,
+      description: translations[idx].description,
+      snippet: translations[idx].description, // Use translated description as snippet too
+    }));
+
+    console.log(`[Unified News] Translated ${translatedNews.length} news items`);
+
+    return translatedNews;
   } catch (error) {
     console.error('Error fetching unified news:', error);
     return [];
