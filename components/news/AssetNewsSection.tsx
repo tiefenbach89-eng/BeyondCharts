@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Clock, ExternalLink, Newspaper } from 'lucide-react';
+import { TrendingUp, Clock, ExternalLink, Newspaper, TrendingDown, Minus } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
-import type { ElbstreamNewsGroup, ElbstreamNewsItem } from '@/lib/elbstream';
+import type { MarketauxNewsItem } from '@/lib/marketaux';
 
 interface AssetNewsSectionProps {
-  initialNews?: ElbstreamNewsGroup[];
+  initialNews?: MarketauxNewsItem[];
 }
 
 export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
-  const [news, setNews] = useState<ElbstreamNewsGroup[]>(initialNews);
+  const [news, setNews] = useState<MarketauxNewsItem[]>(initialNews);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -70,30 +70,34 @@ export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
 
       {/* News Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {news.slice(0, 6).map((newsGroup) => {
-          // Get the first item from the group
-          const item = newsGroup.items[0];
-          if (!item) return null;
-
-          return (
-            <AssetNewsCard key={newsGroup.id} item={item} />
-          );
-        })}
+        {news.slice(0, 6).map((item) => (
+          <AssetNewsCard key={item.uuid} item={item} />
+        ))}
       </div>
     </section>
   );
 }
 
 interface AssetNewsCardProps {
-  item: ElbstreamNewsItem;
+  item: MarketauxNewsItem;
 }
 
 function AssetNewsCard({ item }: AssetNewsCardProps) {
-  const primaryAsset = item.assets[0];
-  const hasMultipleAssets = item.assets.length > 1;
+  const primaryEntity = item.entities[0];
+  const hasMultipleEntities = item.entities.length > 1;
 
   // Format time ago
   const timeAgo = getTimeAgo(item.published_at);
+
+  // Get sentiment icon and color
+  const getSentimentDisplay = (score: number) => {
+    if (score > 0.1) return { icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' };
+    if (score < -0.1) return { icon: TrendingDown, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
+    return { icon: Minus, color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200' };
+  };
+
+  const sentiment = primaryEntity ? getSentimentDisplay(primaryEntity.sentiment_score) : null;
+  const SentimentIcon = sentiment?.icon;
 
   return (
     <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
@@ -101,17 +105,20 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative p-6">
-        {/* Asset Badge */}
-        {primaryAsset && (
+        {/* Asset Badge with Sentiment */}
+        {primaryEntity && (
           <div className="flex items-center gap-2 mb-4">
-            <div className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-200 rounded-xl">
+            <div className={`px-3 py-1.5 bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-200 rounded-xl flex items-center gap-1.5`}>
               <span className="text-xs font-bold text-blue-700">
-                {primaryAsset.symbol || primaryAsset.isin}
+                {primaryEntity.symbol}
               </span>
+              {SentimentIcon && sentiment && (
+                <SentimentIcon className={`w-3 h-3 ${sentiment.color}`} />
+              )}
             </div>
-            {hasMultipleAssets && (
+            {hasMultipleEntities && (
               <span className="text-xs text-slate-500 font-medium">
-                +{item.assets.length - 1} weitere
+                +{item.entities.length - 1} weitere
               </span>
             )}
           </div>
@@ -119,13 +126,13 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
 
         {/* Headline */}
         <h3 className="text-lg font-bold text-slate-900 mb-3 leading-tight line-clamp-3 group-hover:text-blue-600 transition-colors">
-          {item.headline}
+          {item.title}
         </h3>
 
-        {/* Summary */}
-        {item.summary && (
+        {/* Description */}
+        {item.description && (
           <p className="text-sm text-slate-600 mb-4 line-clamp-2 leading-relaxed">
-            {item.summary}
+            {item.description}
           </p>
         )}
 

@@ -1,7 +1,7 @@
 import { listContent } from "@/lib/content.server";
 import { NewsCard } from "@/components/news/NewsCard";
 import { AssetNewsSection } from "@/components/news/AssetNewsSection";
-import { fetchElbstreamNews, POPULAR_ASSET_ISINS } from "@/lib/elbstream";
+import { fetchMarketauxNews, POPULAR_STOCK_SYMBOLS, EUROPEAN_COUNTRIES } from "@/lib/marketaux";
 import {
   TrendingUp,
   Zap,
@@ -17,7 +17,7 @@ export default async function NewsPage() {
   // Fetch both internal and external news
   const [items, assetNewsData] = await Promise.all([
     listContent("news"),
-    fetchElbstreamNews('de', 6, POPULAR_ASSET_ISINS)
+    fetchMarketauxNews(POPULAR_STOCK_SYMBOLS, 6, 'de', EUROPEAN_COUNTRIES)
   ]);
 
   // Type assertion - we know these properties exist on news items
@@ -98,7 +98,7 @@ export default async function NewsPage() {
       </div>
 
       <div className="ff-container px-4 py-16 space-y-16">
-        {/* Asset News from Elbstream */}
+        {/* Asset News from Marketaux */}
         {assetNewsData.data.length > 0 && (
           <AssetNewsSection initialNews={assetNewsData.data} />
         )}

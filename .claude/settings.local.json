@@ -17,7 +17,8 @@
       "Bash(git reset:*)",
       "Bash(git rm:*)",
       "Bash(git stash:*)",
-      "Bash(echo \"Du musst in der Supabase Datenbank überprüfen, ob dein User die role=''admin'' hat.\n\nGehe zu Supabase Dashboard > Table Editor > profiles\nFinde deinen User und setze das ''role'' Feld auf ''admin''\n\nOder führe diese SQL Query aus:\nUPDATE profiles SET role = ''admin'' WHERE email = ''deine@email.com'';\")"
+      "Bash(echo \"Du musst in der Supabase Datenbank überprüfen, ob dein User die role=''admin'' hat.\n\nGehe zu Supabase Dashboard > Table Editor > profiles\nFinde deinen User und setze das ''role'' Feld auf ''admin''\n\nOder führe diese SQL Query aus:\nUPDATE profiles SET role = ''admin'' WHERE email = ''deine@email.com'';\")",
+      "Bash(curl:*)"
     ]
   }
 }
