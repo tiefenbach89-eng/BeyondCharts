@@ -73,11 +73,41 @@ export default function RegisterPage() {
       return;
     }
 
+    // Check if email already exists
+    setLoading(true);
+    try {
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (existingUser) {
+        setError('Diese Email-Adresse ist bereits registriert. Bitte melde dich an.');
+        setLoading(false);
+        return;
+      }
+    } catch (err: any) {
+      // If error is "not found", that's good - email doesn't exist
+      if (err.code !== 'PGRST116') {
+        console.error('Email check error:', err);
+      }
+    } finally {
+      setLoading(false);
+    }
+
     setStep('name');
   };
 
   const handleStepTwo = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate name is required
+    if (!name || name.trim().length === 0) {
+      setError('Bitte gib einen Namen oder Spitznamen ein');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -88,7 +118,7 @@ export default function RegisterPage() {
         options: {
           emailRedirectTo: `${window.location.origin}/konto?confirmed=true`,
           data: {
-            name: name || null,
+            name: name.trim(),
           },
         },
       });
@@ -155,308 +185,293 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-violet-700 flex items-center justify-center p-6">
-      <div className="grid lg:grid-cols-2 gap-8 max-w-6xl w-full items-center">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
 
-        {/* LEFT SIDE - Registration Form */}
-        <div className="w-full max-w-lg mx-auto">
-
-          {/* Logo */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              BeyondCharts
-            </h1>
-            <div className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
-              <span className="text-sm font-semibold text-white">PREMIUM ANALYTICS</span>
-            </div>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg mx-auto mb-4">
+            <User className="h-8 w-8 text-white" />
           </div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+            Account erstellen
+          </h1>
+          <p className="text-slate-600">
+            Erstelle deinen kostenlosen Account
+          </p>
+        </div>
 
-          {/* Form Card */}
-          <div className="bg-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-800">
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
 
-            {/* STEP 1: Email + Password */}
-            {step === 'credentials' && (
-              <form onSubmit={handleStepOne} className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    Erstelle einen Account
-                  </h2>
+          {/* Progress Indicator */}
+          {step !== 'confirmation' && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-slate-600">
+                  Schritt {step === 'credentials' ? '1' : '2'} von 2
+                </span>
+              </div>
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-300"
+                  style={{ width: step === 'credentials' ? '50%' : '100%' }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* STEP 1: Email + Password */}
+          {step === 'credentials' && (
+            <form onSubmit={handleStepOne} className="space-y-6">
+              {error && (
+                <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                  E-Mail-Adresse
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    placeholder="deine@email.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                  Passwort
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-12 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    placeholder="Mindestens 8 Zeichen"
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
 
-                {error && (
-                  <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400">
-                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                    <p className="text-sm">{error}</p>
+                {/* Password Strength Indicator */}
+                {password && (
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-slate-600">{getStrengthLabel()}</span>
+                    </div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 ${getStrengthColor()}`}
+                        style={{ width: `${passwordStrength}%` }}
+                      />
+                    </div>
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-2">
-                    E-Mail-Adresse
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                      placeholder="deine@email.com"
-                      required
-                    />
-                  </div>
+                <div className="mt-3 space-y-1">
+                  <p className={`text-xs ${password.length >= 8 ? 'text-green-600' : 'text-slate-500'} flex items-center gap-2`}>
+                    {password.length >= 8 ? <Check className="h-3 w-3" /> : '○'} Mindestens 8 Zeichen
+                  </p>
+                  <p className={`text-xs ${/[A-Z]/.test(password) ? 'text-green-600' : 'text-slate-500'} flex items-center gap-2`}>
+                    {/[A-Z]/.test(password) ? <Check className="h-3 w-3" /> : '○'} 1 Großbuchstabe
+                  </p>
+                  <p className={`text-xs ${/[0-9]/.test(password) ? 'text-green-600' : 'text-slate-500'} flex items-center gap-2`}>
+                    {/[0-9]/.test(password) ? <Check className="h-3 w-3" /> : '○'} 1 Zahl
+                  </p>
+                  <p className={`text-xs ${/[^A-Za-z0-9]/.test(password) ? 'text-green-600' : 'text-slate-500'} flex items-center gap-2`}>
+                    {/[^A-Za-z0-9]/.test(password) ? <Check className="h-3 w-3" /> : '○'} 1 Sonderzeichen
+                  </p>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-2">
-                    Passwort
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                      placeholder="Mindestens 8 Zeichen"
-                      required
-                      minLength={8}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
+              <button
+                type="submit"
+                className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                Weiter
+                <ArrowRight className="h-5 w-5" />
+              </button>
 
-                  {/* Password Strength Indicator */}
-                  {password && (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs text-slate-400">{getStrengthLabel()}</span>
-                      </div>
-                      <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-300 ${getStrengthColor()}`}
-                          style={{ width: `${passwordStrength}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="mt-3 space-y-1">
-                    <p className={`text-xs ${password.length >= 8 ? 'text-green-400' : 'text-slate-400'} flex items-center gap-2`}>
-                      {password.length >= 8 ? <Check className="h-3 w-3" /> : '○'} Mindestens 8, nicht mehr als 72 Zeichen
-                    </p>
-                    <p className={`text-xs ${/[a-z]/.test(password) ? 'text-green-400' : 'text-slate-400'} flex items-center gap-2`}>
-                      {/[a-z]/.test(password) ? <Check className="h-3 w-3" /> : '○'} 1 Kleinbuchstabe
-                    </p>
-                    <p className={`text-xs ${/[A-Z]/.test(password) ? 'text-green-400' : 'text-slate-400'} flex items-center gap-2`}>
-                      {/[A-Z]/.test(password) ? <Check className="h-3 w-3" /> : '○'} 1 Großbuchstabe
-                    </p>
-                    <p className={`text-xs ${/[^A-Za-z0-9]/.test(password) ? 'text-green-400' : 'text-slate-400'} flex items-center gap-2`}>
-                      {/[^A-Za-z0-9]/.test(password) ? <Check className="h-3 w-3" /> : '○'} 1 Sonderzeichen
-                    </p>
-                  </div>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200"></div>
                 </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-slate-400">oder</span>
+                </div>
+              </div>
 
+              <div className="space-y-3">
                 <button
-                  type="submit"
-                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl"
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-slate-50 hover:bg-slate-100 text-slate-900 border border-slate-200 rounded-xl font-semibold transition-all disabled:opacity-50"
                 >
-                  Weiter
+                  <Chrome className="h-5 w-5" />
+                  Mit Google anmelden
                 </button>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-700"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-slate-900 text-slate-400">oder</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <button
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-slate-100 text-slate-900 rounded-xl font-semibold transition-all disabled:opacity-50"
-                  >
-                    <Chrome className="h-5 w-5" />
-                    Mit Google anmelden
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleAppleSignIn}
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white hover:bg-slate-100 text-slate-900 rounded-xl font-semibold transition-all disabled:opacity-50"
-                  >
-                    <FaApple className="h-5 w-5" />
-                    Mit Apple anmelden
-                  </button>
-                </div>
-
-                <div className="text-center text-xs text-slate-400">
-                  Durch deine Registrierung stimmst du den{' '}
-                  <a href="/agb" className="text-blue-400 hover:text-blue-300 underline">AGB</a>
-                  {' '}zu und bestätigst, dass du die{' '}
-                  <a href="/datenschutz" className="text-blue-400 hover:text-blue-300 underline">Datenschutzerklärung</a>
-                  {' '}zur Kenntnis genommen hast.
-                </div>
 
                 <button
                   type="button"
-                  onClick={() => router.push('/login')}
-                  className="w-full text-center text-sm text-slate-400 hover:text-white transition-colors"
+                  onClick={handleAppleSignIn}
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-slate-50 hover:bg-slate-100 text-slate-900 border border-slate-200 rounded-xl font-semibold transition-all disabled:opacity-50"
                 >
+                  <FaApple className="h-5 w-5" />
+                  Mit Apple anmelden
+                </button>
+              </div>
+
+              <div className="text-center text-xs text-slate-500">
+                Durch deine Registrierung stimmst du den{' '}
+                <a href="/agb" className="text-blue-600 hover:text-blue-700 underline">AGB</a>
+                {' '}zu und bestätigst, dass du die{' '}
+                <a href="/datenschutz" className="text-blue-600 hover:text-blue-700 underline">Datenschutzerklärung</a>
+                {' '}zur Kenntnis genommen hast.
+              </div>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => router.push('/login')}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  Bereits registriert? Anmelden
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* STEP 2: Name */}
+          {step === 'name' && (
+            <form onSubmit={handleStepTwo} className="space-y-6">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setStep('credentials')}
+                  className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4" />
                   Zurück
                 </button>
-              </form>
-            )}
-
-            {/* STEP 2: Name */}
-            {step === 'name' && (
-              <form onSubmit={handleStepTwo} className="space-y-6">
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setStep('credentials')}
-                    className="flex items-center gap-2 text-slate-400 hover:text-white mb-4 transition-colors"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Zurück
-                  </button>
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    Dein Name oder Spitzname?
-                  </h2>
-                </div>
-
-                {error && (
-                  <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400">
-                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                    <p className="text-sm">{error}</p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-2">
-                    Name / Spitzname
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                      placeholder="Wie möchtest du genannt werden?"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Registrieren...</span>
-                    </div>
-                  ) : 'Registrieren'}
-                </button>
-              </form>
-            )}
-
-            {/* STEP 3: Confirmation */}
-            {step === 'confirmation' && (
-              <div className="text-center space-y-6">
-                <div className="w-16 h-16 rounded-full bg-green-500/10 border-2 border-green-500 flex items-center justify-center mx-auto">
-                  <Check className="h-8 w-8 text-green-500" />
-                </div>
-
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    Fast geschafft!
-                  </h2>
-                  <p className="text-slate-400">
-                    Du erhältst in Kürze eine Bestätigungs-E-Mail. Bitte klicke auf den darin enthaltenen Link, um dein Konto zu aktivieren.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => router.push('/login')}
-                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl"
-                >
-                  Zum Login
-                </button>
-
-                <div className="text-sm text-slate-400">
-                  Du hast keinen Aktivierungslink erhalten?
-                  <br />
-                  <button className="text-blue-400 hover:text-blue-300 font-semibold mt-2">
-                    Aktivierungslink erneut anfordern
-                  </button>
-                </div>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">
+                  Dein Name oder Spitzname?
+                </h2>
+                <p className="text-sm text-slate-600">
+                  Wie möchtest du in deinem Profil genannt werden?
+                </p>
               </div>
-            )}
 
-          </div>
+              {error && (
+                <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
 
-          {/* Footer Links */}
-          <div className="mt-6 text-center text-sm text-white/60 flex items-center justify-center gap-4">
-            <a href="/impressum" className="hover:text-white transition-colors">Impressum</a>
-            <span>•</span>
-            <a href="/datenschutz" className="hover:text-white transition-colors">Datenschutz</a>
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                  Name / Spitzname *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    placeholder="z.B. Max oder Investor2024"
+                    required
+                    autoFocus
+                  />
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  Pflichtfeld - Dieser Name wird in deinem Profil angezeigt
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Registrieren...</span>
+                  </div>
+                ) : 'Registrieren'}
+              </button>
+            </form>
+          )}
+
+          {/* STEP 3: Confirmation */}
+          {step === 'confirmation' && (
+            <div className="text-center space-y-6">
+              <div className="w-16 h-16 rounded-full bg-green-50 border-2 border-green-500 flex items-center justify-center mx-auto">
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                  Fast geschafft!
+                </h2>
+                <p className="text-slate-600">
+                  Du erhältst in Kürze eine Bestätigungs-E-Mail. Bitte klicke auf den darin enthaltenen Link, um dein Konto zu aktivieren.
+                </p>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <p className="text-sm text-blue-900">
+                  📧 E-Mail gesendet an: <strong>{email}</strong>
+                </p>
+              </div>
+
+              <button
+                onClick={() => router.push('/login')}
+                className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl"
+              >
+                Zum Login
+              </button>
+
+              <div className="text-sm text-slate-600">
+                Du hast keinen Aktivierungslink erhalten?
+                <br />
+                <button className="text-blue-600 hover:text-blue-700 font-semibold mt-2">
+                  Aktivierungslink erneut anfordern
+                </button>
+              </div>
+            </div>
+          )}
+
         </div>
 
-        {/* RIGHT SIDE - Illustration & Benefits */}
-        <div className="hidden lg:block">
-          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-            <div className="mb-8">
-              <div className="w-full aspect-square bg-gradient-to-br from-blue-400/20 to-violet-400/20 rounded-2xl flex items-center justify-center mb-6">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">📊</div>
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-                    <span className="text-white font-bold text-sm">PLUS</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Behalte deine Dividenden im Blick
-            </h3>
-            <p className="text-white/80 text-sm mb-6">
-              Berechne deine Dividendenrendite, erhalte Prognosen zu Ausschüttungen und einen Kalender für alle Auszahlungstermine.
-            </p>
-
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-white/90">
-                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-sm">Premium Analysen & Insights</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/90">
-                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-sm">Echtzeit-Dividendenkalender</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/90">
-                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-sm">Erweiterte Chart-Funktionen</span>
-              </div>
-            </div>
-          </div>
+        {/* Back Link */}
+        <div className="text-center mt-6">
+          <a href="/" className="text-sm text-slate-500 hover:text-slate-700 transition-colors">
+            ← Zurück zur Startseite
+          </a>
         </div>
 
       </div>

@@ -25,7 +25,9 @@
   "/news/[slug]/page": "app/news/[slug]/page.js",
   "/news/page": "app/news/page.js",
   "/page": "app/page.js",
+  "/passwort-zuruecksetzen/page": "app/passwort-zuruecksetzen/page.js",
   "/premium/page": "app/premium/page.js",
+  "/register/page": "app/register/page.js",
   "/suche/page": "app/suche/page.js",
   "/watchlist/page": "app/watchlist/page.js"
 }

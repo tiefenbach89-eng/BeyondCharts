@@ -51,7 +51,13 @@
     "[project]/app/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
+    "[project]/app/passwort-zuruecksetzen/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
     "[project]/app/premium/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/app/register/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
     "[project]/app/suche/page": [

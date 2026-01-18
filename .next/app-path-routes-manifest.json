@@ -25,7 +25,9 @@
   "/news/[slug]/page": "/news/[slug]",
   "/news/page": "/news",
   "/page": "/",
+  "/passwort-zuruecksetzen/page": "/passwort-zuruecksetzen",
   "/premium/page": "/premium",
+  "/register/page": "/register",
   "/suche/page": "/suche",
   "/watchlist/page": "/watchlist"
 }

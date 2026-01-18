@@ -192,10 +192,22 @@
       "namedRegex": "^/news(?:/)?$"
     },
     {
+      "page": "/passwort-zuruecksetzen",
+      "regex": "^/passwort\\-zuruecksetzen(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/passwort\\-zuruecksetzen(?:/)?$"
+    },
+    {
       "page": "/premium",
       "regex": "^/premium(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/premium(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
     },
     {
       "page": "/suche",

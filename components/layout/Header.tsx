@@ -131,20 +131,34 @@ export function Header() {
             <Search className="h-4 w-4 text-slate-600" />
           </button>
 
-          {/* Account Button - Shows role when logged in */}
-          <Link href="/konto" className="hidden sm:block">
-            <button className={cn(
-              "inline-flex items-center gap-2 h-10 px-4 rounded-xl border transition-all duration-200 hover:shadow-md text-sm font-semibold",
-              user
-                ? "border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700"
-                : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700"
-            )}>
-              <User className="h-4 w-4" />
-              <span>
-                {loading ? '...' : user ? role.charAt(0).toUpperCase() + role.slice(1) : 'Konto'}
-              </span>
-            </button>
-          </Link>
+          {/* Account Button - Shows dropdown when not logged in */}
+          {user ? (
+            <Link href="/konto" className="hidden sm:block">
+              <button className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 transition-all duration-200 hover:shadow-md text-sm font-semibold">
+                <User className="h-4 w-4" />
+                <span>{loading ? '...' : role.charAt(0).toUpperCase() + role.slice(1)}</span>
+              </button>
+            </Link>
+          ) : (
+            <div className="hidden sm:block relative group">
+              <button className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 transition-all duration-200 hover:shadow-md text-sm font-semibold">
+                <User className="h-4 w-4" />
+                <span>Login</span>
+              </button>
+
+              {/* Dropdown on Hover */}
+              <div className="absolute right-0 top-full mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="bg-white rounded-xl shadow-xl border border-slate-200 py-2 overflow-hidden">
+                  <Link href="/login" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors font-medium">
+                    Anmelden
+                  </Link>
+                  <Link href="/register" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors font-medium">
+                    Registrieren
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

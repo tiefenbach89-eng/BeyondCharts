@@ -191,10 +191,28 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/passwort-zuruecksetzen/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/passwort-zuruecksetzen">> = Specific
+  const handler = {} as typeof import("../../app/passwort-zuruecksetzen/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/premium/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/premium">> = Specific
   const handler = {} as typeof import("../../app/premium/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/register/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/register">> = Specific
+  const handler = {} as typeof import("../../app/register/page.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
