@@ -17,7 +17,7 @@ export default async function NewsPage() {
   // Fetch both internal and external news
   const [items, assetNewsData] = await Promise.all([
     listContent("news"),
-    fetchMarketauxNews(POPULAR_STOCK_SYMBOLS, 20, 'de') // German news - increased limit
+    fetchMarketauxNews(undefined, 20, 'de', EUROPEAN_COUNTRIES) // All German/European news
   ]);
 
   // Type assertion - we know these properties exist on news items

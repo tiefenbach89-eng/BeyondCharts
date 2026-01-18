@@ -9,9 +9,10 @@ export async function GET() {
   try {
     // Fetch news for popular assets from Marketaux
     const newsData = await fetchMarketauxNews(
-      POPULAR_STOCK_SYMBOLS,
+      undefined,
       20,
-      'de' // German news
+      'de', // German news
+      EUROPEAN_COUNTRIES // From European markets
     );
 
     return NextResponse.json({
