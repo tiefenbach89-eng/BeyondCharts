@@ -52,6 +52,10 @@ function AccountContent() {
   const [priceAlerts, setPriceAlerts] = useState(false);
   const [weeklyDigest, setWeeklyDigest] = useState(true);
 
+  const [showNameEdit, setShowNameEdit] = useState(false);
+  const [name, setName] = useState('');
+  const [profileName, setProfileName] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -61,14 +65,32 @@ function AccountContent() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Check for confirmation success
+  // Check for confirmation success and load profile data
   useEffect(() => {
     const confirmed = searchParams?.get('confirmed');
     if (confirmed === 'true') {
       setSuccess('✅ Email erfolgreich bestätigt! Willkommen bei BeyondCharts!');
       setTimeout(() => setSuccess(''), 8000);
     }
-  }, [searchParams]);
+
+    // Load profile name
+    const loadProfile = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+
+      if (data && data.name) {
+        setProfileName(data.name);
+        setName(data.name);
+      }
+    };
+
+    loadProfile();
+  }, [searchParams, user, supabase]);
 
   // PASSWORD CHANGE
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -139,6 +161,30 @@ function AccountContent() {
       }, 2000);
     } catch (err: any) {
       setError(err.message || 'Fehler beim Löschen des Accounts');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNameChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ name })
+        .eq('id', user!.id);
+
+      if (error) throw error;
+
+      setProfileName(name);
+      setSuccess('✅ Name erfolgreich aktualisiert!');
+      setShowNameEdit(false);
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (err: any) {
+      setError(err.message || 'Fehler beim Aktualisieren des Namens');
     } finally {
       setLoading(false);
     }
@@ -363,6 +409,60 @@ function AccountContent() {
                   <h2 className="text-xl font-bold text-slate-900 mb-6">Account Informationen</h2>
 
                   <div className="space-y-4">
+                    {/* Name Field */}
+                    <div className="p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <User className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-slate-900">Name</div>
+                            <div className="text-xs text-slate-600">{profileName || 'Noch nicht angegeben'}</div>
+                          </div>
+                        </div>
+                        {!showNameEdit && (
+                          <button
+                            onClick={() => setShowNameEdit(true)}
+                            className="text-xs text-blue-600 hover:text-blue-700 font-semibold"
+                          >
+                            Ändern
+                          </button>
+                        )}
+                      </div>
+
+                      {showNameEdit && (
+                        <form onSubmit={handleNameChange} className="mt-3 space-y-3">
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                            placeholder="Dein Name oder Spitzname"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              type="submit"
+                              disabled={loading}
+                              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
+                            >
+                              {loading ? 'Speichere...' : 'Speichern'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowNameEdit(false);
+                                setName(profileName);
+                              }}
+                              className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 rounded-xl font-semibold text-sm border border-slate-200 transition-all"
+                            >
+                              Abbrechen
+                            </button>
+                          </div>
+                        </form>
+                      )}
+                    </div>
+
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
