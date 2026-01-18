@@ -70,7 +70,7 @@ export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
 
       {/* News Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {news.slice(0, 6).map((item) => (
+        {news.map((item) => (
           <AssetNewsCard key={item.uuid} item={item} />
         ))}
       </div>
@@ -100,9 +100,10 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
   const SentimentIcon = sentiment?.icon;
 
   return (
-    <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
-      {/* Gradient Overlay on Hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <Link href={`/asset-news/${item.uuid}`}>
+      <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
+        {/* Gradient Overlay on Hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative p-6">
         {/* Asset Badge with Sentiment */}
@@ -168,6 +169,7 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
         )}
       </div>
     </Card>
+    </Link>
   );
 }
 

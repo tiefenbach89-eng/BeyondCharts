@@ -10,7 +10,7 @@ export async function GET() {
     // Fetch news for popular assets from Marketaux
     const newsData = await fetchMarketauxNews(
       POPULAR_STOCK_SYMBOLS,
-      10,
+      20,
       'de' // German news
     );
 
