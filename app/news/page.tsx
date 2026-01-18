@@ -1,8 +1,8 @@
 import { listContent } from "@/lib/content.server";
 import { NewsCard } from "@/components/news/NewsCard";
 import { AssetNewsSection } from "@/components/news/AssetNewsSection";
+import { getStoredNews, storeNews, shouldFetchFreshNews } from "@/lib/news-storage";
 import { fetchAllNews } from "@/lib/unified-news";
-import { getCachedNews, setCachedNews } from "@/lib/news-cache";
 import {
   TrendingUp,
   Zap,
@@ -11,20 +11,27 @@ import {
   Sparkles,
 } from "lucide-react";
 
-// Use ISR: Page is statically generated and revalidated every 30 minutes
-export const revalidate = 1800; // 30 minutes (or on-demand)
+// Use ISR: Page is statically generated and revalidated every 2 hours
+export const revalidate = 7200; // 2 hours (or on-demand)
 
 export default async function NewsPage() {
-  // Check cache first
-  let assetNews = getCachedNews();
+  // Check if we need fresh news (2 hour threshold)
+  const needsFreshNews = await shouldFetchFreshNews(2 * 60 * 60 * 1000);
 
-  // If no cache, fetch from Finnhub (only happens once every 30 min)
+  let assetNews;
+
+  if (!needsFreshNews) {
+    // Get from Supabase storage
+    assetNews = await getStoredNews(50);
+  }
+
+  // If storage is empty or news are stale, fetch fresh
   if (!assetNews || assetNews.length === 0) {
-    assetNews = await fetchAllNews(20); // Get 20 news items from Finnhub
+    assetNews = await fetchAllNews(20); // Get 20 news items from Finnhub + translate
 
-    // Cache for subsequent requests
+    // Store for future requests
     if (assetNews.length > 0) {
-      setCachedNews(assetNews);
+      await storeNews(assetNews);
     }
   }
 

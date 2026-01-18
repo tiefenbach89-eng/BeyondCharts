@@ -1,42 +1,55 @@
 // app/api/asset-news/route.ts
 import { NextResponse } from 'next/server';
 import { fetchAllNews } from '@/lib/unified-news';
-import { getCachedNews, setCachedNews, getCacheAge } from '@/lib/news-cache';
+import { getStoredNews, storeNews, shouldFetchFreshNews, cleanupOldNews } from '@/lib/news-storage';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 1800; // Revalidate every 30 minutes
+export const revalidate = 7200; // Revalidate every 2 hours
 
 export async function GET() {
   try {
-    // Try to get cached news first
-    const cachedNews = getCachedNews();
-
-    if (cachedNews && cachedNews.length > 0) {
-      const cacheAge = getCacheAge();
-      console.log(`[API] Serving ${cachedNews.length} cached news items (age: ${cacheAge ? Math.round(cacheAge / 1000) : 0}s)`);
-
-      return NextResponse.json({
-        success: true,
-        news: cachedNews,
-        meta: {
-          found: cachedNews.length,
-          returned: cachedNews.length,
-          limit: cachedNews.length,
-          page: 1,
-          cached: true,
-          cacheAge: cacheAge,
-        },
-        timestamp: new Date().toISOString()
-      });
+    // Clean up old news (runs on every request, but DB checks internally)
+    const deletedCount = await cleanupOldNews();
+    if (deletedCount > 0) {
+      console.log(`[API] Cleaned up ${deletedCount} old news items`);
     }
 
-    // No cache or expired - fetch from Finnhub
-    console.log('[API] Cache miss - fetching from Finnhub API');
-    const newsData = await fetchAllNews(20); // Fetch 20 news items
+    // Check if we need to fetch fresh news (2 hour threshold)
+    const needsFreshNews = await shouldFetchFreshNews(2 * 60 * 60 * 1000);
 
-    // Cache the results
+    if (!needsFreshNews) {
+      // Serve from Supabase storage
+      const storedNews = await getStoredNews(50);
+
+      if (storedNews.length > 0) {
+        console.log(`[API] Serving ${storedNews.length} news items from storage`);
+
+        return NextResponse.json({
+          success: true,
+          news: storedNews,
+          meta: {
+            found: storedNews.length,
+            returned: storedNews.length,
+            limit: storedNews.length,
+            page: 1,
+            cached: true,
+            source: 'storage',
+          },
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+
+    // Fetch fresh news from Finnhub + translate
+    console.log('[API] Fetching fresh news from Finnhub API + translating...');
+    const newsData = await fetchAllNews(20);
+
+    // Store in Supabase for future requests
     if (newsData.length > 0) {
-      setCachedNews(newsData as any); // Type cast for cache compatibility
+      const stored = await storeNews(newsData);
+      if (stored) {
+        console.log(`[API] Stored ${newsData.length} news items in Supabase`);
+      }
     }
 
     return NextResponse.json({
@@ -48,6 +61,7 @@ export async function GET() {
         limit: newsData.length,
         page: 1,
         cached: false,
+        source: 'api',
       },
       timestamp: new Date().toISOString()
     });
