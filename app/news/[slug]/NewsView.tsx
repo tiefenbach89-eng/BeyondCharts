@@ -4,8 +4,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  Clock, Calendar, ChevronLeft, Share2, User, 
+import {
+  Clock, Calendar, ChevronLeft, Share2, User,
   ExternalLink, TrendingUp, AlertCircle, CheckCircle,
   Zap, Shield, ArrowUpRight
 } from "lucide-react";
@@ -19,6 +19,7 @@ import {
   removeHighlightMarkers
 } from "@/lib/contentParser";
 import { formatDate } from "@/lib/date";
+import { ContentProtection } from "@/components/auth/ContentProtection";
 
 interface NewsViewProps {
   item: NewsItem;
@@ -190,89 +191,132 @@ export function NewsView({ item }: NewsViewProps) {
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          
+
           {/* Main Content */}
           <article className="lg:col-span-8">
-            <div className="space-y-12">
-              {isHtml ? (
-                <div 
-                  className="prose prose-slate prose-lg max-w-none
-                    prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h2:text-3xl prose-h2:mb-6 prose-h2:mt-12 prose-h2:pb-4 
-                    prose-h2:border-b-2 prose-h2:border-emerald-200
-                    prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-8
-                    prose-p:text-slate-700 prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-lg
-                    prose-strong:text-slate-950 prose-strong:font-bold
-                    prose-em:text-slate-700 prose-em:italic
-                    prose-ul:my-6 prose-ul:list-disc prose-ul:ml-6
-                    prose-ol:my-6 prose-ol:list-decimal prose-ol:ml-6
-                    prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
-                    prose-li:marker:text-emerald-600
-                    prose-blockquote:border-l-4 prose-blockquote:border-emerald-600 
-                    prose-blockquote:bg-emerald-50/50 prose-blockquote:py-4 prose-blockquote:px-6
-                    prose-blockquote:italic prose-blockquote:text-slate-800 prose-blockquote:my-6
-                    prose-blockquote:rounded-r-xl
-                    prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8
-                    prose-a:text-emerald-600 prose-a:underline hover:prose-a:text-emerald-700
-                    prose-hr:border-emerald-200 prose-hr:my-12
-                    prose-code:bg-slate-100 prose-code:px-2 prose-code:py-1 prose-code:rounded
-                    prose-code:text-slate-800 prose-code:text-base"
-                  dangerouslySetInnerHTML={{ __html: item.content }} 
-                />
-              ) : contentSections.length > 0 ? (
-                contentSections.map((section, idx) => (
-                  <section key={idx} className="scroll-mt-32">
-                    {/* Section Header */}
-                    <div className="mb-6 pb-4 border-b-2 border-emerald-200">
-                      <h2 className="text-3xl font-bold tracking-tight text-slate-950">
-                        {section.title}
-                      </h2>
-                    </div>
-                    
-                    {/* Section Content */}
-                    <div className="space-y-5">
-                      {section.paragraphs.map((paragraph, pIdx) => {
-                        if (isList(paragraph)) {
-                          const items = extractListItems(paragraph);
-                          return (
-                            <ul key={pIdx} className="space-y-3 ml-1">
-                              {items.map((listItem, iIdx) => (
-                                <li key={iIdx} className="text-lg text-slate-700 leading-relaxed flex gap-3 group">
-                                  <span className="text-emerald-600 font-bold mt-1 group-hover:scale-125 transition-transform">•</span>
-                                  <span>{listItem}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          );
-                        }
-                        
-                        if (isHighlight(paragraph)) {
-                          const text = removeHighlightMarkers(paragraph);
-                          return (
-                            <div key={pIdx} className="relative">
-                              <div className="absolute -inset-2 bg-emerald-100/50 rounded-2xl blur-sm" />
-                              <div className="relative p-6 bg-gradient-to-br from-emerald-50 to-teal-50/50 border-l-4 border-emerald-600 rounded-r-2xl">
-                                <p className="text-lg text-slate-900 leading-relaxed font-semibold">
-                                  {text}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        }
-                        
-                        return (
+            <ContentProtection
+              title="Vollständigen Artikel freischalten"
+              description="Registriere dich kostenlos, um diesen Artikel vollständig zu lesen und unbegrenzten Zugriff auf alle News und Analysen zu erhalten."
+              preview={
+                <div className="space-y-12 max-h-[600px] overflow-hidden">
+                  {isHtml ? (
+                    <div
+                      className="prose prose-slate prose-lg max-w-none
+                        prose-headings:font-bold prose-headings:tracking-tight
+                        prose-h2:text-3xl prose-h2:mb-6 prose-h2:mt-12 prose-h2:pb-4
+                        prose-h2:border-b-2 prose-h2:border-emerald-200
+                        prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-8
+                        prose-p:text-slate-700 prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-lg
+                        prose-strong:text-slate-950 prose-strong:font-bold
+                        prose-em:text-slate-700 prose-em:italic
+                        prose-ul:my-6 prose-ul:list-disc prose-ul:ml-6
+                        prose-ol:my-6 prose-ol:list-decimal prose-ol:ml-6
+                        prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
+                        prose-li:marker:text-emerald-600"
+                      dangerouslySetInnerHTML={{ __html: item.content?.split('</p>').slice(0, 3).join('</p>') + '</p>' }}
+                    />
+                  ) : contentSections.length > 0 && contentSections[0] ? (
+                    <section className="scroll-mt-32">
+                      <div className="mb-6 pb-4 border-b-2 border-emerald-200">
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-950">
+                          {contentSections[0].title}
+                        </h2>
+                      </div>
+                      <div className="space-y-5">
+                        {contentSections[0].paragraphs.slice(0, 3).map((paragraph, pIdx) => (
                           <p key={pIdx} className="text-lg text-slate-700 leading-[1.8]">
                             {paragraph}
                           </p>
-                        );
-                      })}
-                    </div>
-                  </section>
-                ))
-              ) : (
-                <p className="text-slate-500 italic">No content available</p>
-              )}
-            </div>
+                        ))}
+                      </div>
+                    </section>
+                  ) : (
+                    <p className="text-slate-500 italic">No content available</p>
+                  )}
+                </div>
+              }
+            >
+              <div className="space-y-12">
+                {isHtml ? (
+                  <div
+                    className="prose prose-slate prose-lg max-w-none
+                      prose-headings:font-bold prose-headings:tracking-tight
+                      prose-h2:text-3xl prose-h2:mb-6 prose-h2:mt-12 prose-h2:pb-4
+                      prose-h2:border-b-2 prose-h2:border-emerald-200
+                      prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-8
+                      prose-p:text-slate-700 prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-lg
+                      prose-strong:text-slate-950 prose-strong:font-bold
+                      prose-em:text-slate-700 prose-em:italic
+                      prose-ul:my-6 prose-ul:list-disc prose-ul:ml-6
+                      prose-ol:my-6 prose-ol:list-decimal prose-ol:ml-6
+                      prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
+                      prose-li:marker:text-emerald-600
+                      prose-blockquote:border-l-4 prose-blockquote:border-emerald-600
+                      prose-blockquote:bg-emerald-50/50 prose-blockquote:py-4 prose-blockquote:px-6
+                      prose-blockquote:italic prose-blockquote:text-slate-800 prose-blockquote:my-6
+                      prose-blockquote:rounded-r-xl
+                      prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8
+                      prose-a:text-emerald-600 prose-a:underline hover:prose-a:text-emerald-700
+                      prose-hr:border-emerald-200 prose-hr:my-12
+                      prose-code:bg-slate-100 prose-code:px-2 prose-code:py-1 prose-code:rounded
+                      prose-code:text-slate-800 prose-code:text-base"
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
+                ) : contentSections.length > 0 ? (
+                  contentSections.map((section, idx) => (
+                    <section key={idx} className="scroll-mt-32">
+                      {/* Section Header */}
+                      <div className="mb-6 pb-4 border-b-2 border-emerald-200">
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-950">
+                          {section.title}
+                        </h2>
+                      </div>
+
+                      {/* Section Content */}
+                      <div className="space-y-5">
+                        {section.paragraphs.map((paragraph, pIdx) => {
+                          if (isList(paragraph)) {
+                            const items = extractListItems(paragraph);
+                            return (
+                              <ul key={pIdx} className="space-y-3 ml-1">
+                                {items.map((listItem, iIdx) => (
+                                  <li key={iIdx} className="text-lg text-slate-700 leading-relaxed flex gap-3 group">
+                                    <span className="text-emerald-600 font-bold mt-1 group-hover:scale-125 transition-transform">•</span>
+                                    <span>{listItem}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            );
+                          }
+
+                          if (isHighlight(paragraph)) {
+                            const text = removeHighlightMarkers(paragraph);
+                            return (
+                              <div key={pIdx} className="relative">
+                                <div className="absolute -inset-2 bg-emerald-100/50 rounded-2xl blur-sm" />
+                                <div className="relative p-6 bg-gradient-to-br from-emerald-50 to-teal-50/50 border-l-4 border-emerald-600 rounded-r-2xl">
+                                  <p className="text-lg text-slate-900 leading-relaxed font-semibold">
+                                    {text}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <p key={pIdx} className="text-lg text-slate-700 leading-[1.8]">
+                              {paragraph}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  ))
+                ) : (
+                  <p className="text-slate-500 italic">No content available</p>
+                )}
+              </div>
+            </ContentProtection>
 
             {/* Related Actions CTA */}
             <div className="mt-16 p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 rounded-[32px] relative overflow-hidden">

@@ -4,9 +4,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  Target, Zap, BarChart3, ShieldAlert, Fingerprint, 
-  Clock, Calendar, ChevronLeft, ArrowUpRight, Share2, 
+import {
+  Target, Zap, BarChart3, ShieldAlert, Fingerprint,
+  Clock, Calendar, ChevronLeft, ArrowUpRight, Share2,
   TrendingUp, Sparkles, Eye
 } from "lucide-react";
 import type {
@@ -24,6 +24,7 @@ import {
   removeHighlightMarkers
 } from "@/lib/contentParser";
 import { formatDate } from "@/lib/date";
+import { ContentProtection } from "@/components/auth/ContentProtection";
 
 interface AnalyseViewProps {
   item: Analyse;
@@ -214,86 +215,123 @@ export function AnalyseView({ item }: AnalyseViewProps) {
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-          
+
           {/* Main Content */}
           <article className="lg:col-span-8">
-            <div className="space-y-16">
-              {isHtml ? (
-                <div 
-                  className="prose prose-slate prose-xl max-w-none
-                    prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h2:text-4xl prose-h2:mb-8 prose-h2:mt-16 prose-h2:pb-6 
-                    prose-h2:border-b-2 prose-h2:border-slate-200
-                    prose-h3:text-3xl prose-h3:mb-6 prose-h3:mt-12
-                    prose-p:text-slate-700 prose-p:leading-[1.85] prose-p:mb-8 prose-p:text-lg
-                    prose-strong:text-slate-950 prose-strong:font-bold
-                    prose-em:text-slate-700 prose-em:italic
-                    prose-ul:my-8 prose-ul:list-disc prose-ul:ml-6
-                    prose-ol:my-8 prose-ol:list-decimal prose-ol:ml-6
-                    prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
-                    prose-blockquote:border-l-4 prose-blockquote:border-blue-500 
-                    prose-blockquote:bg-blue-50/30 prose-blockquote:py-4 prose-blockquote:px-6
-                    prose-blockquote:italic prose-blockquote:text-slate-800 prose-blockquote:my-8
-                    prose-blockquote:rounded-r-xl
-                    prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-12
-                    prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-700
-                    prose-hr:border-slate-300 prose-hr:my-16
-                    prose-code:bg-slate-100 prose-code:px-2 prose-code:py-1 prose-code:rounded
-                    prose-code:text-slate-800 prose-code:text-base"
-                  dangerouslySetInnerHTML={{ __html: item.content }} 
-                />
-              ) : contentSections.length > 0 ? (
-                contentSections.map((section, idx) => (
-                  <section key={idx} className="scroll-mt-32">
-                    {/* Section Header */}
-                    <div className="mb-8 pb-6 border-b-2 border-slate-200">
-                      <h2 className="text-4xl font-bold tracking-tight text-slate-950">
-                        {section.title}
-                      </h2>
-                    </div>
-                    
-                    {/* Section Content */}
-                    <div className="space-y-6">
-                      {section.paragraphs.map((paragraph, pIdx) => {
-                        if (isList(paragraph)) {
-                          const items = extractListItems(paragraph);
-                          
-                          return (
-                            <ul key={pIdx} className="space-y-3 ml-6">
-                              {items.map((listItem, iIdx) => (
-                                <li key={iIdx} className="text-lg text-slate-700 leading-relaxed flex gap-4">
-                                  <span className="text-blue-600 font-bold mt-1.5">→</span>
-                                  <span>{listItem}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          );
-                        }
-                        
-                        if (isHighlight(paragraph)) {
-                          const text = removeHighlightMarkers(paragraph);
-                          return (
-                            <div key={pIdx} className="pl-6 border-l-4 border-blue-500 bg-blue-50/30 py-4 pr-6 rounded-r-xl">
-                              <p className="text-lg text-slate-800 leading-relaxed font-medium italic">
-                                {text}
-                              </p>
-                            </div>
-                          );
-                        }
-                        
-                        return (
+            <ContentProtection
+              title="Vollständige Analyse freischalten"
+              description="Registriere dich kostenlos, um diese Expertenanalyse vollständig zu lesen und Zugriff auf alle Investment-Analysen zu erhalten."
+              preview={
+                <div className="space-y-16 max-h-[600px] overflow-hidden">
+                  {isHtml ? (
+                    <div
+                      className="prose prose-slate prose-xl max-w-none
+                        prose-headings:font-bold prose-headings:tracking-tight
+                        prose-h2:text-4xl prose-h2:mb-8 prose-h2:mt-16 prose-h2:pb-6
+                        prose-h2:border-b-2 prose-h2:border-slate-200
+                        prose-h3:text-3xl prose-h3:mb-6 prose-h3:mt-12
+                        prose-p:text-slate-700 prose-p:leading-[1.85] prose-p:mb-8 prose-p:text-lg"
+                      dangerouslySetInnerHTML={{ __html: item.content?.split('</p>').slice(0, 3).join('</p>') + '</p>' }}
+                    />
+                  ) : contentSections.length > 0 && contentSections[0] ? (
+                    <section className="scroll-mt-32">
+                      <div className="mb-8 pb-6 border-b-2 border-slate-200">
+                        <h2 className="text-4xl font-bold tracking-tight text-slate-950">
+                          {contentSections[0].title}
+                        </h2>
+                      </div>
+                      <div className="space-y-6">
+                        {contentSections[0].paragraphs.slice(0, 3).map((paragraph, pIdx) => (
                           <p key={pIdx} className="text-lg text-slate-700 leading-[1.85]">
                             {paragraph}
                           </p>
-                        );
-                      })}
-                    </div>
-                  </section>
-                ))
-              ) : (
-                <p className="text-slate-500 italic">No content available</p>
-              )}
-            </div>
+                        ))}
+                      </div>
+                    </section>
+                  ) : (
+                    <p className="text-slate-500 italic">No content available</p>
+                  )}
+                </div>
+              }
+            >
+              <div className="space-y-16">
+                {isHtml ? (
+                  <div
+                    className="prose prose-slate prose-xl max-w-none
+                      prose-headings:font-bold prose-headings:tracking-tight
+                      prose-h2:text-4xl prose-h2:mb-8 prose-h2:mt-16 prose-h2:pb-6
+                      prose-h2:border-b-2 prose-h2:border-slate-200
+                      prose-h3:text-3xl prose-h3:mb-6 prose-h3:mt-12
+                      prose-p:text-slate-700 prose-p:leading-[1.85] prose-p:mb-8 prose-p:text-lg
+                      prose-strong:text-slate-950 prose-strong:font-bold
+                      prose-em:text-slate-700 prose-em:italic
+                      prose-ul:my-8 prose-ul:list-disc prose-ul:ml-6
+                      prose-ol:my-8 prose-ol:list-decimal prose-ol:ml-6
+                      prose-li:text-slate-700 prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
+                      prose-blockquote:border-l-4 prose-blockquote:border-blue-500
+                      prose-blockquote:bg-blue-50/30 prose-blockquote:py-4 prose-blockquote:px-6
+                      prose-blockquote:italic prose-blockquote:text-slate-800 prose-blockquote:my-8
+                      prose-blockquote:rounded-r-xl
+                      prose-img:rounded-2xl prose-img:shadow-xl prose-img:my-12
+                      prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-700
+                      prose-hr:border-slate-300 prose-hr:my-16
+                      prose-code:bg-slate-100 prose-code:px-2 prose-code:py-1 prose-code:rounded
+                      prose-code:text-slate-800 prose-code:text-base"
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
+                ) : contentSections.length > 0 ? (
+                  contentSections.map((section, idx) => (
+                    <section key={idx} className="scroll-mt-32">
+                      {/* Section Header */}
+                      <div className="mb-8 pb-6 border-b-2 border-slate-200">
+                        <h2 className="text-4xl font-bold tracking-tight text-slate-950">
+                          {section.title}
+                        </h2>
+                      </div>
+
+                      {/* Section Content */}
+                      <div className="space-y-6">
+                        {section.paragraphs.map((paragraph, pIdx) => {
+                          if (isList(paragraph)) {
+                            const items = extractListItems(paragraph);
+
+                            return (
+                              <ul key={pIdx} className="space-y-3 ml-6">
+                                {items.map((listItem, iIdx) => (
+                                  <li key={iIdx} className="text-lg text-slate-700 leading-relaxed flex gap-4">
+                                    <span className="text-blue-600 font-bold mt-1.5">→</span>
+                                    <span>{listItem}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            );
+                          }
+
+                          if (isHighlight(paragraph)) {
+                            const text = removeHighlightMarkers(paragraph);
+                            return (
+                              <div key={pIdx} className="pl-6 border-l-4 border-blue-500 bg-blue-50/30 py-4 pr-6 rounded-r-xl">
+                                <p className="text-lg text-slate-800 leading-relaxed font-medium italic">
+                                  {text}
+                                </p>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <p key={pIdx} className="text-lg text-slate-700 leading-[1.85]">
+                              {paragraph}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  ))
+                ) : (
+                  <p className="text-slate-500 italic">No content available</p>
+                )}
+              </div>
+            </ContentProtection>
 
             {/* CTA Section */}
             {item.isPremium && (

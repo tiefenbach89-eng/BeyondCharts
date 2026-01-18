@@ -25,6 +25,7 @@ import {
   BookOpen,
   Newspaper
 } from 'lucide-react';
+import { ContentProtection } from '@/components/auth/ContentProtection';
 
 // Helper: Konvertiere Ticker zu TradingView Symbol Format
 function getTradingViewSymbol(ticker: string): string {
@@ -315,25 +316,47 @@ export default function AssetDetailPage({ params }: { params: { ticker: string }
           </div>
         </Card>
 
-        {/* Chart Section - TradingView Widget */}
-        <Card className="p-4 md:p-6 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-slate-900">Chart</h2>
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
-              <Activity className="h-3 w-3 inline mr-1" />
-              Live
-            </Badge>
-          </div>
+        {/* Chart Section - TradingView Widget - PROTECTED */}
+        <ContentProtection
+          title="Live-Charts und Analyse-Tools freischalten"
+          description="Registriere dich kostenlos, um auf professionelle Charts, Fundamentaldaten und alle Asset-Analysen zuzugreifen."
+          preview={
+            <Card className="p-4 md:p-6 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-slate-900">Chart</h2>
+                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
+                  <Activity className="h-3 w-3 inline mr-1" />
+                  Live
+                </Badge>
+              </div>
+              <div className="w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center relative">
+                <div className="text-center text-slate-400">
+                  <BarChart3 className="h-20 w-20 mx-auto mb-4 opacity-20" />
+                  <p className="text-sm font-semibold">Chart-Vorschau</p>
+                </div>
+              </div>
+            </Card>
+          }
+        >
+          <Card className="p-4 md:p-6 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-slate-900">Chart</h2>
+              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
+                <Activity className="h-3 w-3 inline mr-1" />
+                Live
+              </Badge>
+            </div>
 
-          {/* TradingView Chart - Responsive */}
-          <div className="w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden bg-slate-50">
-            <iframe
-              src={`https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${getTradingViewSymbol(asset.ticker)}&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=light&style=1&timezone=Europe/Berlin&withdateranges=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=de_DE&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${asset.ticker}`}
-              className="w-full h-full border-0"
-              title="TradingView Chart"
-            />
-          </div>
-        </Card>
+            {/* TradingView Chart - Responsive */}
+            <div className="w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden bg-slate-50">
+              <iframe
+                src={`https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${getTradingViewSymbol(asset.ticker)}&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=light&style=1&timezone=Europe/Berlin&withdateranges=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=de_DE&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${asset.ticker}`}
+                className="w-full h-full border-0"
+                title="TradingView Chart"
+              />
+            </div>
+          </Card>
+        </ContentProtection>
 
         {/* Quick Stats - Responsive Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
