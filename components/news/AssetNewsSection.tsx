@@ -120,13 +120,45 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
 
   return (
     <Link href={`/asset-news/${item.uuid}`}>
-      <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
-        {/* Gradient Overlay on Hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer h-full flex flex-col">
+        {/* Image */}
+        {item.image_url && (
+          <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+            <img
+              src={item.image_url}
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <div className="relative p-6">
-        {/* Asset Badge with Sentiment */}
-        {primaryEntity && (
+            {/* Entity Badge on Image */}
+            {primaryEntity && (
+              <div className="absolute top-3 left-3 flex items-center gap-2">
+                <div className={`px-3 py-1.5 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl flex items-center gap-1.5 shadow-lg`}>
+                  <span className="text-xs font-bold text-blue-700">
+                    {primaryEntity.symbol}
+                  </span>
+                  {SentimentIcon && sentiment && (
+                    <SentimentIcon className={`w-3 h-3 ${sentiment.color}`} />
+                  )}
+                </div>
+                {hasMultipleEntities && (
+                  <span className="text-xs text-white font-medium bg-black/50 backdrop-blur-sm px-2 py-1 rounded-lg">
+                    +{item.entities.length - 1}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+      <div className="relative p-6 flex-1 flex flex-col">
+        {/* Asset Badge (if no image) */}
+        {!item.image_url && primaryEntity && (
           <div className="flex items-center gap-2 mb-4">
             <div className={`px-3 py-1.5 bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-200 rounded-xl flex items-center gap-1.5`}>
               <span className="text-xs font-bold text-blue-700">
@@ -145,13 +177,13 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
         )}
 
         {/* Headline */}
-        <h3 className="text-lg font-bold text-slate-900 mb-3 leading-tight line-clamp-3 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-lg font-bold text-slate-900 mb-3 leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
           {item.title}
         </h3>
 
         {/* Description */}
         {item.description && (
-          <p className="text-sm text-slate-600 mb-4 line-clamp-2 leading-relaxed">
+          <p className="text-sm text-slate-600 mb-4 line-clamp-3 leading-relaxed flex-1">
             {item.description}
           </p>
         )}

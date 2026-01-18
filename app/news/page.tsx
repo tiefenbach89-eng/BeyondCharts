@@ -1,7 +1,8 @@
 import { listContent } from "@/lib/content.server";
 import { NewsCard } from "@/components/news/NewsCard";
 import { AssetNewsSection } from "@/components/news/AssetNewsSection";
-import { fetchMarketauxNews, POPULAR_STOCK_SYMBOLS, EUROPEAN_COUNTRIES } from "@/lib/marketaux";
+import { fetchMarketauxNews } from "@/lib/marketaux";
+import { getCachedNews, setCachedNews } from "@/lib/news-cache";
 import {
   TrendingUp,
   Zap,
@@ -10,16 +11,36 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 300; // Revalidate every 5 minutes (or on-demand)
+// Use ISR: Page is statically generated and revalidated every 30 minutes
+export const revalidate = 1800; // 30 minutes (or on-demand)
 
 export default async function NewsPage() {
-  // Fetch both internal and external news
-  const [items, assetNewsData] = await Promise.all([
-    listContent("news"),
-    // Fetch finance news without symbol filter to get stocks, ETFs, crypto and market-moving news
-    fetchMarketauxNews(undefined, 50, 'de') // Increased to 50 for more variety
-  ]);
+  // Check cache first
+  let assetNews = getCachedNews();
+
+  // If no cache, fetch from API (only happens once every 30 min)
+  if (!assetNews || assetNews.length === 0) {
+    const newsData = await fetchMarketauxNews(undefined, 3, 'de');
+    assetNews = newsData.data;
+
+    // Cache for subsequent requests
+    if (assetNews.length > 0) {
+      setCachedNews(assetNews);
+    }
+  }
+
+  // Fetch internal news
+  const items = await listContent("news");
+
+  const assetNewsData = {
+    data: assetNews,
+    meta: {
+      found: assetNews.length,
+      returned: assetNews.length,
+      limit: assetNews.length,
+      page: 1
+    }
+  };
 
   // Type assertion - we know these properties exist on news items
   const newsItems = items.map((item) => {

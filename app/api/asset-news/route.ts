@@ -1,23 +1,55 @@
 // app/api/asset-news/route.ts
 import { NextResponse } from 'next/server';
-import { fetchMarketauxNews, POPULAR_STOCK_SYMBOLS, EUROPEAN_COUNTRIES } from '@/lib/marketaux';
+import { fetchMarketauxNews } from '@/lib/marketaux';
+import { getCachedNews, setCachedNews, getCacheAge } from '@/lib/news-cache';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 300; // Revalidate every 5 minutes
+export const revalidate = 1800; // Revalidate every 30 minutes
 
 export async function GET() {
   try {
-    // Fetch news for stocks, ETFs, crypto and market-moving events
+    // Try to get cached news first
+    const cachedNews = getCachedNews();
+
+    if (cachedNews && cachedNews.length > 0) {
+      const cacheAge = getCacheAge();
+      console.log(`[API] Serving ${cachedNews.length} cached news items (age: ${cacheAge ? Math.round(cacheAge / 1000) : 0}s)`);
+
+      return NextResponse.json({
+        success: true,
+        news: cachedNews,
+        meta: {
+          found: cachedNews.length,
+          returned: cachedNews.length,
+          limit: cachedNews.length,
+          page: 1,
+          cached: true,
+          cacheAge: cacheAge,
+        },
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // No cache or expired - fetch from API (only 3 items to stay within free tier)
+    console.log('[API] Cache miss - fetching from Marketaux API');
     const newsData = await fetchMarketauxNews(
       undefined,
-      50, // Increased limit for more variety
+      3, // Free tier: only 3 items per request to conserve daily limit
       'de' // German news
     );
+
+    // Cache the results
+    if (newsData.data.length > 0) {
+      setCachedNews(newsData.data);
+    }
 
     return NextResponse.json({
       success: true,
       news: newsData.data,
-      meta: newsData.meta,
+      meta: {
+        ...newsData.meta,
+        cached: false,
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -27,7 +59,7 @@ export async function GET() {
       success: false,
       error: 'Failed to fetch asset news',
       news: [],
-      meta: { found: 0, returned: 0, limit: 0, page: 1 }
+      meta: { found: 0, returned: 0, limit: 0, page: 1, cached: false }
     }, { status: 500 });
   }
 }
