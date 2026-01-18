@@ -7,12 +7,11 @@ export const revalidate = 300; // Revalidate every 5 minutes
 
 export async function GET() {
   try {
-    // Fetch news for popular assets from Marketaux
+    // Fetch news for stocks, ETFs, crypto and market-moving events
     const newsData = await fetchMarketauxNews(
       undefined,
-      20,
-      'de', // German news
-      EUROPEAN_COUNTRIES // From European markets
+      50, // Increased limit for more variety
+      'de' // German news
     );
 
     return NextResponse.json({

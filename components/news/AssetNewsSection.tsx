@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Clock, ExternalLink, Newspaper, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, Clock, ExternalLink, Newspaper, TrendingDown, Minus, ChevronDown } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import type { MarketauxNewsItem } from '@/lib/marketaux';
 
@@ -13,6 +13,7 @@ interface AssetNewsSectionProps {
 export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
   const [news, setNews] = useState<MarketauxNewsItem[]>(initialNews);
   const [loading, setLoading] = useState(false);
+  const [displayCount, setDisplayCount] = useState(6);
 
   useEffect(() => {
     if (initialNews.length === 0) {
@@ -70,9 +71,27 @@ export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
 
       {/* News Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {news.map((item) => (
+        {news.slice(0, displayCount).map((item) => (
           <AssetNewsCard key={item.uuid} item={item} />
         ))}
+      </div>
+
+      {/* Load More Button */}
+      {displayCount < news.length && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => setDisplayCount(prev => Math.min(prev + 6, news.length))}
+            className="px-6 py-3 bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl transition-all flex items-center gap-2 font-bold text-slate-700 hover:border-blue-300"
+          >
+            <span>Mehr News laden</span>
+            <ChevronDown className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Show count */}
+      <div className="text-center mt-4 text-sm text-slate-500">
+        Zeige {Math.min(displayCount, news.length)} von {news.length} News
       </div>
     </section>
   );

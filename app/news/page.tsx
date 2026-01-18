@@ -17,7 +17,8 @@ export default async function NewsPage() {
   // Fetch both internal and external news
   const [items, assetNewsData] = await Promise.all([
     listContent("news"),
-    fetchMarketauxNews(undefined, 20, 'de', EUROPEAN_COUNTRIES) // All German/European news
+    // Fetch finance news without symbol filter to get stocks, ETFs, crypto and market-moving news
+    fetchMarketauxNews(undefined, 50, 'de') // Increased to 50 for more variety
   ]);
 
   // Type assertion - we know these properties exist on news items
