@@ -17,7 +17,7 @@ export default async function NewsPage() {
   // Fetch both internal and external news
   const [items, assetNewsData] = await Promise.all([
     listContent("news"),
-    fetchMarketauxNews(POPULAR_STOCK_SYMBOLS, 6, 'de', EUROPEAN_COUNTRIES)
+    fetchMarketauxNews(POPULAR_STOCK_SYMBOLS, 6, 'en') // English for better entity detection
   ]);
 
   // Type assertion - we know these properties exist on news items

@@ -70,7 +70,7 @@ export async function fetchMarketauxNews(
       api_token: MARKETAUX_API_TOKEN,
       limit: limit.toString(),
       language: language,
-      filter_entities: 'true', // Only return news with identified entities
+      // filter_entities: 'true', // Disabled: German news often have no entities detected
     });
 
     // Add symbols if provided

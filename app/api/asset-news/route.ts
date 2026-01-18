@@ -11,8 +11,7 @@ export async function GET() {
     const newsData = await fetchMarketauxNews(
       POPULAR_STOCK_SYMBOLS,
       10,
-      'de',
-      EUROPEAN_COUNTRIES
+      'en' // English for better entity detection
     );
 
     return NextResponse.json({
