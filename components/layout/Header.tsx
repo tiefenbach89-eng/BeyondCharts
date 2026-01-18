@@ -28,40 +28,49 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b bg-white/95 backdrop-blur-md shadow-sm",
-        isAdminPage ? "border-slate-200/70 bg-white/90" : "border-slate-200"
+        "fixed inset-x-0 top-0 z-50 border-b backdrop-blur-2xl shadow-lg transition-all duration-300",
+        isAdminPage
+          ? "border-slate-200/30 bg-white/70"
+          : "border-white/20 bg-gradient-to-r from-white/80 via-white/70 to-white/80"
       )}
     >
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between gap-3 px-4 md:h-20">
+      {/* Subtle animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-violet-500/5 to-purple-500/5 opacity-50 animate-shimmer"
+           style={{ backgroundSize: '200% 100%' }} />
+
+      <div className="relative max-w-7xl mx-auto flex h-16 items-center justify-between gap-3 px-4 md:h-20">
         {/* Left Section - Logo & Nav */}
         <div className="flex items-center gap-6">
-          {/* Logo */}
+          {/* Logo - Enhanced 3D Effect */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
+            <div className="relative h-12 w-12 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-xl group-hover:shadow-2xl">
+              {/* Glow effect */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500" />
+
               {/* Animated bars */}
               <div className="absolute inset-0 flex items-center justify-center gap-0.5">
-                <div className="h-5 w-1 bg-blue-500 rounded-full animate-pulse" />
-                <div className="h-3 w-1 bg-white rounded-full opacity-90" />
-                <div className="h-6 w-1 bg-blue-400 rounded-full" />
+                <div className="h-5 w-1 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-500/50" />
+                <div className="h-3 w-1 bg-white rounded-full opacity-90 shadow-lg" />
+                <div className="h-6 w-1 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50" />
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="text-lg font-bold text-slate-900 leading-none mb-1">
-                Beyond<span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Charts</span>
+              <div className="text-xl font-bold text-slate-900 leading-none mb-1 transition-all duration-300 group-hover:scale-105">
+                Beyond<span className="bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">Charts</span>
               </div>
-              <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Investieren verstehen
               </div>
             </div>
           </Link>
 
-          {/* Navigation - Desktop */}
+          {/* Navigation - Desktop - Revolutionary Glassmorphism */}
           <nav
             className={cn(
-              "hidden lg:flex items-center gap-1 rounded-2xl p-1.5 shadow-sm",
-              isAdminPage 
-                ? "bg-white/50 backdrop-blur-sm border border-slate-200/60" 
-                : "bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200/50"
+              "hidden lg:flex items-center gap-1.5 rounded-2xl p-2 backdrop-blur-xl shadow-xl border transition-all duration-300",
+              isAdminPage
+                ? "bg-white/60 border-white/40"
+                : "bg-white/50 border-white/30"
             )}
           >
             {nav.map((n) => {
@@ -71,20 +80,27 @@ export function Header() {
                   key={n.href}
                   href={n.href}
                   className={cn(
-                    "relative rounded-xl px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+                    "relative rounded-xl px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-300 group overflow-hidden",
                     active
-                      ? isAdminPage
-                        ? "bg-white text-slate-900 shadow-md"
-                        : "bg-white text-blue-600 shadow-md"
-                      : isAdminPage
-                        ? "text-slate-500 hover:text-slate-900 hover:bg-white/50"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
+                      ? "bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 text-white shadow-xl"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/80 hover:shadow-lg"
                   )}
                 >
+                  {/* Shimmer effect on active */}
                   {active && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-violet-500/5 rounded-xl" />
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+                           style={{ backgroundSize: '200% 100%' }} />
+                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 opacity-30 blur-xl" />
+                    </>
                   )}
-                  <span className="relative">{n.label}</span>
+
+                  {/* Hover glow effect */}
+                  {!active && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+                  )}
+
+                  <span className="relative z-10">{n.label}</span>
                 </Link>
               );
             })}
@@ -122,37 +138,40 @@ export function Header() {
             </Link>
           )}
 
-          {/* Search Button */}
+          {/* Search Button - Premium Glassmorphism */}
           <button
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 hover:shadow-md"
+            className="relative inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/40 bg-white/60 backdrop-blur-xl hover:bg-white/80 hover:border-white/60 transition-all duration-300 hover:shadow-xl hover:scale-105 group overflow-hidden"
             onClick={() => setOpen(true)}
             aria-label="Suche öffnen"
           >
-            <Search className="h-4 w-4 text-slate-600" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Search className="h-4 w-4 text-slate-700 relative z-10 group-hover:scale-110 transition-transform duration-300" />
           </button>
 
           {/* Account Button - Shows dropdown when not logged in */}
           {user ? (
             <Link href="/konto" className="hidden sm:block">
-              <button className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 transition-all duration-200 hover:shadow-md text-sm font-semibold">
-                <User className="h-4 w-4" />
-                <span>{loading ? '...' : role.charAt(0).toUpperCase() + role.slice(1)}</span>
+              <button className="relative inline-flex items-center gap-2 h-11 px-5 rounded-xl border border-blue-300/50 bg-gradient-to-r from-blue-50/80 to-violet-50/80 backdrop-blur-xl hover:from-blue-100/80 hover:to-violet-100/80 text-blue-700 transition-all duration-300 hover:shadow-xl hover:scale-105 text-sm font-bold overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <User className="h-4 w-4 relative z-10" />
+                <span className="relative z-10">{loading ? '...' : role.charAt(0).toUpperCase() + role.slice(1)}</span>
               </button>
             </Link>
           ) : (
             <div className="hidden sm:block relative group">
-              <button className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 transition-all duration-200 hover:shadow-md text-sm font-semibold">
-                <User className="h-4 w-4" />
-                <span>Login</span>
+              <button className="relative inline-flex items-center gap-2 h-11 px-5 rounded-xl border border-white/40 bg-white/60 backdrop-blur-xl hover:bg-white/80 hover:border-white/60 text-slate-700 transition-all duration-300 hover:shadow-xl hover:scale-105 text-sm font-bold overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <User className="h-4 w-4 relative z-10" />
+                <span className="relative z-10">Login</span>
               </button>
 
-              {/* Dropdown on Hover */}
-              <div className="absolute right-0 top-full mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div className="bg-white rounded-xl shadow-xl border border-slate-200 py-2 overflow-hidden">
-                  <Link href="/login" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors font-medium">
+              {/* Dropdown on Hover - Premium Glassmorphism */}
+              <div className="absolute right-0 top-full mt-3 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 group-hover:translate-y-0 translate-y-2">
+                <div className="bg-white/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 py-2 overflow-hidden">
+                  <Link href="/login" className="block px-5 py-3 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-violet-50/50 transition-all duration-200 font-semibold">
                     Anmelden
                   </Link>
-                  <Link href="/register" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors font-medium">
+                  <Link href="/register" className="block px-5 py-3 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-violet-50/50 transition-all duration-200 font-semibold">
                     Registrieren
                   </Link>
                 </div>
