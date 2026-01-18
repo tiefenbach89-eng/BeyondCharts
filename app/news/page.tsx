@@ -1,5 +1,7 @@
 import { listContent } from "@/lib/content.server";
 import { NewsCard } from "@/components/news/NewsCard";
+import { AssetNewsSection } from "@/components/news/AssetNewsSection";
+import { fetchElbstreamNews, POPULAR_ASSET_ISINS } from "@/lib/elbstream";
 import {
   TrendingUp,
   Zap,
@@ -12,7 +14,11 @@ export const dynamic = "force-dynamic";
 export const revalidate = 300; // Revalidate every 5 minutes (or on-demand)
 
 export default async function NewsPage() {
-  const items = await listContent("news");
+  // Fetch both internal and external news
+  const [items, assetNewsData] = await Promise.all([
+    listContent("news"),
+    fetchElbstreamNews('de', 6, POPULAR_ASSET_ISINS)
+  ]);
 
   // Type assertion - we know these properties exist on news items
   const newsItems = items.map((item) => {
@@ -92,6 +98,11 @@ export default async function NewsPage() {
       </div>
 
       <div className="ff-container px-4 py-16 space-y-16">
+        {/* Asset News from Elbstream */}
+        {assetNewsData.data.length > 0 && (
+          <AssetNewsSection initialNews={assetNewsData.data} />
+        )}
+
         {/* High Impact News */}
         {featuredNews.length > 0 && (
           <section>
