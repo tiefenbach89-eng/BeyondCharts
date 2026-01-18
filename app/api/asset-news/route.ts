@@ -1,6 +1,6 @@
 // app/api/asset-news/route.ts
 import { NextResponse } from 'next/server';
-import { fetchMarketauxNews } from '@/lib/marketaux';
+import { fetchAllNews } from '@/lib/unified-news';
 import { getCachedNews, setCachedNews, getCacheAge } from '@/lib/news-cache';
 
 export const dynamic = 'force-dynamic';
@@ -30,24 +30,23 @@ export async function GET() {
       });
     }
 
-    // No cache or expired - fetch from API (only 3 items to stay within free tier)
-    console.log('[API] Cache miss - fetching from Marketaux API');
-    const newsData = await fetchMarketauxNews(
-      undefined,
-      3, // Free tier: only 3 items per request to conserve daily limit
-      'de' // German news
-    );
+    // No cache or expired - fetch from Finnhub
+    console.log('[API] Cache miss - fetching from Finnhub API');
+    const newsData = await fetchAllNews(20); // Fetch 20 news items
 
     // Cache the results
-    if (newsData.data.length > 0) {
-      setCachedNews(newsData.data);
+    if (newsData.length > 0) {
+      setCachedNews(newsData as any); // Type cast for cache compatibility
     }
 
     return NextResponse.json({
       success: true,
-      news: newsData.data,
+      news: newsData,
       meta: {
-        ...newsData.meta,
+        found: newsData.length,
+        returned: newsData.length,
+        limit: newsData.length,
+        page: 1,
         cached: false,
       },
       timestamp: new Date().toISOString()

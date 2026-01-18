@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TrendingUp, Clock, ExternalLink, Newspaper, TrendingDown, Minus, ChevronDown } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
-import type { MarketauxNewsItem } from '@/lib/marketaux';
+import type { UnifiedNewsItem } from '@/lib/unified-news';
 
 interface AssetNewsSectionProps {
-  initialNews?: MarketauxNewsItem[];
+  initialNews?: UnifiedNewsItem[];
 }
 
 export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
-  const [news, setNews] = useState<MarketauxNewsItem[]>(initialNews);
+  const [news, setNews] = useState<UnifiedNewsItem[]>(initialNews);
   const [loading, setLoading] = useState(false);
   const [displayCount, setDisplayCount] = useState(6);
 
@@ -98,28 +98,18 @@ export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
 }
 
 interface AssetNewsCardProps {
-  item: MarketauxNewsItem;
+  item: UnifiedNewsItem;
 }
 
 function AssetNewsCard({ item }: AssetNewsCardProps) {
-  const primaryEntity = item.entities[0];
-  const hasMultipleEntities = item.entities.length > 1;
+  const primarySymbol = item.related_symbols[0];
+  const hasMultipleSymbols = item.related_symbols.length > 1;
 
   // Format time ago
   const timeAgo = getTimeAgo(item.published_at);
 
-  // Get sentiment icon and color
-  const getSentimentDisplay = (score: number) => {
-    if (score > 0.1) return { icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' };
-    if (score < -0.1) return { icon: TrendingDown, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
-    return { icon: Minus, color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200' };
-  };
-
-  const sentiment = primaryEntity ? getSentimentDisplay(primaryEntity.sentiment_score) : null;
-  const SentimentIcon = sentiment?.icon;
-
   return (
-    <Link href={`/asset-news/${item.uuid}`}>
+    <Link href={`/asset-news/${item.id}`}>
       <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer h-full flex flex-col">
         {/* Image */}
         {item.image_url && (
@@ -135,20 +125,17 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-            {/* Entity Badge on Image */}
-            {primaryEntity && (
+            {/* Symbol Badge on Image */}
+            {primarySymbol && (
               <div className="absolute top-3 left-3 flex items-center gap-2">
                 <div className={`px-3 py-1.5 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl flex items-center gap-1.5 shadow-lg`}>
                   <span className="text-xs font-bold text-blue-700">
-                    {primaryEntity.symbol}
+                    {primarySymbol}
                   </span>
-                  {SentimentIcon && sentiment && (
-                    <SentimentIcon className={`w-3 h-3 ${sentiment.color}`} />
-                  )}
                 </div>
-                {hasMultipleEntities && (
+                {hasMultipleSymbols && (
                   <span className="text-xs text-white font-medium bg-black/50 backdrop-blur-sm px-2 py-1 rounded-lg">
-                    +{item.entities.length - 1}
+                    +{item.related_symbols.length - 1}
                   </span>
                 )}
               </div>
@@ -157,20 +144,17 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
         )}
 
       <div className="relative p-6 flex-1 flex flex-col">
-        {/* Asset Badge (if no image) */}
-        {!item.image_url && primaryEntity && (
+        {/* Symbol Badge (if no image) */}
+        {!item.image_url && primarySymbol && (
           <div className="flex items-center gap-2 mb-4">
             <div className={`px-3 py-1.5 bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-200 rounded-xl flex items-center gap-1.5`}>
               <span className="text-xs font-bold text-blue-700">
-                {primaryEntity.symbol}
+                {primarySymbol}
               </span>
-              {SentimentIcon && sentiment && (
-                <SentimentIcon className={`w-3 h-3 ${sentiment.color}`} />
-              )}
             </div>
-            {hasMultipleEntities && (
+            {hasMultipleSymbols && (
               <span className="text-xs text-slate-500 font-medium">
-                +{item.entities.length - 1} weitere
+                +{item.related_symbols.length - 1} weitere
               </span>
             )}
           </div>

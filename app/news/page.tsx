@@ -1,7 +1,7 @@
 import { listContent } from "@/lib/content.server";
 import { NewsCard } from "@/components/news/NewsCard";
 import { AssetNewsSection } from "@/components/news/AssetNewsSection";
-import { fetchMarketauxNews } from "@/lib/marketaux";
+import { fetchAllNews } from "@/lib/unified-news";
 import { getCachedNews, setCachedNews } from "@/lib/news-cache";
 import {
   TrendingUp,
@@ -18,10 +18,9 @@ export default async function NewsPage() {
   // Check cache first
   let assetNews = getCachedNews();
 
-  // If no cache, fetch from API (only happens once every 30 min)
+  // If no cache, fetch from Finnhub (only happens once every 30 min)
   if (!assetNews || assetNews.length === 0) {
-    const newsData = await fetchMarketauxNews(undefined, 3, 'de');
-    assetNews = newsData.data;
+    assetNews = await fetchAllNews(20); // Get 20 news items from Finnhub
 
     // Cache for subsequent requests
     if (assetNews.length > 0) {

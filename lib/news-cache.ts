@@ -1,11 +1,11 @@
 // lib/news-cache.ts
-// Server-side in-memory cache for Marketaux news
-// Prevents excessive API calls on the free tier (100 requests/day)
+// Server-side in-memory cache for news
+// Prevents excessive API calls
 
-import type { MarketauxNewsItem } from './marketaux';
+import type { UnifiedNewsItem } from './unified-news';
 
 interface CacheEntry {
-  data: MarketauxNewsItem[];
+  data: UnifiedNewsItem[];
   timestamp: number;
 }
 
@@ -15,7 +15,7 @@ let newsCache: CacheEntry | null = null;
 // Cache duration: 30 minutes (1800000 ms)
 const CACHE_DURATION = 30 * 60 * 1000;
 
-export function getCachedNews(): MarketauxNewsItem[] | null {
+export function getCachedNews(): UnifiedNewsItem[] | null {
   if (!newsCache) return null;
 
   const now = Date.now();
@@ -32,7 +32,7 @@ export function getCachedNews(): MarketauxNewsItem[] | null {
   return null;
 }
 
-export function setCachedNews(data: MarketauxNewsItem[]): void {
+export function setCachedNews(data: UnifiedNewsItem[]): void {
   newsCache = {
     data,
     timestamp: Date.now(),
