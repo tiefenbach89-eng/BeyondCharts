@@ -72,7 +72,7 @@ export function AssetNewsSection({ initialNews = [] }: AssetNewsSectionProps) {
       {/* News Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {news.slice(0, displayCount).map((item) => (
-          <AssetNewsCard key={item.uuid} item={item} />
+          <AssetNewsCard key={item.id} item={item} />
         ))}
       </div>
 
