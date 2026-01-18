@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { TrendingUp, Clock, ExternalLink, Newspaper, TrendingDown, Minus, ChevronDown } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import type { UnifiedNewsItem } from '@/lib/unified-news';
@@ -109,7 +108,7 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
   const timeAgo = getTimeAgo(item.published_at);
 
   return (
-    <Link href={`/asset-news/${item.id}`}>
+    <a href={item.url} target="_blank" rel="noopener noreferrer">
       <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer h-full flex flex-col">
         {/* Image */}
         {item.image_url && (
@@ -179,18 +178,10 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
             <span>{timeAgo}</span>
           </div>
 
-          {item.url && (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <span>Quelle</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
+          <div className="flex items-center gap-1 text-blue-600 font-semibold">
+            <span>Read more</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </div>
         </div>
 
         {/* Source Badge */}
@@ -204,7 +195,7 @@ function AssetNewsCard({ item }: AssetNewsCardProps) {
         )}
       </div>
     </Card>
-    </Link>
+    </a>
   );
 }
 

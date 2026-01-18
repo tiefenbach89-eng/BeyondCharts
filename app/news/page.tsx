@@ -27,7 +27,7 @@ export default async function NewsPage() {
 
   // If storage is empty or news are stale, fetch fresh
   if (!assetNews || assetNews.length === 0) {
-    assetNews = await fetchAllNews(20); // Get 20 news items from Finnhub + translate
+    assetNews = await fetchAllNews(20); // Get 20 news items from Finnhub (English)
 
     // Store for future requests
     if (assetNews.length > 0) {

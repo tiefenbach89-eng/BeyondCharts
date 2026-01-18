@@ -1,6 +1,6 @@
 # News Feature Setup
 
-BeyondCharts verwendet Finnhub für Asset-News, DeepL für automatische Übersetzungen ins Deutsche und Supabase für persistentes 14-Tage-Storage.
+BeyondCharts verwendet Finnhub für Asset-News (in Englisch) und Supabase für persistentes 14-Tage-Storage.
 
 ## Benötigte API Keys
 
@@ -18,36 +18,21 @@ BeyondCharts verwendet Finnhub für Asset-News, DeepL für automatische Überset
    FINNHUB_API_KEY=your_key_here
    ```
 
-### 2. DeepL API Key (Pflicht für deutsche Übersetzungen)
-
-**Anbieter:** [DeepL](https://www.deepl.com/pro-api)
-**Free Tier:** 500.000 Zeichen/Monat
-**Kosten:** Kostenlos (Free Tier reicht für ~125 News-Updates/Monat)
-
-1. Gehe zu https://www.deepl.com/pro-api
-2. Erstelle ein kostenloses "DeepL API Free" Konto
-3. Kopiere deinen Authentication Key
-4. Füge ihn in `.env.local` ein:
-   ```
-   DEEPL_API_KEY=your_key_here
-   ```
-
-**Wichtig:** Verwende den "API Free" Plan, nicht den "API Pro" Plan!
 
 ## Wie es funktioniert
 
-1. **Finnhub** liefert englische Asset-News (20 Items pro Anfrage)
-2. **DeepL** übersetzt Titel + Beschreibung automatisch ins Deutsche
-3. **Supabase** speichert übersetzte News persistent für 14 Tage
-4. **Auto-Cleanup** löscht News älter als 14 Tage (täglich um 3 Uhr)
-5. **ISR** regeneriert die Seite alle 2 Stunden (nur wenn keine frischen News im Storage)
+1. **Finnhub** liefert englische Asset-News mit Bildern (20 Items pro Anfrage)
+2. **Supabase** speichert News persistent für 14 Tage
+3. **Auto-Cleanup** löscht News älter als 14 Tage (täglich um 3 Uhr)
+4. **ISR** regeneriert die Seite alle 2 Stunden (nur wenn keine frischen News im Storage)
+5. **Direct Links** News verlinken direkt zur Original-Quelle (keine Detail-Seite)
 
 ### Vorteile des persistenten Storage:
 
-- **Keine wiederholten Übersetzungen:** News werden einmal übersetzt und 14 Tage lang gespeichert
-- **DeepL-Limit schonen:** Übersetzungen nur bei neuen News (~12x pro Tag statt 48x)
-- **Schnellere Ladezeiten:** Zugriff auf Supabase-DB schneller als Finnhub + DeepL
+- **Keine wiederholten API-Calls:** News werden einmal gefetcht und 14 Tage lang gespeichert
+- **Schnellere Ladezeiten:** Zugriff auf Supabase-DB schneller als Finnhub
 - **News-Archiv:** Benutzer können bis zu 14 Tage alte News sehen
+- **Kostenlos:** Nur Finnhub Free Tier nötig (60 calls/minute)
 
 ## API Rate Limits & Caching
 
@@ -56,54 +41,27 @@ BeyondCharts verwendet Finnhub für Asset-News, DeepL für automatische Überset
 - **Nutzung:** ~2 calls alle 30 Minuten (Market News + Symbol News)
 - **Täglich:** ~96 calls/Tag (weit unter dem Limit)
 
-### DeepL
-- **Limit:** 500.000 Zeichen/Monat
-- **Pro News-Update:** ~4.000 Zeichen (20 News × ~200 Zeichen)
-- **Maximale Updates:** ~125 Updates/Monat
-- **Mit 30-Min-Cache:** ~48 Updates/Tag = ~1.440 Updates/Monat
-- **Problem:** Free Tier reicht nicht für 48 Updates/Tag!
-
-### Lösung: Supabase Storage
+### Supabase Storage
 
 Mit persistentem Storage in Supabase:
-- **Fetch Interval:** Alle 2 Stunden (wenn keine News im Storage)
+- **Fetch Interval:** Alle 2 Stunden (nur wenn keine News im Storage)
 - **Storage Duration:** 14 Tage
-- **DeepL Usage:** ~12 Updates/Tag × 4.000 Zeichen = ~48.000 Zeichen/Tag
-- **Monatlich:** ~1.440.000 Zeichen/Monat ⚠️ Über Limit!
-
-**Optimierung:**
-Da wir alte News 14 Tage lang behalten, holen wir nicht ständig neue News. Realistisch:
-- Nur neue News werden übersetzt (nicht alle 20)
-- Ca. 5-10 neue News pro 2-Stunden-Fenster
-- ~12 Updates/Tag × 10 News × 200 Zeichen = ~24.000 Zeichen/Tag
-- **~720.000 Zeichen/Monat** ✅ Innerhalb des Free Tiers!
+- **Finnhub Usage:** ~12 Updates/Tag × 2 calls = ~24 calls/Tag
+- **Monatlich:** ~720 calls/Monat ✅ Weit unter Limit!
 
 ## Monitoring
-
-### DeepL Usage überprüfen
-
-Du kannst deine DeepL-Nutzung programmatisch abrufen:
-
-```typescript
-import { checkUsage } from '@/lib/deepl';
-
-const usage = await checkUsage();
-console.log(`Characters used: ${usage.character_count}/${usage.character_limit}`);
-```
-
-Oder im DeepL Dashboard: https://www.deepl.com/account/usage
 
 ### Logs
 
 Die News-Feature loggt alle wichtigen Events:
 
 ```bash
-[News Cache] Returning cached news (age: 1234s)
-[News Cache] Cache expired
-[Finnhub] Fetching market news...
-[DeepL] Translated 20 texts (3842 characters)
-[Unified News] Translated 20 news items
-[News Cache] Cached 20 news items
+[News Storage] News are 120 minutes old - using stored
+[API] Serving 50 news items from storage
+[API] Fetching fresh news from Finnhub API...
+[Unified News] Fetched 20 news items from Finnhub
+[API] Stored 20 news items in Supabase
+[Cron Cleanup] Deleted 5 old news items
 ```
 
 ## Supabase Setup
@@ -135,7 +93,6 @@ Prüfe ob die Tabelle `news_items` erstellt wurde:
 2. Settings → Environment Variables
 3. Füge hinzu:
    - `FINNHUB_API_KEY`: Dein Finnhub API Key
-   - `DEEPL_API_KEY`: Dein DeepL API Key
    - `CRON_SECRET`: Zufälliger String für Cron-Auth (z.B. `openssl rand -base64 32`)
 4. Redeploy
 
@@ -156,10 +113,8 @@ curl -X GET https://your-domain.com/api/cron/cleanup-news \
 
 Falls APIs nicht verfügbar sind:
 
-- **Kein Supabase:** News werden aus Finnhub + DeepL geladen (funktioniert, aber nicht persistent)
+- **Kein Supabase:** News werden direkt von Finnhub geladen (funktioniert, aber nicht persistent)
 - **Kein Finnhub Key:** Alte News aus Supabase werden angezeigt (wenn vorhanden)
-- **Kein DeepL Key:** News werden auf Englisch angezeigt (mit Warning-Log)
-- **DeepL Fehler:** News werden auf Englisch angezeigt
 - **API Rate Limit:** Gespeicherte News aus Supabase werden weiter ausgeliefert
 
 ## Kosten-Übersicht
@@ -167,24 +122,17 @@ Falls APIs nicht verfügbar sind:
 | Service | Plan | Kosten | Limit |
 |---------|------|--------|-------|
 | Finnhub | Free | €0 | 60 calls/min |
-| DeepL | API Free | €0 | 500k chars/month |
+| Supabase | Free | €0 | 500 MB DB |
 | Vercel | Hobby | €0 | 100 GB bandwidth |
 | **Total** | | **€0** | |
 
 ## Performance
 
-- **First Load (cold):** ~2-3s (Finnhub + DeepL + Supabase Store)
+- **First Load (cold):** ~1-2s (Finnhub + Supabase Store)
 - **Subsequent Loads:** ~100-200ms (Supabase Query)
-- **Translation Time:** ~500ms (nur neue News)
 - **Storage Hit Rate:** ~95% (News aus Supabase)
 
 ## Troubleshooting
-
-### News werden auf Englisch angezeigt
-
-1. Überprüfe ob `DEEPL_API_KEY` gesetzt ist
-2. Überprüfe Vercel Logs für Fehler
-3. Überprüfe DeepL Character Limit
 
 ### Keine News werden geladen
 

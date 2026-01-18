@@ -40,8 +40,8 @@ export async function GET() {
       }
     }
 
-    // Fetch fresh news from Finnhub + translate
-    console.log('[API] Fetching fresh news from Finnhub API + translating...');
+    // Fetch fresh news from Finnhub (English)
+    console.log('[API] Fetching fresh news from Finnhub API...');
     const newsData = await fetchAllNews(20);
 
     // Store in Supabase for future requests
