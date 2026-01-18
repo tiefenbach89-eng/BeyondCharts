@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import {
   ArrowLeft,
   ExternalLink,
@@ -13,20 +12,17 @@ import {
   TrendingDown,
   Minus,
   Newspaper,
-  Sparkles,
   Building2,
+  BookOpen,
 } from 'lucide-react';
 import type { MarketauxNewsItem } from '@/lib/marketaux';
 
 export default function AssetNewsDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const uuid = params.uuid as string;
 
   const [newsItem, setNewsItem] = useState<MarketauxNewsItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState<string>('');
-  const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
     fetchNewsItem();
@@ -49,33 +45,6 @@ export default function AssetNewsDetailPage() {
       console.error('Error fetching news:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const generateSummary = async () => {
-    if (!newsItem) return;
-
-    setSummaryLoading(true);
-    try {
-      const response = await fetch('/api/summarize-news', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: newsItem.title,
-          description: newsItem.description,
-          snippet: newsItem.snippet,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setSummary(data.summary);
-      }
-    } catch (error) {
-      console.error('Error generating summary:', error);
-      setSummary('Zusammenfassung konnte nicht generiert werden.');
-    } finally {
-      setSummaryLoading(false);
     }
   };
 
@@ -199,34 +168,13 @@ export default function AssetNewsDetailPage() {
 
           {/* Description */}
           {newsItem.description && (
-            <div className="mb-6">
+            <div className="mb-6 p-6 bg-blue-50 border border-blue-200 rounded-2xl">
+              <div className="flex items-center gap-2 mb-3">
+                <BookOpen className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-bold text-blue-900">Zusammenfassung</h3>
+              </div>
               <p className="text-lg text-slate-700 leading-relaxed">
                 {newsItem.description}
-              </p>
-            </div>
-          )}
-
-          {/* AI Summary Button */}
-          {!summary && (
-            <button
-              onClick={generateSummary}
-              disabled={summaryLoading}
-              className="w-full mb-6 px-6 py-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <Sparkles className={`h-5 w-5 ${summaryLoading ? 'animate-spin' : ''}`} />
-              {summaryLoading ? 'Generiere Zusammenfassung...' : 'KI-Zusammenfassung generieren'}
-            </button>
-          )}
-
-          {/* AI Summary */}
-          {summary && (
-            <div className="mb-6 p-6 bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-2xl">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="h-5 w-5 text-violet-600" />
-                <h3 className="text-lg font-bold text-violet-900">KI-Zusammenfassung</h3>
-              </div>
-              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                {summary}
               </p>
             </div>
           )}
