@@ -32,8 +32,11 @@ export default async function HomePage() {
   let finnhubNews: any[] = [];
   try {
     finnhubNews = await getStoredNews(12);
+    console.log('[Home Page] Successfully fetched news:', finnhubNews.length);
   } catch (error) {
     console.error('[Home Page] Error fetching news:', error);
+    // Return empty array on error - page will render without news section
+    finnhubNews = [];
   }
 
   return (
@@ -445,7 +448,7 @@ export default async function HomePage() {
   );
 }
 
-// Finnhub News Card Component
+// Finnhub News Card Component (Server Component - no event handlers)
 function FinnhubNewsCard({ item }: { item: any }) {
   const timeAgo = getTimeAgo(item.published_at);
 
@@ -459,9 +462,6 @@ function FinnhubNewsCard({ item }: { item: any }) {
               src={item.image_url}
               alt={item.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
             />
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
