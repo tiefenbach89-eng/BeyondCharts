@@ -28,8 +28,13 @@ export default async function HomePage() {
   const allAnalyses = await listContent("analyses");
   const featuredAnalysis = allAnalyses.find((a: any) => a.isPremium) || allAnalyses[0];
 
-  // Fetch Finnhub news from Supabase storage
-  const finnhubNews = await getStoredNews(12);
+  // Fetch Finnhub news from Supabase storage (with error handling)
+  let finnhubNews: any[] = [];
+  try {
+    finnhubNews = await getStoredNews(12);
+  } catch (error) {
+    console.error('[Home Page] Error fetching news:', error);
+  }
 
   return (
     <div className="min-h-screen">
