@@ -11,11 +11,11 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { MobileNav } from "./MobileNav";
 
 const nav = [
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/signals", label: "Signals" },
+  { href: "/maerkte", label: "Markets" },
+  { href: "/learn", label: "Learn" },
   { href: "/news", label: "News" },
-  { href: "/analysen", label: "Analysen" },
-  { href: "/maerkte", label: "Märkte" },
-  { href: "/assets", label: "Assets" },
-  { href: "/watchlist", label: "Watchlist" },
 ];
 
 export function Header() {
