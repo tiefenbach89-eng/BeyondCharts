@@ -296,7 +296,7 @@ export default function SignalsPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-slate-900">{signal.ticker}</span>
-                    <Badge tone={signal.signal === 'BUY' ? 'success' : 'error'} size="sm">
+                    <Badge tone={signal.signal === 'BUY' ? 'success' : 'error'}>
                       {signal.signal}
                     </Badge>
                   </div>

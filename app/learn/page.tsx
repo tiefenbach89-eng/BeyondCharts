@@ -204,7 +204,7 @@ export default function LearnPage() {
 
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
-                  <Badge tone="default" size="sm">{guide.difficulty}</Badge>
+                  <Badge tone="neutral">{guide.difficulty}</Badge>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
